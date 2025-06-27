@@ -1,0 +1,34 @@
+[tools]
+python = "3.11"
+uv = "latest"
+
+[settings]
+python.uv_venv_auto = true
+
+[tasks.test]
+run = "uv run python -m pytest"
+description = "Run tests"
+
+[tasks.lint]
+run = "uv run ruff check ."
+description = "Run ruff linter"
+
+[tasks.format]
+run = "uv run black . && uv run isort ."
+description = "Format code with black and isort"
+
+[tasks.format-check]
+run = "uv run black --check . && uv run isort --check-only ."
+description = "Check code formatting without modifying files"
+
+[tasks.typecheck]
+run = "uv run pyright"
+description = "Run pyright type checker"
+
+[tasks.check]
+depends = ["lint", "format-check", "typecheck", "test"]
+description = "Run all checks (lint, format-check, typecheck, test)"
+
+[tasks.run]
+run = "uv run ledger-reconcile"
+description = "Run ledger-reconcile CLI"
