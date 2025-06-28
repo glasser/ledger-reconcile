@@ -225,7 +225,6 @@ class ReconcileApp(App):
             subprocess.run(
                 ["code", "-g", f"{self.ledger_file}:{line_number}"], check=True
             )
-            self.notify(f"Opened line {line_number} in VSCode")
         except subprocess.CalledProcessError:
             self.notify("Failed to open in VSCode", severity="error")
         except FileNotFoundError:
