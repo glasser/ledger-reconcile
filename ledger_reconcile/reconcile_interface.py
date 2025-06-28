@@ -7,9 +7,10 @@ import subprocess
 from pathlib import Path
 from typing import ClassVar
 
+from textual import on
 from textual.app import App, ComposeResult
-from textual.containers import Container, Horizontal, Vertical
-from textual.widgets import DataTable, Footer, Header, Label
+from textual.containers import Container, HorizontalGroup, Vertical
+from textual.widgets import DataTable, Footer, Label
 
 from .file_editor import LedgerFileEditor
 from .file_watcher import LedgerFileWatcher
@@ -44,16 +45,12 @@ class ReconcileApp(App):
 
     .info-label {
         text-align: center;
+        width: 1fr;
     }
 
     .transactions-table {
         height: 1fr;
         border: solid $primary;
-    }
-
-    .balance-info {
-        text-align: center;
-        margin: 1;
     }
 
     DataTable > .datatable--cursor {
@@ -70,10 +67,7 @@ class ReconcileApp(App):
         ("q", "quit", "Quit"),
         ("ctrl+c", "quit", "Quit"),
         ("space", "toggle_status", "Toggle Status"),
-        ("enter", "open_in_editor", "Open in VSCode"),
         ("r", "reconcile_all", "Reconcile All !"),
-        ("up", "cursor_up", "Up"),
-        ("down", "cursor_down", "Down"),
     ]
 
     def __init__(self, ledger_file: Path, account: str, target_amount: str):
@@ -89,17 +83,17 @@ class ReconcileApp(App):
 
     def compose(self) -> ComposeResult:
         """Create the UI layout."""
-        yield Header()
         yield Container(
             Vertical(
-                Horizontal(
+                HorizontalGroup(
                     Label(f"Account: {self.account}", classes="info-label"),
-                    Label(f" | Target: {self.target_amount}", classes="info-label"),
+                    Label(f"Target: {self.target_amount}", classes="info-label"),
                     Label(
-                        f" | Balance: {self.current_balance}",
+                        f"Balance: {self.current_balance}",
                         id="balance-label",
                         classes="info-label",
                     ),
+                    classes="info-panel",
                 ),
                 DataTable(id="transactions-table", classes="transactions-table"),
                 classes="main-container",
@@ -145,8 +139,13 @@ class ReconcileApp(App):
         """Set up the transactions table."""
         table = self.query_one("#transactions-table", DataTable)
 
+        # Select full rows
+        table.cursor_type = "row"
+
         # Add columns
-        table.add_columns("Status", "Date", "Description", "Amount", "Line")
+        table.add_columns("Status", "Date")
+        table.add_column("Description", width=50)
+        table.add_columns("Amount", "Line")
 
         # Filter to show only unreconciled and semi-reconciled transactions (not fully reconciled *)
         filtered_transactions = [t for t in self.transactions if t.status in ("", "!")]
@@ -164,7 +163,7 @@ class ReconcileApp(App):
             table.add_row(
                 status_display,
                 transaction.date,
-                transaction.description[:50],  # Truncate long descriptions
+                transaction.description,
                 amount,
                 str(transaction.line_number),
                 key=str(transaction.line_number),
@@ -183,7 +182,7 @@ class ReconcileApp(App):
         if row_key is None:
             return
 
-        line_number = int(str(row_key))
+        line_number = int(row_key.value)
 
         # Find the transaction
         transaction = None
@@ -213,17 +212,13 @@ class ReconcileApp(App):
         else:
             self.notify("Failed to update transaction", severity="error")
 
-    def action_open_in_editor(self) -> None:
+    @on(DataTable.RowSelected)
+    def open_in_editor(self, event: DataTable.RowSelected) -> None:
         """Open the current transaction in VSCode."""
-        table = self.query_one("#transactions-table", DataTable)
-        if table.cursor_row is None:
+        row_key = event.row_key
+        if not row_key.value:
             return
-
-        row_key = table.get_row_key(table.cursor_row)  # type: ignore[attr-defined]
-        if row_key is None:
-            return
-
-        line_number = int(str(row_key))
+        line_number = int(row_key.value)
 
         try:
             # Use 'code -g' to open file at specific line

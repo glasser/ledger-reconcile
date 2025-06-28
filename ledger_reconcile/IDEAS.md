@@ -1,0 +1,8 @@
+- [ ] The table shows transactions but it should show postings
+- [ ] Factor out the S-expression parser into its own file, and write a lot of tests for it
+- [ ] Using TDD, fix this issue: _find_list_end will get confused by strings with parens.
+- [ ] Using TDD, fix this issue: does anything care about the outermost close paren?
+- [ ] S-expression parser should be less forgiving: if it sees anything at all surprising, it should fail.
+- [ ] In _create_transaction_from_data why do you think statuses are ever in the description?
+- [ ] Instead of getting the overall balance, it should be getting the cleared balance, as the goal is to make the cleared balance match the target.
+- [ ] It should tell you how far the cleared balance is from the target.

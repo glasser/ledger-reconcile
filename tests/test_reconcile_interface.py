@@ -5,6 +5,7 @@ import tempfile
 from pathlib import Path
 
 import pytest
+from textual.widgets import DataTable, Label
 
 from ledger_reconcile.reconcile_interface import ReconcileApp
 
@@ -71,7 +72,7 @@ class TestReconcileInterface:
                 assert info_panel is not None
 
                 # Check for balance label specifically
-                balance_label = app.query_one("#balance-label")
+                balance_label = app.query_one("#balance-label", Label)
                 assert balance_label is not None
 
                 # Check that balance label text gets updated after loading
@@ -95,10 +96,10 @@ class TestReconcileInterface:
             async with app.run_test() as pilot:
                 await pilot.pause()
 
-                # Get all labels with balance-info class
-                balance_info_widgets = app.query(".balance-info")
+                # Get all labels with info-label class
+                balance_info_widgets = list(app.query(".info-label").results(Label))
 
-                # Should have multiple balance-info widgets:
+                # Should have multiple info-label widgets:
                 # - Account label
                 # - Target label
                 # - Balance label
@@ -145,7 +146,7 @@ class TestReconcileInterface:
                 await pilot.pause()
 
                 # Check that the table exists and has the expected structure
-                table = app.query_one("#transactions-table")
+                table = app.query_one("#transactions-table", DataTable)
                 assert table is not None
 
                 # The table should have columns
@@ -208,8 +209,8 @@ class TestReconcileInterface:
                 info_panel = app.query_one(".info-panel")
                 assert info_panel.display  # Should be displayed
 
-                # Check individual balance-info widgets
-                balance_widgets = app.query(".balance-info")
+                # Check individual info-label widgets
+                balance_widgets = list(app.query(".info-label").results(Label))
                 assert len(balance_widgets) >= 3  # Account, Target, Balance
 
                 # Check that they're all displayed and visible
@@ -270,14 +271,14 @@ class TestReconcileInterface:
                 await pilot.pause(0.1)
 
                 # Check that balance label gets updated with real balance
-                balance_label = app.query_one("#balance-label")
+                balance_label = app.query_one("#balance-label", Label)
                 balance_text = str(balance_label.renderable)
 
                 # Should show actual balance, not $0.00
                 assert "Balance:" in balance_text
 
                 # Check that transactions table gets populated
-                table = app.query_one("#transactions-table")
+                table = app.query_one("#transactions-table", DataTable)
 
                 # Table should have content after loading
                 assert (
