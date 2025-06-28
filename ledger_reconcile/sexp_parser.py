@@ -14,19 +14,39 @@ class SExpParser:
     def parse(self, s: str):
         """Parse an S-expression string."""
         s = s.strip()
-        if not s or s == "nil":
+        if not s:
             return None
 
         if s[0] == '"':
-            return self._parse_quoted_string(s)
+            result, consumed = self._parse_quoted_string(s)
+            remaining = s[consumed:].strip()
+            if remaining:
+                raise SExpParseError(
+                    f"Unexpected content after string: {remaining[:20]}"
+                )
+            return result
 
         if s[0] != "(":
-            return self._parse_atom(s)
+            # For atoms, the entire string should be the atom
+            result, consumed = self._parse_atom(s)
+            remaining = s[consumed:].strip()
+            if remaining:
+                raise SExpParseError(f"Unexpected content after atom: {remaining[:20]}")
+            return result
 
-        return self._parse_list(s)
+        # Parse the list and get how much was consumed
+        result, consumed = self._parse_list(s)
+        remaining = s[consumed:].strip()
+        if remaining:
+            raise SExpParseError(f"Unexpected content after list: {remaining[:20]}")
+        return result
 
-    def _parse_quoted_string(self, s: str) -> str:
-        """Parse a quoted string from S-expression."""
+    def _parse_quoted_string(self, s: str) -> tuple[str, int]:
+        """Parse a quoted string from S-expression.
+
+        Returns:
+            Tuple of (parsed string content, bytes consumed)
+        """
         if not s.startswith('"'):
             raise SExpParseError(
                 f"Expected quoted string to start with quote, got: {s[:10]}"
@@ -59,44 +79,65 @@ class SExpParser:
         if i >= len(s):
             raise SExpParseError(f"Unterminated quoted string: {s}")
 
-        return "".join(result)
+        return "".join(result), i + 1  # +1 for the closing quote
 
-    def _parse_atom(self, s: str):
-        """Parse an atomic value from S-expression."""
-        if s.isdigit() or (s.startswith("-") and s[1:].isdigit()):
-            return int(s)
-        return s
+    def _parse_atom(self, s: str) -> tuple[str | int | None, int]:
+        """Parse an atomic value from S-expression.
 
-    def _parse_list(self, s: str) -> list:
-        """Parse a list from S-expression."""
+        Returns:
+            Tuple of (parsed value (string, int, or None), bytes consumed)
+        """
+        i = 0
+        while i < len(s) and not s[i].isspace() and s[i] not in "()":
+            i += 1
+
+        atom_str = s[:i]
+        if atom_str == "nil":
+            return None, i
+        if atom_str.isdigit() or (atom_str.startswith("-") and atom_str[1:].isdigit()):
+            return int(atom_str), i
+        return atom_str, i
+
+    def _parse_list(self, s: str) -> tuple[list, int]:
+        """Parse a list from S-expression.
+
+        Returns:
+            Tuple of (parsed list of elements, bytes consumed)
+        """
         if not s.startswith("("):
             raise SExpParseError("Expected list to start with opening parenthesis")
-        if not s.endswith(")"):
-            raise SExpParseError("Expected list to end with closing parenthesis")
 
         elements = []
         i = 1  # skip opening paren
-        while i < len(s) - 1:  # skip closing paren
+
+        while i < len(s):
             if s[i].isspace():
                 i += 1
                 continue
 
-            start = i
+            if s[i] == ")":
+                # Found the closing paren for this list
+                i += 1  # consume the closing paren
+                return elements, i
+
             if s[i] == '"':
                 # String element
-                i = self._find_string_end(s, i)
-                elements.append(self.parse(s[start:i]))
+                result, consumed = self._parse_quoted_string(s[i:])
+                elements.append(result)
+                i += consumed
             elif s[i] == "(":
                 # Nested list element
-                i = self._find_list_end(s, i)
-                elements.append(self.parse(s[start:i]))
+                result, consumed = self._parse_list(s[i:])
+                elements.append(result)
+                i += consumed
             else:
                 # Atom element
-                while i < len(s) and not s[i].isspace() and s[i] not in "()":
-                    i += 1
-                elements.append(self.parse(s[start:i]))
+                result, consumed = self._parse_atom(s[i:])
+                elements.append(result)
+                i += consumed
 
-        return elements
+        # If we reach here, we ran out of characters without finding a closing paren
+        raise SExpParseError("Unclosed list - missing closing parenthesis")
 
     def _find_string_end(self, s: str, start: int) -> int:
         """Find the end of a quoted string."""

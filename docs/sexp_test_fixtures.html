@@ -118,7 +118,7 @@
         <h2>Summary</h2>
         <div class="summary-stats">
             <div class="stat">
-                <div class="stat-value">40</div>
+                <div class="stat-value">43</div>
                 <div class="stat-label">Total Tests</div>
             </div>
             <div class="stat">
@@ -130,7 +130,7 @@
                 <div class="stat-label">Known Bugs</div>
             </div>
             <div class="stat">
-                <div class="stat-value" style="color: #dc3545;">1</div>
+                <div class="stat-value" style="color: #dc3545;">4</div>
                 <div class="stat-label">Error Cases</div>
             </div>
         </div>
@@ -158,6 +158,30 @@
     
     <div class="test-case error">
         <div class="test-name">
+            Error Unexpected Closing Paren
+            <span class="status-badge status-error">ERROR</span>
+        </div>
+
+        <div class="content-section">
+            <div class="content-label">Input (S-Expression):</div>
+            <div class="content-box">foo)</div>
+        </div>
+
+        <div class="content-section">
+            <div class="content-label">Expected Output (JSON):</div>
+            <div class="content-box error-content">Error: Unexpected content after atom</div>
+        </div>
+
+        
+        <div class="content-section">
+            <div class="content-label">Notes:</div>
+            <div>This input should raise an error when parsed.</div>
+        </div>
+        
+    </div>
+    
+    <div class="test-case error">
+        <div class="test-name">
             Error Unmatched Paren
             <span class="status-badge status-error">ERROR</span>
         </div>
@@ -170,6 +194,30 @@
         <div class="content-section">
             <div class="content-label">Expected Output (JSON):</div>
             <div class="content-box error-content">Error: Unmatched opening parenthesis</div>
+        </div>
+
+        
+        <div class="content-section">
+            <div class="content-label">Notes:</div>
+            <div>This input should raise an error when parsed.</div>
+        </div>
+        
+    </div>
+    
+    <div class="test-case error">
+        <div class="test-name">
+            Extra Closing Paren
+            <span class="status-badge status-error">ERROR</span>
+        </div>
+
+        <div class="content-section">
+            <div class="content-label">Input (S-Expression):</div>
+            <div class="content-box">(foo bar))</div>
+        </div>
+
+        <div class="content-section">
+            <div class="content-label">Expected Output (JSON):</div>
+            <div class="content-box error-content">Error: Unexpected extra closing parenthesis</div>
         </div>
 
         
@@ -939,6 +987,30 @@
             <div class="content-box json-content">"bar123"</div>
         </div>
 
+        
+    </div>
+    
+    <div class="test-case error">
+        <div class="test-name">
+            Trailing Content
+            <span class="status-badge status-error">ERROR</span>
+        </div>
+
+        <div class="content-section">
+            <div class="content-label">Input (S-Expression):</div>
+            <div class="content-box">(foo bar) extra</div>
+        </div>
+
+        <div class="content-section">
+            <div class="content-label">Expected Output (JSON):</div>
+            <div class="content-box error-content">Error: Unexpected content after complete expression</div>
+        </div>
+
+        
+        <div class="content-section">
+            <div class="content-label">Notes:</div>
+            <div>This input should raise an error when parsed.</div>
+        </div>
         
     </div>
     

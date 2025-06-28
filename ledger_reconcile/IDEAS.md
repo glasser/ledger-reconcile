@@ -4,8 +4,8 @@ This is a list of ideas to work on. When you finish one, check it off and re-che
 - [x] Make sure `mise run check` passes again. (This should be something you do before declaring victory on anything, going forward...)
 - [x] Don't skip error test cases in test_sexp_parser!
 - [x] Don't let the tests succeed if there's a sexp file without a JSON file.
-- [ ] Using TDD, fix this issue: does anything care about the outermost close paren?
-- [ ] S-expression parser should be less forgiving: if it sees anything at all surprising, it should fail.
+- [x] Using TDD, fix this issue: does anything care about the outermost close paren?
+- [x] S-expression parser should be less forgiving: if it sees anything at all surprising, it should fail.
 - [ ] In _create_transaction_from_data why do you think statuses are ever in the description?
 - [ ] The table shows transactions but it should show postings
 - [ ] Instead of getting the overall balance, it should be getting the cleared balance, as the goal is to make the cleared balance match the target.
