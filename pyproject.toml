@@ -30,8 +30,6 @@ dev-dependencies = [
     "pytest-textual-snapshot>=0.4.0",
     "pyright>=1.1.0",
     "ruff>=0.1.0",
-    "black>=23.0.0",
-    "isort>=5.12.0",
 ]
 
 [tool.ruff]
@@ -47,14 +45,6 @@ ignore = ["E501", "S101", "PLR0913", "PLR2004"]
 "ledger_reconcile/account_selector.py" = ["S603", "S607"]  # fzf
 "ledger_reconcile/ledger_interface.py" = ["S603", "S607"]  # ledger CLI
 "ledger_reconcile/reconcile_interface.py" = ["S603", "S607"]  # code (VSCode)
-
-[tool.black]
-line-length = 88
-target-version = ['py311']
-
-[tool.isort]
-profile = "black"
-line_length = 88
 
 [tool.pyright]
 include = ["ledger_reconcile", "tests"]

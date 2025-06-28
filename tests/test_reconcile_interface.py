@@ -281,9 +281,9 @@ class TestReconcileInterface:
                 table = app.query_one("#transactions-table", DataTable)
 
                 # Table should have content after loading
-                assert (
-                    table.row_count > 0
-                ), f"Table has {table.row_count} rows, expected > 0"
+                assert table.row_count > 0, (
+                    f"Table has {table.row_count} rows, expected > 0"
+                )
 
         finally:
             ledger_file.unlink()

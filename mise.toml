@@ -14,11 +14,11 @@ run = "uv run ruff check ."
 description = "Run ruff linter"
 
 [tasks.format]
-run = "uv run black . && uv run isort ."
-description = "Format code with black and isort"
+run = "uv run ruff format ."
+description = "Format code"
 
 [tasks.format-check]
-run = "uv run black --check . && uv run isort --check-only ."
+run = "uv run ruff format --check ."
 description = "Check code formatting without modifying files"
 
 [tasks.typecheck]
