@@ -7,6 +7,8 @@ import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
+from .sexp_parser import SExpParser
+
 
 @dataclass
 class LedgerPosting:
@@ -48,6 +50,7 @@ class LedgerInterface:
 
     def __init__(self, ledger_file: Path):
         self.ledger_file = ledger_file
+        self.sexp_parser = SExpParser()
 
     def get_accounts(self) -> list[str]:
         """Get all account names from the ledger file."""
@@ -159,7 +162,7 @@ class LedgerInterface:
             return transactions
 
         # Parse the whole S-expression - it contains multiple transactions
-        parsed = self._parse_sexp_simple(normalized)
+        parsed = self.sexp_parser.parse(normalized)
         if not parsed or not isinstance(parsed, list):
             return transactions
 
@@ -171,84 +174,6 @@ class LedgerInterface:
                     transactions.append(transaction)
 
         return transactions
-
-    def _parse_sexp_simple(self, s: str):
-        """Simple S-expression parser."""
-        s = s.strip()
-        if not s or s == "nil":
-            return None
-
-        if s[0] == '"':
-            return self._parse_quoted_string(s)
-
-        if s[0] != "(":
-            return self._parse_atom(s)
-
-        return self._parse_list(s)
-
-    def _parse_quoted_string(self, s: str) -> str:
-        """Parse a quoted string from S-expression."""
-        i = 1
-        while i < len(s) and s[i] != '"':
-            if s[i] == "\\":
-                i += 2  # skip escaped char
-            else:
-                i += 1
-        return s[1:i] if i < len(s) else s[1:]
-
-    def _parse_atom(self, s: str):
-        """Parse an atomic value from S-expression."""
-        if s.isdigit() or (s.startswith("-") and s[1:].isdigit()):
-            return int(s)
-        return s
-
-    def _parse_list(self, s: str) -> list:
-        """Parse a list from S-expression."""
-        elements = []
-        i = 1  # skip opening paren
-        while i < len(s) - 1:  # skip closing paren
-            if s[i] == " ":
-                i += 1
-                continue
-
-            start = i
-            if s[i] == '"':
-                # String element
-                i = self._find_string_end(s, i)
-                elements.append(self._parse_sexp_simple(s[start:i]))
-            elif s[i] == "(":
-                # Nested list element
-                i = self._find_list_end(s, i)
-                elements.append(self._parse_sexp_simple(s[start:i]))
-            else:
-                # Atom element
-                while i < len(s) and s[i] not in " ()":
-                    i += 1
-                elements.append(self._parse_sexp_simple(s[start:i]))
-
-        return elements
-
-    def _find_string_end(self, s: str, start: int) -> int:
-        """Find the end of a quoted string."""
-        i = start + 1
-        while i < len(s) and s[i] != '"':
-            if s[i] == "\\":
-                i += 2
-            else:
-                i += 1
-        return i + 1  # include closing quote
-
-    def _find_list_end(self, s: str, start: int) -> int:
-        """Find the end of a nested list."""
-        depth = 1
-        i = start + 1
-        while i < len(s) and depth > 0:
-            if s[i] == "(":
-                depth += 1
-            elif s[i] == ")":
-                depth -= 1
-            i += 1
-        return i
 
     def _create_transaction_from_data(self, data: list) -> ReconciliationEntry | None:
         """Create a LedgerTransaction from parsed S-expression data."""

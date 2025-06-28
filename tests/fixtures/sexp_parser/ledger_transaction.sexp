@@ -1,0 +1,1 @@
+("/path/to/file.ledger" 123 (2024 1 15) nil "Grocery Store" ((account "Expenses:Food") (amount "$50.00") (status "*")))
