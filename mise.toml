@@ -29,6 +29,6 @@ description = "Run pyright type checker"
 depends = ["lint", "format-check", "typecheck", "test"]
 description = "Run all checks (lint, format-check, typecheck, test)"
 
-[tasks.run]
+[tasks.reconcile]
 run = "uv run ledger-reconcile"
 description = "Run ledger-reconcile CLI"
