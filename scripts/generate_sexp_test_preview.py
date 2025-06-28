@@ -4,185 +4,22 @@
 
 import json
 from pathlib import Path
+
 from jinja2 import Template
-
-# HTML template
-html_template = """
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S-Expression Parser Test Fixtures</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        h1 {
-            color: #333;
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 10px;
-        }
-        .test-case {
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .test-case.bug {
-            border-color: #ffc107;
-            background-color: #fffcf5;
-        }
-        .test-case.error {
-            border-color: #dc3545;
-            background-color: #fcf5f5;
-        }
-        .test-name {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #007bff;
-            margin-bottom: 10px;
-        }
-        .test-case.bug .test-name {
-            color: #f59e0b;
-        }
-        .test-case.error .test-name {
-            color: #dc3545;
-        }
-        .content-section {
-            margin: 10px 0;
-        }
-        .content-label {
-            font-weight: bold;
-            color: #666;
-            margin-bottom: 5px;
-        }
-        .content-box {
-            background-color: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 4px;
-            padding: 10px;
-            font-family: "Consolas", "Monaco", "Courier New", monospace;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-        .json-content {
-            color: #007bff;
-        }
-        .error-content {
-            color: #dc3545;
-        }
-        .status-badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.85em;
-            font-weight: bold;
-            margin-left: 10px;
-        }
-        .status-pass {
-            background-color: #28a745;
-            color: white;
-        }
-        .status-xfail {
-            background-color: #ffc107;
-            color: #333;
-        }
-        .status-error {
-            background-color: #dc3545;
-            color: white;
-        }
-        .summary {
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-        .summary-stats {
-            display: flex;
-            gap: 30px;
-        }
-        .stat {
-            text-align: center;
-        }
-        .stat-value {
-            font-size: 2em;
-            font-weight: bold;
-        }
-        .stat-label {
-            color: #666;
-        }
-    </style>
-</head>
-<body>
-    <h1>S-Expression Parser Test Fixtures</h1>
-    
-    <div class="summary">
-        <h2>Summary</h2>
-        <div class="summary-stats">
-            <div class="stat">
-                <div class="stat-value">{{ total_tests }}</div>
-                <div class="stat-label">Total Tests</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value" style="color: #28a745;">{{ passing_tests }}</div>
-                <div class="stat-label">Passing</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value" style="color: #ffc107;">{{ xfail_tests }}</div>
-                <div class="stat-label">Known Bugs</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value" style="color: #dc3545;">{{ error_tests }}</div>
-                <div class="stat-label">Error Cases</div>
-            </div>
-        </div>
-    </div>
-
-    {% for test in tests %}
-    <div class="test-case {{ test.css_class }}">
-        <div class="test-name">
-            {{ test.name }}
-            <span class="status-badge status-{{ test.status }}">{{ test.status_label }}</span>
-        </div>
-        
-        <div class="content-section">
-            <div class="content-label">Input (S-Expression):</div>
-            <div class="content-box">{{ test.sexp_content }}</div>
-        </div>
-        
-        <div class="content-section">
-            <div class="content-label">Expected Output (JSON):</div>
-            <div class="content-box {% if test.is_error %}error-content{% else %}json-content{% endif %}">{{ test.json_display }}</div>
-        </div>
-        
-        {% if test.notes %}
-        <div class="content-section">
-            <div class="content-label">Notes:</div>
-            <div>{{ test.notes }}</div>
-        </div>
-        {% endif %}
-    </div>
-    {% endfor %}
-</body>
-</html>
-"""
 
 
 def generate_preview():
     """Generate HTML preview of test fixtures."""
-    fixtures_dir = Path(__file__).parent.parent / "tests" / "fixtures" / "sexp_parser"
-    output_file = Path(__file__).parent.parent / "docs" / "sexp_test_fixtures.html"
+    script_dir = Path(__file__).parent
+    fixtures_dir = script_dir.parent / "tests" / "fixtures" / "sexp_parser"
+    template_file = script_dir / "test_fixture_template.html"
+    output_file = script_dir.parent / "docs" / "sexp_test_fixtures.html"
 
     # Ensure output directory exists
     output_file.parent.mkdir(exist_ok=True)
+
+    # Load template
+    template = Template(template_file.read_text())
 
     tests = []
     passing_tests = 0
@@ -213,7 +50,10 @@ def generate_preview():
             status = "xfail"
             status_label = "XFAIL"
             xfail_tests += 1
-            notes = "This is a known bug that needs to be fixed."
+            if is_error:
+                notes = "Known bug: this should raise an error but currently doesn't (or raises wrong error)."
+            else:
+                notes = "Known bug: this currently parses to wrong output or fails when it should succeed."
         elif is_error:
             css_class = "error"
             status = "error"
@@ -247,7 +87,6 @@ def generate_preview():
         )
 
     # Render template
-    template = Template(html_template)
     html = template.render(
         tests=tests,
         total_tests=len(tests),

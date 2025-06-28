@@ -2,6 +2,12 @@
 # Extracted from ledger_interface.py for better modularity and testing
 
 
+class SExpParseError(ValueError):
+    """Exception raised when S-expression parsing fails."""
+
+    pass
+
+
 class SExpParser:
     """Parser for S-expressions returned by ledger emacs command."""
 
@@ -21,6 +27,11 @@ class SExpParser:
 
     def _parse_quoted_string(self, s: str) -> str:
         """Parse a quoted string from S-expression."""
+        if not s.startswith('"'):
+            raise SExpParseError(
+                f"Expected quoted string to start with quote, got: {s[:10]}"
+            )
+
         result = []
         i = 1
         while i < len(s) and s[i] != '"':
@@ -44,6 +55,10 @@ class SExpParser:
             else:
                 result.append(s[i])
                 i += 1
+
+        if i >= len(s):
+            raise SExpParseError(f"Unterminated quoted string: {s}")
+
         return "".join(result)
 
     def _parse_atom(self, s: str):
@@ -54,6 +69,11 @@ class SExpParser:
 
     def _parse_list(self, s: str) -> list:
         """Parse a list from S-expression."""
+        if not s.startswith("("):
+            raise SExpParseError("Expected list to start with opening parenthesis")
+        if not s.endswith(")"):
+            raise SExpParseError("Expected list to end with closing parenthesis")
+
         elements = []
         i = 1  # skip opening paren
         while i < len(s) - 1:  # skip closing paren
@@ -93,7 +113,11 @@ class SExpParser:
         depth = 1
         i = start + 1
         while i < len(s) and depth > 0:
-            if s[i] == "(":
+            if s[i] == '"':
+                # Skip over quoted string to avoid counting parens inside it
+                i = self._find_string_end(s, i)
+                continue
+            elif s[i] == "(":
                 depth += 1
             elif s[i] == ")":
                 depth -= 1

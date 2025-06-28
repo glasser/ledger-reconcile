@@ -32,3 +32,7 @@ description = "Run all checks (lint, format-check, typecheck, test)"
 [tasks.reconcile]
 run = "uv run ledger-reconcile"
 description = "Run ledger-reconcile CLI"
+
+[tasks.preview-sexp-tests]
+run = "uv run python scripts/generate_sexp_test_preview.py"
+description = "Generate HTML preview of S-expression test fixtures"

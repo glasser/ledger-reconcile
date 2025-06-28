@@ -6,7 +6,27 @@ from pathlib import Path
 
 import pytest
 
-from ledger_reconcile.sexp_parser import SExpParser
+from ledger_reconcile.sexp_parser import SExpParseError, SExpParser
+
+
+def get_fixtures_dir() -> Path:
+    """Get the fixtures directory path."""
+    return Path(__file__).parent / "fixtures" / "sexp_parser"
+
+
+def get_all_sexp_files() -> list[Path]:
+    """Get all .sexp files in the fixtures directory."""
+    return sorted(get_fixtures_dir().glob("*.sexp"))
+
+
+def get_test_cases() -> list[tuple[str, Path, Path]]:
+    """Get all valid test cases (sexp files with corresponding json files)."""
+    test_cases = []
+    for sexp_file in get_all_sexp_files():
+        json_file = sexp_file.with_suffix(".json")
+        if json_file.exists():
+            test_cases.append((sexp_file.stem, sexp_file, json_file))
+    return test_cases
 
 
 class TestSExpParser:
@@ -15,29 +35,25 @@ class TestSExpParser:
     def setup_method(self):
         """Set up test fixtures."""
         self.parser = SExpParser()
-        self.fixtures_dir = Path(__file__).parent / "fixtures" / "sexp_parser"
 
-    def get_test_cases(self):
-        """Get all test cases from fixture files."""
-        test_cases = []
-        for sexp_file in sorted(self.fixtures_dir.glob("*.sexp")):
+    def test_all_sexp_files_have_json_files(self):
+        """Ensure every .sexp file has a corresponding .json file."""
+        missing_json_files = []
+        for sexp_file in get_all_sexp_files():
             json_file = sexp_file.with_suffix(".json")
-            if json_file.exists():
-                test_cases.append((sexp_file.stem, sexp_file, json_file))
-        return test_cases
+            if not json_file.exists():
+                missing_json_files.append(sexp_file.name)
 
+        assert not missing_json_files, f"Missing JSON files for: {missing_json_files}"
 
 
 def pytest_generate_tests(metafunc):
     """Generate parameterized tests from fixtures."""
     if metafunc.function.__name__ == "test_fixture":
-        fixtures_dir = Path(__file__).parent / "fixtures" / "sexp_parser"
-        test_cases = []
-
-        for sexp_file in sorted(fixtures_dir.glob("*.sexp")):
-            json_file = sexp_file.with_suffix(".json")
-            if json_file.exists():
-                test_cases.append((sexp_file.stem, str(sexp_file), str(json_file)))
+        test_cases = [
+            (name, str(sexp_file), str(json_file))
+            for name, sexp_file, json_file in get_test_cases()
+        ]
 
         metafunc.parametrize(
             "name,sexp_file,json_file", test_cases, ids=[tc[0] for tc in test_cases]
@@ -63,8 +79,9 @@ def test_fixture(name, sexp_file, json_file):
             # Known bugs - mark as xfail
             pytest.xfail(f"Known bug: {expected['error']}")
         else:
-            # For now, just skip error test cases since parser doesn't raise exceptions
-            pytest.skip("Error handling not yet implemented")
+            # Test should raise an exception
+            with pytest.raises(SExpParseError):
+                parser.parse(sexp_input)
         return
 
     # Normal test case
