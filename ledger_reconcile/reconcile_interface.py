@@ -265,16 +265,6 @@ class ReconcileApp(App):
         await self.refresh_table()
         self.notify("File updated externally - data refreshed")
 
-    def action_cursor_up(self) -> None:
-        """Move cursor up in the table."""
-        table = self.query_one("#transactions-table", DataTable)
-        table.action_cursor_up()
-
-    def action_cursor_down(self) -> None:
-        """Move cursor down in the table."""
-        table = self.query_one("#transactions-table", DataTable)
-        table.action_cursor_down()
-
 
 def run_reconcile_interface(
     ledger_file: Path, account: str, target_amount: str

@@ -148,19 +148,3 @@ class SExpParser:
             else:
                 i += 1
         return i + 1  # include closing quote
-
-    def _find_list_end(self, s: str, start: int) -> int:
-        """Find the end of a nested list."""
-        depth = 1
-        i = start + 1
-        while i < len(s) and depth > 0:
-            if s[i] == '"':
-                # Skip over quoted string to avoid counting parens inside it
-                i = self._find_string_end(s, i)
-                continue
-            elif s[i] == "(":
-                depth += 1
-            elif s[i] == ")":
-                depth -= 1
-            i += 1
-        return i

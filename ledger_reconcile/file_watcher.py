@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import asyncio
 import time
 from collections.abc import Callable
 from pathlib import Path
@@ -21,7 +20,6 @@ class LedgerFileWatcher:
         self.observer: Observer | None = None  # type: ignore[misc]
         self.last_modification_time = 0.0
         self.ignore_next_change = False
-        self._lock = asyncio.Lock()
 
     def start(self) -> None:
         """Start watching the file for changes."""

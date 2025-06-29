@@ -22,18 +22,6 @@ class LedgerPosting:
 
 
 @dataclass
-class LedgerTransaction:
-    """Represents a complete transaction with all its postings."""
-
-    date: str
-    description: str
-    status: str  # '', '!', or '*'
-    line_number: int
-    postings: list[LedgerPosting]
-    original_line: str
-
-
-@dataclass
 class ReconciliationEntry:
     """Represents a transaction with only the postings for a specific account."""
 
@@ -176,7 +164,7 @@ class LedgerInterface:
         return transactions
 
     def _create_transaction_from_data(self, data: list) -> ReconciliationEntry | None:
-        """Create a LedgerTransaction from parsed S-expression data."""
+        """Create a ReconciliationEntry from parsed S-expression data."""
         try:
             # Format: (file line-no date-info code description posting1 posting2...)
             if len(data) < 5:
