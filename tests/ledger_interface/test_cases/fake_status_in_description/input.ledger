@@ -1,0 +1,11 @@
+2024-01-07 \! This is not a status marker
+    Expenses:Food                 $25.00
+    Assets:Checking
+
+2024-01-08 \* This is also not a status marker
+    Expenses:Gas                  $40.00
+    Assets:Checking
+
+2024-01-09 ! Real pending transaction
+    Expenses:Rent                $100.00
+    Assets:Checking

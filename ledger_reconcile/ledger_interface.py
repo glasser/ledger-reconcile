@@ -198,8 +198,8 @@ class LedgerInterface:
 
             description = data[4] if data[4] else ""
 
-            # Extract status from description if it starts with ! or *
-            status, description = self._extract_status_from_description(description)
+            # Transaction status will be determined from posting statuses
+            status = ""
 
             # Parse postings
             postings = []
@@ -244,27 +244,3 @@ class LedgerInterface:
             # or unexpected ledger output format - fail loudly so it gets fixed
             msg = f"Failed to parse ledger emacs output: {e}\nRaw S-expression data: {data}"
             raise RuntimeError(msg) from e
-
-    def _extract_status_from_description(self, description: str) -> tuple[str, str]:
-        """Extract status marker from transaction description.
-
-        Returns (status, cleaned_description) tuple.
-        """
-        if not description:
-            return "", description
-
-        # Define status prefixes and their corresponding markers
-        status_patterns = [
-            ("\\\\! ", "!"),  # Double-escaped pending
-            ("\\\\* ", "*"),  # Double-escaped cleared
-            ("\\! ", "!"),  # Escaped pending
-            ("\\* ", "*"),  # Escaped cleared
-            ("! ", "!"),  # Unescaped pending
-            ("* ", "*"),  # Unescaped cleared
-        ]
-
-        for prefix, status in status_patterns:
-            if description.startswith(prefix):
-                return status, description[len(prefix) :]
-
-        return "", description

@@ -18,6 +18,7 @@ dependencies = [
     "fuzzywuzzy>=0.18.0",
     "python-levenshtein>=0.20.0",
     "watchdog>=3.0.0",
+    "pyyaml>=6.0.2",
 ]
 
 [project.scripts]
@@ -53,3 +54,7 @@ ignore = ["E501", "S101", "PLR0913", "PLR2004", "TRY003"]
 include = ["ledger_reconcile", "tests"]
 exclude = ["**/__pycache__"]
 typeCheckingMode = "basic"
+
+[tool.pytest.ini_options]
+python_files = ["test_*.py", "*_test.py", "__init__.py"]
+testpaths = ["tests"]

@@ -1,0 +1,35 @@
+description: Basic transaction types with different statuses
+expected:
+  - filename: input.ledger
+    line_number: 1
+    date: "2024/01/01"
+    description: "Opening Balance"
+    status: ""
+    account_postings:
+      - account: "Assets:Checking"
+        amount: "$1000.00"
+        status: ""
+        line_number: 2
+        original_line: ""
+  - filename: input.ledger
+    line_number: 9
+    date: "2024/01/03"
+    description: "Pending Transaction"
+    status: "!"
+    account_postings:
+      - account: "Assets:Checking"
+        amount: "$-500.00"
+        status: "!"
+        line_number: 11
+        original_line: ""
+  - filename: input.ledger
+    line_number: 13
+    date: "2024/01/04"
+    description: "Uncleared Transaction"
+    status: ""
+    account_postings:
+      - account: "Assets:Checking"
+        amount: "$-35.00"
+        status: ""
+        line_number: 15
+        original_line: ""

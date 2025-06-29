@@ -1,0 +1,24 @@
+description: Transactions with posting-level status markers
+expected:
+  - filename: input.ledger
+    line_number: 1
+    date: "2024/01/05"
+    description: "Transaction with posting status"
+    status: "!"
+    account_postings:
+      - account: "Assets:Checking"
+        amount: "$-75.00"
+        status: "!"
+        line_number: 3
+        original_line: ""
+  - filename: input.ledger
+    line_number: 5
+    date: "2024/01/06"
+    description: "Mixed posting status"
+    status: ""
+    account_postings:
+      - account: "Assets:Checking"
+        amount: "$-5.00"
+        status: ""
+        line_number: 7
+        original_line: ""

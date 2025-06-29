@@ -25,14 +25,15 @@ description = "Check code formatting without modifying files"
 run = "uv run pyright"
 description = "Run pyright type checker"
 
+[tasks.generate-test-previews]
+run = "uv run python scripts/generate_all_previews.py"
+description = "Generate HTML previews for all test cases"
+
 [tasks.check]
-depends = ["lint", "format-check", "typecheck", "test"]
-description = "Run all checks (lint, format-check, typecheck, test)"
+depends = ["lint", "format-check", "typecheck", "test", "generate-test-previews"]
+description = "Run all checks (lint, format-check, typecheck, test) and generate test previews"
 
 [tasks.reconcile]
 run = "uv run ledger-reconcile"
 description = "Run ledger-reconcile CLI"
 
-[tasks.preview-sexp-tests]
-run = "uv run python scripts/generate_sexp_test_preview.py"
-description = "Generate HTML preview of S-expression test fixtures"

@@ -1,0 +1,7 @@
+2024-01-05 Transaction with posting status
+    * Expenses:Utilities          $75.00
+    ! Assets:Checking
+
+2024-01-06 Mixed posting status
+    * Expenses:Coffee             $5.00
+    Assets:Checking               $-5.00
