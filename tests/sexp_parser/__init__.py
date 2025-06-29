@@ -23,7 +23,7 @@ def pytest_generate_tests(metafunc):
                 isinstance(test_data, dict)
                 and "path" not in test_data
                 and "input.sexp" in test_data
-                and "output.json" in test_data
+                and ("output.json" in test_data or "output.error" in test_data)
             ):  # It's a directory with required files
                 test_cases.append((test_name, test_data))
 
@@ -38,16 +38,21 @@ def test_fixture(name, test_data):
 
     # Get content from in-memory data
     sexp_input = test_data["input.sexp"]["content"]
-    expected = test_data["output.json"]["parsed"]
 
-    # Handle error cases
-    if isinstance(expected, dict) and "error" in expected:
-        # Test should raise an exception
-        with pytest.raises(SExpParseError):
+    # Check if this is an error case
+    if "output.error" in test_data:
+        # Error case - should raise an exception
+        expected_error = test_data["output.error"]["content"].strip()
+        with pytest.raises(SExpParseError) as excinfo:
             parser.parse(sexp_input)
+        # Optionally verify the error message matches
+        assert str(excinfo.value) == expected_error, (
+            f"Test: {name}\nInput: {sexp_input!r}\nExpected error: {expected_error!r}\nGot error: {str(excinfo.value)!r}"
+        )
         return
 
     # Normal test case
+    expected = test_data["output.json"]["parsed"]
     result = parser.parse(sexp_input)
     assert result == expected, (
         f"Test: {name}\nInput: {sexp_input!r}\nExpected: {expected!r}\nGot: {result!r}"

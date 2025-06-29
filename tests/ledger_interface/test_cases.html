@@ -7,62 +7,37 @@
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-            max-width: 1200px;
+            max-width: 1600px;
             margin: 0 auto;
             padding: 20px;
             line-height: 1.6;
+            background-color: #f5f5f5;
         }
-        .test-case {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: #fafafa;
-        }
-        .test-case h2 {
-            margin-top: 0;
-            color: #333;
-            border-bottom: 2px solid #007acc;
-            padding-bottom: 10px;
-        }
-        .file-section {
-            margin: 15px 0;
-        }
-        .file-section h3 {
-            margin: 0 0 10px 0;
-            font-size: 16px;
-            color: #666;
-        }
-        .file-content {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 15px;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
-            font-size: 14px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-        }
-        .json-content {
-            background: #f8f9fa;
-        }
-        .ledger-content {
-            background: #fff8f0;
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
         }
         
         .summary {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
-            padding: 15px;
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 6px;
             margin-bottom: 20px;
         }
         
         .toc {
             background: white;
             border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 15px;
-            margin-bottom: 20px;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .toc h3 {
+            margin-top: 0;
+            color: #2c3e50;
         }
         
         .toc ul {
@@ -71,12 +46,187 @@
         }
         
         .toc a {
+            color: #3498db;
             text-decoration: none;
-            color: #007acc;
         }
         
         .toc a:hover {
             text-decoration: underline;
+        }
+        
+        .test-case {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .test-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .test-header h2 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 20px;
+        }
+        
+        .test-description {
+            color: #666;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        
+        .test-content {
+            display: flex;
+            min-height: 300px;
+        }
+        
+        .input-section,
+        .expected-section {
+            flex: 1;
+            padding: 20px;
+        }
+        
+        .input-section {
+            border-right: 1px solid #ddd;
+            background-color: #fafafa;
+        }
+        
+        .expected-section {
+            background-color: white;
+        }
+        
+        .section-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .ledger-content {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+            font-size: 13px;
+            white-space: pre;
+            background: white;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+        
+        .expected-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        .expected-table th {
+            background-color: #f0f0f0;
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .expected-table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            vertical-align: top;
+        }
+        
+        .expected-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .status-pending {
+            background-color: #fff3cd;
+        }
+        
+        .status-cleared {
+            background-color: #d4edda;
+        }
+        
+        .line-number {
+            color: #666;
+            font-family: monospace;
+        }
+        
+        .amount {
+            font-family: monospace;
+            text-align: right;
+            white-space: nowrap;
+        }
+        
+        .amount.negative {
+            color: #dc3545;
+        }
+        
+        .amount.positive {
+            color: #28a745;
+        }
+        
+        .posting-details {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        
+        .posting-details li {
+            padding: 4px 0;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+        
+        .posting-details li:last-child {
+            border-bottom: none;
+        }
+        
+        .status-marker {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+        
+        .status-marker.pending {
+            background-color: #ffc107;
+            color: white;
+        }
+        
+        .status-marker.cleared {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .status-marker.empty {
+            background-color: #e0e0e0;
+            color: #999;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 1200px) {
+            .test-content {
+                flex-direction: column;
+            }
+            
+            .input-section {
+                border-right: none;
+                border-bottom: 1px solid #ddd;
+            }
         }
     </style>
 </head>
@@ -92,198 +242,45 @@
         <ul>
         
             <li>
-                <a href="#posting_status">posting_status</a>
-                - Transactions with posting-level status markers
-            </li>
-        
-            <li>
-                <a href="#fake_status_in_description">fake_status_in_description</a>
-                - Ensure status markers in descriptions are not treated as actual status
-            </li>
-        
-            <li>
-                <a href="#basic_transactions">basic_transactions</a>
+                <a href="#basic_transactions">Basic Transactions</a>
+                
                 - Basic transaction types with different statuses
+                
+            </li>
+        
+            <li>
+                <a href="#fake_status_in_description">Fake Status In Description</a>
+                
+                - Ensure status markers in descriptions are not treated as actual status
+                
+            </li>
+        
+            <li>
+                <a href="#posting_status">Posting Status</a>
+                
+                - Transactions with posting-level status markers
+                
             </li>
         
         </ul>
     </div>
 
     
-    <div class="test-case" id="posting_status">
-        <h2>posting_status</h2>
-        
-        
-        <p><strong>Description:</strong> Transactions with posting-level status markers</p>
-        
-        
-        
-        <div class="file-section">
-            <h3>config.yaml</h3>
-            
-            <div class="file-content json-content">description: Transactions with posting-level status markers
-expected:
-  - filename: input.ledger
-    line_number: 1
-    date: "2024/01/05"
-    description: "Transaction with posting status"
-    status: "!"
-    account_postings:
-      - account: "Assets:Checking"
-        amount: "$-75.00"
-        status: "!"
-        line_number: 3
-        original_line: ""
-  - filename: input.ledger
-    line_number: 5
-    date: "2024/01/06"
-    description: "Mixed posting status"
-    status: ""
-    account_postings:
-      - account: "Assets:Checking"
-        amount: "$-5.00"
-        status: ""
-        line_number: 7
-        original_line: ""</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.ledger</h3>
-            
-            <div class="file-content ledger-content">2024-01-05 Transaction with posting status
-    * Expenses:Utilities          $75.00
-    ! Assets:Checking
-
-2024-01-06 Mixed posting status
-    * Expenses:Coffee             $5.00
-    Assets:Checking               $-5.00</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="fake_status_in_description">
-        <h2>fake_status_in_description</h2>
-        
-        
-        <p><strong>Description:</strong> Ensure status markers in descriptions are not treated as actual status</p>
-        
-        
-        
-        <div class="file-section">
-            <h3>config.yaml</h3>
-            
-            <div class="file-content json-content">description: Ensure status markers in descriptions are not treated as actual status
-expected:
-  - filename: input.ledger
-    line_number: 1
-    date: "2024/01/07"
-    description: "\\! This is not a status marker"
-    status: ""
-    account_postings:
-      - account: "Assets:Checking"
-        amount: "$-25.00"
-        status: ""
-        line_number: 3
-        original_line: ""
-  - filename: input.ledger
-    line_number: 5
-    date: "2024/01/08"
-    description: "\\* This is also not a status marker"
-    status: ""
-    account_postings:
-      - account: "Assets:Checking"
-        amount: "$-40.00"
-        status: ""
-        line_number: 7
-        original_line: ""
-  - filename: input.ledger
-    line_number: 9
-    date: "2024/01/09"
-    description: "Real pending transaction"
-    status: "!"
-    account_postings:
-      - account: "Assets:Checking"
-        amount: "$-100.00"
-        status: "!"
-        line_number: 11
-        original_line: ""</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.ledger</h3>
-            
-            <div class="file-content ledger-content">2024-01-07 \! This is not a status marker
-    Expenses:Food                 $25.00
-    Assets:Checking
-
-2024-01-08 \* This is also not a status marker
-    Expenses:Gas                  $40.00
-    Assets:Checking
-
-2024-01-09 ! Real pending transaction
-    Expenses:Rent                $100.00
-    Assets:Checking</div>
-            
-        </div>
-        
-    </div>
-    
     <div class="test-case" id="basic_transactions">
-        <h2>basic_transactions</h2>
-        
-        
-        <p><strong>Description:</strong> Basic transaction types with different statuses</p>
-        
-        
-        
-        <div class="file-section">
-            <h3>config.yaml</h3>
+        <div class="test-header">
+            <h2>Basic Transactions</h2>
             
-            <div class="file-content json-content">description: Basic transaction types with different statuses
-expected:
-  - filename: input.ledger
-    line_number: 1
-    date: "2024/01/01"
-    description: "Opening Balance"
-    status: ""
-    account_postings:
-      - account: "Assets:Checking"
-        amount: "$1000.00"
-        status: ""
-        line_number: 2
-        original_line: ""
-  - filename: input.ledger
-    line_number: 9
-    date: "2024/01/03"
-    description: "Pending Transaction"
-    status: "!"
-    account_postings:
-      - account: "Assets:Checking"
-        amount: "$-500.00"
-        status: "!"
-        line_number: 11
-        original_line: ""
-  - filename: input.ledger
-    line_number: 13
-    date: "2024/01/04"
-    description: "Uncleared Transaction"
-    status: ""
-    account_postings:
-      - account: "Assets:Checking"
-        amount: "$-35.00"
-        status: ""
-        line_number: 15
-        original_line: ""</div>
+            <div class="test-description">
+                Basic transaction types with different statuses
+            </div>
             
         </div>
         
-        <div class="file-section">
-            <h3>input.ledger</h3>
-            
-            <div class="file-content ledger-content">2024-01-01 Opening Balance
+        <div class="test-content">
+            <div class="input-section">
+                <div class="section-title">Input Ledger File</div>
+                
+                <div class="ledger-content">2024-01-01 Opening Balance
     Assets:Checking              $1000.00
     Equity:Opening Balances
 
@@ -298,9 +295,347 @@ expected:
 2024-01-04 Uncleared Transaction
     Expenses:Gas                  $35.00
     Assets:Checking</div>
+                
+            </div>
+            
+            <div class="expected-section">
+                <div class="section-title">Expected Parser Output</div>
+                
+                <table class="expected-table">
+                    <thead>
+                        <tr>
+                            <th>Line</th>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Account Postings</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    
+                        <tr class="">
+                            <td class="line-number">1</td>
+                            <td>2024/01/01</td>
+                            <td>Opening Balance</td>
+                            <td>
+                                
+                                    <span class="status-marker empty">-</span>
+                                
+                            </td>
+                            <td>
+                                
+                                <ul class="posting-details">
+                                
+                                    <li>
+                                        <strong>Assets:Checking</strong>
+                                        
+                                        <span class="amount positive">$1000.00</span>
+                                        
+                                        
+                                        <span class="line-number">(line 2)</span>
+                                    </li>
+                                
+                                </ul>
+                                
+                            </td>
+                        </tr>
+                    
+                        <tr class="status-pending">
+                            <td class="line-number">9</td>
+                            <td>2024/01/03</td>
+                            <td>Pending Transaction</td>
+                            <td>
+                                
+                                    <span class="status-marker pending">!</span>
+                                
+                            </td>
+                            <td>
+                                
+                                <ul class="posting-details">
+                                
+                                    <li>
+                                        <strong>Assets:Checking</strong>
+                                        
+                                        <span class="amount negative">$-500.00</span>
+                                        
+                                        
+                                        <span class="status-marker pending">!</span>
+                                        
+                                        <span class="line-number">(line 11)</span>
+                                    </li>
+                                
+                                </ul>
+                                
+                            </td>
+                        </tr>
+                    
+                        <tr class="">
+                            <td class="line-number">13</td>
+                            <td>2024/01/04</td>
+                            <td>Uncleared Transaction</td>
+                            <td>
+                                
+                                    <span class="status-marker empty">-</span>
+                                
+                            </td>
+                            <td>
+                                
+                                <ul class="posting-details">
+                                
+                                    <li>
+                                        <strong>Assets:Checking</strong>
+                                        
+                                        <span class="amount negative">$-35.00</span>
+                                        
+                                        
+                                        <span class="line-number">(line 15)</span>
+                                    </li>
+                                
+                                </ul>
+                                
+                            </td>
+                        </tr>
+                    
+                    </tbody>
+                </table>
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-case" id="fake_status_in_description">
+        <div class="test-header">
+            <h2>Fake Status In Description</h2>
+            
+            <div class="test-description">
+                Ensure status markers in descriptions are not treated as actual status
+            </div>
             
         </div>
         
+        <div class="test-content">
+            <div class="input-section">
+                <div class="section-title">Input Ledger File</div>
+                
+                <div class="ledger-content">2024-01-07 \! This is not a status marker
+    Expenses:Food                 $25.00
+    Assets:Checking
+
+2024-01-08 \* This is also not a status marker
+    Expenses:Gas                  $40.00
+    Assets:Checking
+
+2024-01-09 ! Real pending transaction
+    Expenses:Rent                $100.00
+    Assets:Checking</div>
+                
+            </div>
+            
+            <div class="expected-section">
+                <div class="section-title">Expected Parser Output</div>
+                
+                <table class="expected-table">
+                    <thead>
+                        <tr>
+                            <th>Line</th>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Account Postings</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    
+                        <tr class="">
+                            <td class="line-number">1</td>
+                            <td>2024/01/07</td>
+                            <td>\! This is not a status marker</td>
+                            <td>
+                                
+                                    <span class="status-marker empty">-</span>
+                                
+                            </td>
+                            <td>
+                                
+                                <ul class="posting-details">
+                                
+                                    <li>
+                                        <strong>Assets:Checking</strong>
+                                        
+                                        <span class="amount negative">$-25.00</span>
+                                        
+                                        
+                                        <span class="line-number">(line 3)</span>
+                                    </li>
+                                
+                                </ul>
+                                
+                            </td>
+                        </tr>
+                    
+                        <tr class="">
+                            <td class="line-number">5</td>
+                            <td>2024/01/08</td>
+                            <td>\* This is also not a status marker</td>
+                            <td>
+                                
+                                    <span class="status-marker empty">-</span>
+                                
+                            </td>
+                            <td>
+                                
+                                <ul class="posting-details">
+                                
+                                    <li>
+                                        <strong>Assets:Checking</strong>
+                                        
+                                        <span class="amount negative">$-40.00</span>
+                                        
+                                        
+                                        <span class="line-number">(line 7)</span>
+                                    </li>
+                                
+                                </ul>
+                                
+                            </td>
+                        </tr>
+                    
+                        <tr class="status-pending">
+                            <td class="line-number">9</td>
+                            <td>2024/01/09</td>
+                            <td>Real pending transaction</td>
+                            <td>
+                                
+                                    <span class="status-marker pending">!</span>
+                                
+                            </td>
+                            <td>
+                                
+                                <ul class="posting-details">
+                                
+                                    <li>
+                                        <strong>Assets:Checking</strong>
+                                        
+                                        <span class="amount negative">$-100.00</span>
+                                        
+                                        
+                                        <span class="status-marker pending">!</span>
+                                        
+                                        <span class="line-number">(line 11)</span>
+                                    </li>
+                                
+                                </ul>
+                                
+                            </td>
+                        </tr>
+                    
+                    </tbody>
+                </table>
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-case" id="posting_status">
+        <div class="test-header">
+            <h2>Posting Status</h2>
+            
+            <div class="test-description">
+                Transactions with posting-level status markers
+            </div>
+            
+        </div>
+        
+        <div class="test-content">
+            <div class="input-section">
+                <div class="section-title">Input Ledger File</div>
+                
+                <div class="ledger-content">2024-01-05 Transaction with posting status
+    * Expenses:Utilities          $75.00
+    ! Assets:Checking
+
+2024-01-06 Mixed posting status
+    * Expenses:Coffee             $5.00
+    Assets:Checking               $-5.00</div>
+                
+            </div>
+            
+            <div class="expected-section">
+                <div class="section-title">Expected Parser Output</div>
+                
+                <table class="expected-table">
+                    <thead>
+                        <tr>
+                            <th>Line</th>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Account Postings</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    
+                        <tr class="status-pending">
+                            <td class="line-number">1</td>
+                            <td>2024/01/05</td>
+                            <td>Transaction with posting status</td>
+                            <td>
+                                
+                                    <span class="status-marker pending">!</span>
+                                
+                            </td>
+                            <td>
+                                
+                                <ul class="posting-details">
+                                
+                                    <li>
+                                        <strong>Assets:Checking</strong>
+                                        
+                                        <span class="amount negative">$-75.00</span>
+                                        
+                                        
+                                        <span class="status-marker pending">!</span>
+                                        
+                                        <span class="line-number">(line 3)</span>
+                                    </li>
+                                
+                                </ul>
+                                
+                            </td>
+                        </tr>
+                    
+                        <tr class="">
+                            <td class="line-number">5</td>
+                            <td>2024/01/06</td>
+                            <td>Mixed posting status</td>
+                            <td>
+                                
+                                    <span class="status-marker empty">-</span>
+                                
+                            </td>
+                            <td>
+                                
+                                <ul class="posting-details">
+                                
+                                    <li>
+                                        <strong>Assets:Checking</strong>
+                                        
+                                        <span class="amount negative">$-5.00</span>
+                                        
+                                        
+                                        <span class="line-number">(line 7)</span>
+                                    </li>
+                                
+                                </ul>
+                                
+                            </td>
+                        </tr>
+                    
+                    </tbody>
+                </table>
+                
+            </div>
+        </div>
     </div>
     
 </body>

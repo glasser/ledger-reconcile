@@ -25,8 +25,13 @@
             border-bottom: 2px solid #007acc;
             padding-bottom: 10px;
         }
-        .file-section {
+        .file-sections-container {
+            display: flex;
+            gap: 20px;
             margin: 15px 0;
+        }
+        .file-section {
+            flex: 1;
         }
         .file-section h3 {
             margin: 0 0 10px 0;
@@ -48,6 +53,21 @@
         }
         .sexp-content {
             background: #f0f8ff;
+        }
+        
+        .test-case.error-case {
+            background: #fff5f5;
+            border-color: #feb2b2;
+        }
+        
+        .test-case.error-case h2 {
+            color: #e53e3e;
+            border-bottom-color: #e53e3e;
+        }
+        
+        .error-case .json-content {
+            background: #fed7d7;
+            border-color: #feb2b2;
         }
         
         .summary {
@@ -92,47 +112,11 @@
         <ul>
         
             <li>
-                <a href="#error_unexpected_closing_paren">error_unexpected_closing_paren</a>
-            </li>
-        
-            <li>
-                <a href="#token_with_numbers">token_with_numbers</a>
-            </li>
-        
-            <li>
                 <a href="#empty_string">empty_string</a>
             </li>
         
             <li>
-                <a href="#list_with_nil">list_with_nil</a>
-            </li>
-        
-            <li>
-                <a href="#nested_list_with_parens_in_string">nested_list_with_parens_in_string</a>
-            </li>
-        
-            <li>
-                <a href="#list_nested_double">list_nested_double</a>
-            </li>
-        
-            <li>
-                <a href="#string_escaped_quote">string_escaped_quote</a>
-            </li>
-        
-            <li>
-                <a href="#token_pending">token_pending</a>
-            </li>
-        
-            <li>
-                <a href="#list_nested_mixed">list_nested_mixed</a>
-            </li>
-        
-            <li>
-                <a href="#string_escaped_newline">string_escaped_newline</a>
-            </li>
-        
-            <li>
-                <a href="#nil">nil</a>
+                <a href="#error_unexpected_closing_paren">error_unexpected_closing_paren</a>
             </li>
         
             <li>
@@ -140,15 +124,15 @@
             </li>
         
             <li>
-                <a href="#list_complex_mixed">list_complex_mixed</a>
+                <a href="#extra_closing_paren">extra_closing_paren</a>
             </li>
         
             <li>
-                <a href="#token_snake_case">token_snake_case</a>
+                <a href="#integer_negative">integer_negative</a>
             </li>
         
             <li>
-                <a href="#string_unicode_japanese">string_unicode_japanese</a>
+                <a href="#integer_positive">integer_positive</a>
             </li>
         
             <li>
@@ -156,31 +140,19 @@
             </li>
         
             <li>
-                <a href="#token_kebab_case">token_kebab_case</a>
+                <a href="#list_complex_mixed">list_complex_mixed</a>
             </li>
         
             <li>
-                <a href="#string_with_numbers">string_with_numbers</a>
+                <a href="#list_deeply_nested">list_deeply_nested</a>
             </li>
         
             <li>
-                <a href="#string_with_spaces">string_with_spaces</a>
+                <a href="#list_empty">list_empty</a>
             </li>
         
             <li>
-                <a href="#extra_closing_paren">extra_closing_paren</a>
-            </li>
-        
-            <li>
-                <a href="#string_escaped_backslash">string_escaped_backslash</a>
-            </li>
-        
-            <li>
-                <a href="#string_empty">string_empty</a>
-            </li>
-        
-            <li>
-                <a href="#integer_positive">integer_positive</a>
+                <a href="#list_mixed_types">list_mixed_types</a>
             </li>
         
             <li>
@@ -192,19 +164,23 @@
             </li>
         
             <li>
-                <a href="#string_unicode_cafe">string_unicode_cafe</a>
+                <a href="#list_nested_double">list_nested_double</a>
+            </li>
+        
+            <li>
+                <a href="#list_nested_mixed">list_nested_mixed</a>
+            </li>
+        
+            <li>
+                <a href="#list_nested_simple">list_nested_simple</a>
+            </li>
+        
+            <li>
+                <a href="#list_single_int">list_single_int</a>
             </li>
         
             <li>
                 <a href="#list_strings">list_strings</a>
-            </li>
-        
-            <li>
-                <a href="#list_empty">list_empty</a>
-            </li>
-        
-            <li>
-                <a href="#string_with_parens">string_with_parens</a>
             </li>
         
             <li>
@@ -216,39 +192,31 @@
             </li>
         
             <li>
-                <a href="#list_deeply_nested">list_deeply_nested</a>
+                <a href="#list_with_nil">list_with_nil</a>
             </li>
         
             <li>
-                <a href="#list_single_int">list_single_int</a>
+                <a href="#nested_list_with_parens_in_string">nested_list_with_parens_in_string</a>
             </li>
         
             <li>
-                <a href="#integer_negative">integer_negative</a>
+                <a href="#nil">nil</a>
             </li>
         
             <li>
-                <a href="#whitespace_tabs">whitespace_tabs</a>
+                <a href="#string_empty">string_empty</a>
             </li>
         
             <li>
-                <a href="#trailing_content">trailing_content</a>
+                <a href="#string_escaped_backslash">string_escaped_backslash</a>
             </li>
         
             <li>
-                <a href="#token_simple">token_simple</a>
+                <a href="#string_escaped_newline">string_escaped_newline</a>
             </li>
         
             <li>
-                <a href="#list_nested_simple">list_nested_simple</a>
-            </li>
-        
-            <li>
-                <a href="#whitespace_spaces">whitespace_spaces</a>
-            </li>
-        
-            <li>
-                <a href="#whitespace_newlines">whitespace_newlines</a>
+                <a href="#string_escaped_quote">string_escaped_quote</a>
             </li>
         
             <li>
@@ -256,879 +224,974 @@
             </li>
         
             <li>
-                <a href="#list_mixed_types">list_mixed_types</a>
+                <a href="#string_unicode_cafe">string_unicode_cafe</a>
             </li>
         
             <li>
                 <a href="#string_unicode_emoji">string_unicode_emoji</a>
             </li>
         
+            <li>
+                <a href="#string_unicode_japanese">string_unicode_japanese</a>
+            </li>
+        
+            <li>
+                <a href="#string_with_numbers">string_with_numbers</a>
+            </li>
+        
+            <li>
+                <a href="#string_with_parens">string_with_parens</a>
+            </li>
+        
+            <li>
+                <a href="#string_with_spaces">string_with_spaces</a>
+            </li>
+        
+            <li>
+                <a href="#token_kebab_case">token_kebab_case</a>
+            </li>
+        
+            <li>
+                <a href="#token_pending">token_pending</a>
+            </li>
+        
+            <li>
+                <a href="#token_simple">token_simple</a>
+            </li>
+        
+            <li>
+                <a href="#token_snake_case">token_snake_case</a>
+            </li>
+        
+            <li>
+                <a href="#token_with_numbers">token_with_numbers</a>
+            </li>
+        
+            <li>
+                <a href="#trailing_content">trailing_content</a>
+            </li>
+        
+            <li>
+                <a href="#whitespace_newlines">whitespace_newlines</a>
+            </li>
+        
+            <li>
+                <a href="#whitespace_spaces">whitespace_spaces</a>
+            </li>
+        
+            <li>
+                <a href="#whitespace_tabs">whitespace_tabs</a>
+            </li>
+        
         </ul>
     </div>
 
     
-    <div class="test-case" id="error_unexpected_closing_paren">
-        <h2>error_unexpected_closing_paren</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">{"error": "Unexpected content after atom"}</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">foo)</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="token_with_numbers">
-        <h2>token_with_numbers</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">"bar123"</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">bar123</div>
-            
-        </div>
-        
-    </div>
     
     <div class="test-case" id="empty_string">
         <h2>empty_string</h2>
         
-        
-        <div class="file-section">
-            <h3>output.json</h3>
+        <div class="file-sections-container">
             
-            <div class="file-content json-content">null</div>
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content"></div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">null</div>
+            </div>
             
         </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content"></div>
-            
-        </div>
-        
     </div>
     
-    <div class="test-case" id="list_with_nil">
-        <h2>list_with_nil</h2>
+    
+    <div class="test-case error-case" id="error_unexpected_closing_paren">
+        <h2>error_unexpected_closing_paren (Error)</h2>
         
-        
-        <div class="file-section">
-            <h3>output.json</h3>
+        <div class="file-sections-container">
             
-            <div class="file-content json-content">[null, 42, "string"]</div>
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">foo)</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Error</h3>
+                <div class="file-content json-content">Unexpected content after atom: )</div>
+            </div>
             
         </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">(nil 42 "string")</div>
-            
-        </div>
-        
     </div>
     
-    <div class="test-case" id="nested_list_with_parens_in_string">
-        <h2>nested_list_with_parens_in_string</h2>
+    
+    <div class="test-case error-case" id="error_unmatched_paren">
+        <h2>error_unmatched_paren (Error)</h2>
         
-        
-        <div class="file-section">
-            <h3>output.json</h3>
+        <div class="file-sections-container">
             
-            <div class="file-content json-content">["outer", ["inner", "string with ) paren"]]</div>
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">(incomplete</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Error</h3>
+                <div class="file-content json-content">Unclosed list - missing closing parenthesis</div>
+            </div>
             
         </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">(outer (inner "string with ) paren"))</div>
-            
-        </div>
-        
     </div>
     
-    <div class="test-case" id="list_nested_double">
-        <h2>list_nested_double</h2>
+    
+    <div class="test-case error-case" id="extra_closing_paren">
+        <h2>extra_closing_paren (Error)</h2>
         
-        
-        <div class="file-section">
-            <h3>output.json</h3>
+        <div class="file-sections-container">
             
-            <div class="file-content json-content">[[1, 2], [3, 4]]</div>
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">(foo bar))</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Error</h3>
+                <div class="file-content json-content">Unexpected content after list: )</div>
+            </div>
             
         </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">((1 2) (3 4))</div>
-            
-        </div>
-        
     </div>
     
-    <div class="test-case" id="string_escaped_quote">
-        <h2>string_escaped_quote</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">"hello\"world"</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">"hello\"world"</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="token_pending">
-        <h2>token_pending</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">"pending"</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">pending</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="list_nested_mixed">
-        <h2>list_nested_mixed</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">[1, [2, 3]]</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">(1 (2 3))</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="string_escaped_newline">
-        <h2>string_escaped_newline</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">"line\nbreak"</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">"line\nbreak"</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="nil">
-        <h2>nil</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">null</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">nil</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="error_unmatched_paren">
-        <h2>error_unmatched_paren</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">{"error": "Unmatched opening parenthesis"}</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">(incomplete</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="list_complex_mixed">
-        <h2>list_complex_mixed</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">[[1, 2], "nested", ["foo", "bar"]]</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">((1 2) "nested" (foo bar))</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="token_snake_case">
-        <h2>token_snake_case</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">"snake_case"</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">snake_case</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="string_unicode_japanese">
-        <h2>string_unicode_japanese</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">"日本語"</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">"日本語"</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="ledger_transaction">
-        <h2>ledger_transaction</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">["/path/to/file.ledger", 123, [2024, 1, 15], null, "Grocery Store", [["account", "Expenses:Food"], ["amount", "$50.00"], ["status", "*"]]]</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">("/path/to/file.ledger" 123 (2024 1 15) nil "Grocery Store" ((account "Expenses:Food") (amount "$50.00") (status "*")))</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="token_kebab_case">
-        <h2>token_kebab_case</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">"kebab-case"</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">kebab-case</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="string_with_numbers">
-        <h2>string_with_numbers</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">"with spaces and numbers 123"</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">"with spaces and numbers 123"</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="string_with_spaces">
-        <h2>string_with_spaces</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">"hello world"</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">"hello world"</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="extra_closing_paren">
-        <h2>extra_closing_paren</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">{"error": "Unexpected extra closing parenthesis"}</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">(foo bar))</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="string_escaped_backslash">
-        <h2>string_escaped_backslash</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">"back\\slash"</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">"back\\slash"</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="string_empty">
-        <h2>string_empty</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">""</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">""</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="integer_positive">
-        <h2>integer_positive</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">42</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">42</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="list_multiple_ints">
-        <h2>list_multiple_ints</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">[1, 2, 3]</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">(1 2 3)</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="list_multiple_spaces">
-        <h2>list_multiple_spaces</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">["a", "b"]</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">(a     b)</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="string_unicode_cafe">
-        <h2>string_unicode_cafe</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">"café"</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">"café"</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="list_strings">
-        <h2>list_strings</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">["hello", "world"]</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">("hello" "world")</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="list_empty">
-        <h2>list_empty</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">[]</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">()</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="string_with_parens">
-        <h2>string_with_parens</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">["string with (parens)"]</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">("string with (parens)")</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="list_tokens">
-        <h2>list_tokens</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">["foo", "bar"]</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">(foo bar)</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="list_with_empty_string">
-        <h2>list_with_empty_string</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">[""]</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">("")</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="list_deeply_nested">
-        <h2>list_deeply_nested</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">["a", ["b", ["c", "d"], "e"], "f"]</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">(a (b (c d) e) f)</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="list_single_int">
-        <h2>list_single_int</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">[1]</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">(1)</div>
-            
-        </div>
-        
-    </div>
     
     <div class="test-case" id="integer_negative">
         <h2>integer_negative</h2>
         
-        
-        <div class="file-section">
-            <h3>output.json</h3>
+        <div class="file-sections-container">
             
-            <div class="file-content json-content">-42</div>
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">-42</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">-42</div>
+            </div>
             
         </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">-42</div>
-            
-        </div>
-        
     </div>
     
-    <div class="test-case" id="whitespace_tabs">
-        <h2>whitespace_tabs</h2>
+    
+    <div class="test-case" id="integer_positive">
+        <h2>integer_positive</h2>
         
-        
-        <div class="file-section">
-            <h3>output.json</h3>
+        <div class="file-sections-container">
             
-            <div class="file-content json-content">[1, 2, 3]</div>
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">42</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">42</div>
+            </div>
             
         </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">(	1	2	3	)</div>
-            
-        </div>
-        
     </div>
     
-    <div class="test-case" id="trailing_content">
-        <h2>trailing_content</h2>
+    
+    <div class="test-case" id="ledger_transaction">
+        <h2>ledger_transaction</h2>
         
-        
-        <div class="file-section">
-            <h3>output.json</h3>
+        <div class="file-sections-container">
             
-            <div class="file-content json-content">{"error": "Unexpected content after complete expression"}</div>
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">("/path/to/file.ledger" 123 (2024 1 15) nil "Grocery Store" ((account "Expenses:Food") (amount "$50.00") (status "*")))</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">["/path/to/file.ledger", 123, [2024, 1, 15], null, "Grocery Store", [["account", "Expenses:Food"], ["amount", "$50.00"], ["status", "*"]]]</div>
+            </div>
             
         </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">(foo bar) extra</div>
-            
-        </div>
-        
     </div>
     
-    <div class="test-case" id="token_simple">
-        <h2>token_simple</h2>
+    
+    <div class="test-case" id="list_complex_mixed">
+        <h2>list_complex_mixed</h2>
         
-        
-        <div class="file-section">
-            <h3>output.json</h3>
+        <div class="file-sections-container">
             
-            <div class="file-content json-content">"foo"</div>
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">((1 2) "nested" (foo bar))</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">[[1, 2], "nested", ["foo", "bar"]]</div>
+            </div>
             
         </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">foo</div>
-            
-        </div>
-        
     </div>
     
-    <div class="test-case" id="list_nested_simple">
-        <h2>list_nested_simple</h2>
+    
+    <div class="test-case" id="list_deeply_nested">
+        <h2>list_deeply_nested</h2>
         
-        
-        <div class="file-section">
-            <h3>output.json</h3>
+        <div class="file-sections-container">
             
-            <div class="file-content json-content">[[1]]</div>
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">(a (b (c d) e) f)</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">["a", ["b", ["c", "d"], "e"], "f"]</div>
+            </div>
             
         </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">((1))</div>
-            
-        </div>
-        
     </div>
     
-    <div class="test-case" id="whitespace_spaces">
-        <h2>whitespace_spaces</h2>
+    
+    <div class="test-case" id="list_empty">
+        <h2>list_empty</h2>
         
-        
-        <div class="file-section">
-            <h3>output.json</h3>
+        <div class="file-sections-container">
             
-            <div class="file-content json-content">[1, 2, 3]</div>
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">()</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">[]</div>
+            </div>
             
         </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">  (  1   2   3  )  </div>
-            
-        </div>
-        
     </div>
     
-    <div class="test-case" id="whitespace_newlines">
-        <h2>whitespace_newlines</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">[1, 2, 3]</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">(
-1
-2
-3
-)</div>
-            
-        </div>
-        
-    </div>
-    
-    <div class="test-case" id="string_simple">
-        <h2>string_simple</h2>
-        
-        
-        <div class="file-section">
-            <h3>output.json</h3>
-            
-            <div class="file-content json-content">"hello"</div>
-            
-        </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">"hello"</div>
-            
-        </div>
-        
-    </div>
     
     <div class="test-case" id="list_mixed_types">
         <h2>list_mixed_types</h2>
         
-        
-        <div class="file-section">
-            <h3>output.json</h3>
+        <div class="file-sections-container">
             
-            <div class="file-content json-content">[1, "two", "three"]</div>
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">(1 "two" three)</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">[1, "two", "three"]</div>
+            </div>
             
         </div>
-        
-        <div class="file-section">
-            <h3>input.sexp</h3>
-            
-            <div class="file-content sexp-content">(1 "two" three)</div>
-            
-        </div>
-        
     </div>
+    
+    
+    <div class="test-case" id="list_multiple_ints">
+        <h2>list_multiple_ints</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">(1 2 3)</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">[1, 2, 3]</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="list_multiple_spaces">
+        <h2>list_multiple_spaces</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">(a     b)</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">["a", "b"]</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="list_nested_double">
+        <h2>list_nested_double</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">((1 2) (3 4))</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">[[1, 2], [3, 4]]</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="list_nested_mixed">
+        <h2>list_nested_mixed</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">(1 (2 3))</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">[1, [2, 3]]</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="list_nested_simple">
+        <h2>list_nested_simple</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">((1))</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">[[1]]</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="list_single_int">
+        <h2>list_single_int</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">(1)</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">[1]</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="list_strings">
+        <h2>list_strings</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">("hello" "world")</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">["hello", "world"]</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="list_tokens">
+        <h2>list_tokens</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">(foo bar)</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">["foo", "bar"]</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="list_with_empty_string">
+        <h2>list_with_empty_string</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">("")</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">[""]</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="list_with_nil">
+        <h2>list_with_nil</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">(nil 42 "string")</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">[null, 42, "string"]</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="nested_list_with_parens_in_string">
+        <h2>nested_list_with_parens_in_string</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">(outer (inner "string with ) paren"))</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">["outer", ["inner", "string with ) paren"]]</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="nil">
+        <h2>nil</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">nil</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">null</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="string_empty">
+        <h2>string_empty</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">""</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">""</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="string_escaped_backslash">
+        <h2>string_escaped_backslash</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">"back\\slash"</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">"back\\slash"</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="string_escaped_newline">
+        <h2>string_escaped_newline</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">"line\nbreak"</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">"line\nbreak"</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="string_escaped_quote">
+        <h2>string_escaped_quote</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">"hello\"world"</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">"hello\"world"</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="string_simple">
+        <h2>string_simple</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">"hello"</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">"hello"</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="string_unicode_cafe">
+        <h2>string_unicode_cafe</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">"café"</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">"café"</div>
+            </div>
+            
+        </div>
+    </div>
+    
     
     <div class="test-case" id="string_unicode_emoji">
         <h2>string_unicode_emoji</h2>
         
-        
-        <div class="file-section">
-            <h3>output.json</h3>
+        <div class="file-sections-container">
             
-            <div class="file-content json-content">"emoji 😀"</div>
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">"emoji 😀"</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">"emoji 😀"</div>
+            </div>
             
         </div>
+    </div>
+    
+    
+    <div class="test-case" id="string_unicode_japanese">
+        <h2>string_unicode_japanese</h2>
         
-        <div class="file-section">
-            <h3>input.sexp</h3>
+        <div class="file-sections-container">
             
-            <div class="file-content sexp-content">"emoji 😀"</div>
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">"日本語"</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">"日本語"</div>
+            </div>
             
         </div>
+    </div>
+    
+    
+    <div class="test-case" id="string_with_numbers">
+        <h2>string_with_numbers</h2>
         
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">"with spaces and numbers 123"</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">"with spaces and numbers 123"</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="string_with_parens">
+        <h2>string_with_parens</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">("string with (parens)")</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">["string with (parens)"]</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="string_with_spaces">
+        <h2>string_with_spaces</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">"hello world"</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">"hello world"</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="token_kebab_case">
+        <h2>token_kebab_case</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">kebab-case</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">"kebab-case"</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="token_pending">
+        <h2>token_pending</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">pending</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">"pending"</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="token_simple">
+        <h2>token_simple</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">foo</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">"foo"</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="token_snake_case">
+        <h2>token_snake_case</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">snake_case</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">"snake_case"</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="token_with_numbers">
+        <h2>token_with_numbers</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">bar123</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">"bar123"</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case error-case" id="trailing_content">
+        <h2>trailing_content (Error)</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">(foo bar) extra</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Error</h3>
+                <div class="file-content json-content">Unexpected content after list: extra</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="whitespace_newlines">
+        <h2>whitespace_newlines</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">(
+1
+2
+3
+)</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">[1, 2, 3]</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="whitespace_spaces">
+        <h2>whitespace_spaces</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">  (  1   2   3  )  </div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">[1, 2, 3]</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="whitespace_tabs">
+        <h2>whitespace_tabs</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">(	1	2	3	)</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">[1, 2, 3]</div>
+            </div>
+            
+        </div>
     </div>
     
 </body>

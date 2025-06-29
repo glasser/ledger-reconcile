@@ -7,62 +7,37 @@
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-            max-width: 1200px;
+            max-width: 1600px;
             margin: 0 auto;
             padding: 20px;
             line-height: 1.6;
+            background-color: #f5f5f5;
         }
-        .test-case {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: #fafafa;
-        }
-        .test-case h2 {
-            margin-top: 0;
-            color: #333;
-            border-bottom: 2px solid #007acc;
-            padding-bottom: 10px;
-        }
-        .file-section {
-            margin: 15px 0;
-        }
-        .file-section h3 {
-            margin: 0 0 10px 0;
-            font-size: 16px;
-            color: #666;
-        }
-        .file-content {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 15px;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
-            font-size: 14px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-        }
-        .json-content {
-            background: #f8f9fa;
-        }
-        .ledger-content {
-            background: #fff8f0;
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
         }
         
         .summary {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
-            padding: 15px;
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 6px;
             margin-bottom: 20px;
         }
         
         .toc {
             background: white;
             border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 15px;
-            margin-bottom: 20px;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .toc h3 {
+            margin-top: 0;
+            color: #2c3e50;
         }
         
         .toc ul {
@@ -71,12 +46,187 @@
         }
         
         .toc a {
+            color: #3498db;
             text-decoration: none;
-            color: #007acc;
         }
         
         .toc a:hover {
             text-decoration: underline;
+        }
+        
+        .test-case {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .test-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .test-header h2 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 20px;
+        }
+        
+        .test-description {
+            color: #666;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        
+        .test-content {
+            display: flex;
+            min-height: 300px;
+        }
+        
+        .input-section,
+        .expected-section {
+            flex: 1;
+            padding: 20px;
+        }
+        
+        .input-section {
+            border-right: 1px solid #ddd;
+            background-color: #fafafa;
+        }
+        
+        .expected-section {
+            background-color: white;
+        }
+        
+        .section-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .ledger-content {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+            font-size: 13px;
+            white-space: pre;
+            background: white;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+        
+        .expected-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        .expected-table th {
+            background-color: #f0f0f0;
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .expected-table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            vertical-align: top;
+        }
+        
+        .expected-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .status-pending {
+            background-color: #fff3cd;
+        }
+        
+        .status-cleared {
+            background-color: #d4edda;
+        }
+        
+        .line-number {
+            color: #666;
+            font-family: monospace;
+        }
+        
+        .amount {
+            font-family: monospace;
+            text-align: right;
+            white-space: nowrap;
+        }
+        
+        .amount.negative {
+            color: #dc3545;
+        }
+        
+        .amount.positive {
+            color: #28a745;
+        }
+        
+        .posting-details {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        
+        .posting-details li {
+            padding: 4px 0;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+        
+        .posting-details li:last-child {
+            border-bottom: none;
+        }
+        
+        .status-marker {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+        
+        .status-marker.pending {
+            background-color: #ffc107;
+            color: white;
+        }
+        
+        .status-marker.cleared {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .status-marker.empty {
+            background-color: #e0e0e0;
+            color: #999;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 1200px) {
+            .test-content {
+                flex-direction: column;
+            }
+            
+            .input-section {
+                border-right: none;
+                border-bottom: 1px solid #ddd;
+            }
         }
     </style>
 </head>
@@ -90,35 +240,89 @@
     <div class="toc">
         <h3>Test Cases</h3>
         <ul>
-        {% for case_name, case_data in test_cases.items() %}
+        {% for case_name, case_data in test_cases.items() | sort %}
             <li>
-                <a href="#{{ case_name }}">{{ case_name }}</a>
-                {% if case_data.get("config.yaml") and case_data["config.yaml"].get("parsed") and case_data["config.yaml"].parsed.get("description") %}- {{ case_data["config.yaml"].parsed.description }}{% endif %}
+                <a href="#{{ case_name }}">{{ case_name.replace('_', ' ').title() }}</a>
+                {% if case_data.get("config.yaml") and case_data["config.yaml"].get("parsed") and case_data["config.yaml"].parsed.get("description") %}
+                - {{ case_data["config.yaml"].parsed.description }}
+                {% endif %}
             </li>
         {% endfor %}
         </ul>
     </div>
 
-    {% for case_name, case_data in test_cases.items() %}
+    {% for case_name, case_data in test_cases.items() | sort %}
     <div class="test-case" id="{{ case_name }}">
-        <h2>{{ case_name }}</h2>
-        
-        {% if case_data.get("config.yaml") and case_data["config.yaml"].get("parsed") and case_data["config.yaml"].parsed.get("description") %}
-        <p><strong>Description:</strong> {{ case_data["config.yaml"].parsed.description }}</p>
-        {% endif %}
-        
-        {% for file_name, file_data in case_data.items() %}
-        <div class="file-section">
-            <h3>{{ file_name }}</h3>
-            {% if file_data.suffix == ".ledger" %}
-            <div class="file-content ledger-content">{{ file_data.content }}</div>
-            {% elif file_data.suffix in [".json", ".yaml", ".yml"] %}
-            <div class="file-content json-content">{{ file_data.content }}</div>
-            {% else %}
-            <div class="file-content">{{ file_data.content }}</div>
+        <div class="test-header">
+            <h2>{{ case_name.replace('_', ' ').title() }}</h2>
+            {% if case_data.get("config.yaml") and case_data["config.yaml"].get("parsed") and case_data["config.yaml"].parsed.get("description") %}
+            <div class="test-description">
+                {{ case_data["config.yaml"].parsed.description }}
+            </div>
             {% endif %}
         </div>
-        {% endfor %}
+        
+        <div class="test-content">
+            <div class="input-section">
+                <div class="section-title">Input Ledger File</div>
+                {% if case_data.get("input.ledger") %}
+                <div class="ledger-content">{{ case_data["input.ledger"].content }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="expected-section">
+                <div class="section-title">Expected Parser Output</div>
+                {% if case_data.get("config.yaml") and case_data["config.yaml"].get("parsed") and case_data["config.yaml"].parsed.get("expected") %}
+                <table class="expected-table">
+                    <thead>
+                        <tr>
+                            <th>Line</th>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Account Postings</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for transaction in case_data["config.yaml"].parsed.expected %}
+                        <tr class="{% if transaction.status == '!' %}status-pending{% elif transaction.status == '*' %}status-cleared{% endif %}">
+                            <td class="line-number">{{ transaction.line_number }}</td>
+                            <td>{{ transaction.date }}</td>
+                            <td>{{ transaction.description }}</td>
+                            <td>
+                                {% if transaction.status == '!' %}
+                                    <span class="status-marker pending">!</span>
+                                {% elif transaction.status == '*' %}
+                                    <span class="status-marker cleared">*</span>
+                                {% else %}
+                                    <span class="status-marker empty">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if transaction.account_postings %}
+                                <ul class="posting-details">
+                                {% for posting in transaction.account_postings %}
+                                    <li>
+                                        <strong>{{ posting.account }}</strong>
+                                        {% if posting.amount %}
+                                        <span class="amount {% if posting.amount.startswith('$-') %}negative{% else %}positive{% endif %}">{{ posting.amount }}</span>
+                                        {% endif %}
+                                        {% if posting.status %}
+                                        <span class="status-marker {% if posting.status == '!' %}pending{% elif posting.status == '*' %}cleared{% else %}empty{% endif %}">{{ posting.status }}</span>
+                                        {% endif %}
+                                        <span class="line-number">(line {{ posting.line_number }})</span>
+                                    </li>
+                                {% endfor %}
+                                </ul>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+            </div>
+        </div>
     </div>
     {% endfor %}
 </body>
