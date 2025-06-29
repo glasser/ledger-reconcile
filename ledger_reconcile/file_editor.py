@@ -94,8 +94,9 @@ class LedgerFileEditor:
     ) -> bool:
         """Update status markers for all postings in a transaction.
 
-        If all postings in a transaction have the same status, the status should be
-        moved to the transaction header instead of individual postings.
+        Smart about physical representation:
+        - If all postings will have the same status → use transaction header
+        - If postings have different statuses → use individual posting lines
 
         Args:
             transaction_line_number: 1-based line number of the transaction header
@@ -109,8 +110,9 @@ class LedgerFileEditor:
             if transaction_line_number < 1 or transaction_line_number > len(lines):
                 return False
 
-            # Find all posting lines for this transaction
+            # Find all posting lines for this transaction and their current statuses
             posting_lines = []
+            current_statuses = []
             i = transaction_line_number  # Start after transaction header (1-based)
 
             while i < len(lines):
@@ -128,19 +130,43 @@ class LedgerFileEditor:
                 # This is a posting line
                 if line.strip():  # Only add non-empty lines
                     posting_lines.append(i)
+                    current_status = self._extract_posting_status(lines[i])
+                    current_statuses.append(current_status)
                 i += 1
 
-            # Update the transaction header
-            trans_idx = transaction_line_number - 1
-            old_trans_line = lines[trans_idx]
-            new_trans_line = self._update_transaction_line(old_trans_line, new_status)
-            lines[trans_idx] = new_trans_line
+            # Decide physical representation: if all postings will have same status, use transaction header
+            all_same_status = len(set([new_status] * len(posting_lines))) == 1
 
-            # Clear status from all posting lines (since it's now on the transaction)
-            for posting_line_idx in posting_lines:
-                old_posting_line = lines[posting_line_idx]
-                new_posting_line = self._update_posting_line(old_posting_line, "")
-                lines[posting_line_idx] = new_posting_line
+            if all_same_status and posting_lines:
+                # Use transaction header representation
+                trans_idx = transaction_line_number - 1
+                old_trans_line = lines[trans_idx]
+                new_trans_line = self._update_transaction_line(
+                    old_trans_line, new_status
+                )
+                lines[trans_idx] = new_trans_line
+
+                # Clear status from all posting lines (since it's now on the transaction)
+                for posting_line_idx in posting_lines:
+                    old_posting_line = lines[posting_line_idx]
+                    new_posting_line = self._update_posting_line(old_posting_line, "")
+                    lines[posting_line_idx] = new_posting_line
+            else:
+                # Use individual posting representation
+                trans_idx = transaction_line_number - 1
+                old_trans_line = lines[trans_idx]
+                new_trans_line = self._update_transaction_line(
+                    old_trans_line, ""
+                )  # Clear transaction status
+                lines[trans_idx] = new_trans_line
+
+                # Set status on each posting line
+                for posting_line_idx in posting_lines:
+                    old_posting_line = lines[posting_line_idx]
+                    new_posting_line = self._update_posting_line(
+                        old_posting_line, new_status
+                    )
+                    lines[posting_line_idx] = new_posting_line
 
             # Mark that we're making an internal change
             if self.file_watcher:
@@ -150,6 +176,14 @@ class LedgerFileEditor:
 
         except (IndexError, ValueError, OSError):
             return False
+
+    def _extract_posting_status(self, line: str) -> str:
+        """Extract the current status marker from a posting line."""
+        # Posting line format: [STATUS] ACCOUNT [AMOUNT]
+        stripped = line.lstrip()
+        if stripped.startswith(("!", "*")):
+            return stripped[0]
+        return ""
 
     def _update_transaction_line(self, line: str, new_status: str) -> str:
         """Update the status marker in a transaction header line."""

@@ -40,7 +40,8 @@ class TestLedgerInterface:
 
             assert transaction.date == "2024/01/02"
             assert transaction.description == "Grocery Store"
-            assert transaction.status == "!"
+            # Check that the posting for CC:Visa has the expected status
+            assert transaction.account_postings[0].status == "!"
             # Note: ledger emacs with account filter only returns postings for that account
             assert len(transaction.account_postings) == 1
             assert transaction.account_postings[0].account == "CC:Visa"
@@ -124,12 +125,10 @@ class TestLedgerInterface:
             assert len(transactions) == 1
             transaction = transactions[0]
 
-            # Check transaction status - should be promoted from posting status
-            assert transaction.status == "!"
-
             # Check posting statuses - only returns postings for the queried account
             assert len(transaction.account_postings) == 1
             assert transaction.account_postings[0].account == "Assets:Checking"
+            # This posting has status (from whatever source)
             assert transaction.account_postings[0].status == "!"
 
         finally:
@@ -153,8 +152,9 @@ class TestLedgerInterface:
             assert len(transactions) == 1
             transaction = transactions[0]
 
-            assert transaction.status == "!"
             assert transaction.description == "Semi-Reconciled Transaction"
+            # Check that the posting has the status (regardless of source)
+            assert transaction.account_postings[0].status == "!"
 
         finally:
             ledger_file.unlink()

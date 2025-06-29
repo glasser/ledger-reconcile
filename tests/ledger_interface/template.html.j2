@@ -114,11 +114,33 @@
             font-size: 13px;
             white-space: pre;
             background: white;
-            padding: 15px;
+            padding: 0;
             border: 1px solid #e0e0e0;
             border-radius: 4px;
             overflow-x: auto;
             line-height: 1.5;
+        }
+        
+        .ledger-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+        
+        .ledger-content .line-num {
+            background: #f8f9fa;
+            color: #666;
+            text-align: right;
+            padding: 0 8px;
+            border-right: 1px solid #e0e0e0;
+            user-select: none;
+            width: 40px;
+            vertical-align: top;
+        }
+        
+        .ledger-content .line-content {
+            padding: 0 15px;
+            vertical-align: top;
         }
         
         .expected-table {
@@ -266,7 +288,16 @@
             <div class="input-section">
                 <div class="section-title">Input Ledger File</div>
                 {% if case_data.get("input.ledger") %}
-                <div class="ledger-content">{{ case_data["input.ledger"].content }}</div>
+                <div class="ledger-content">
+                    <table>
+                        {% for line in case_data["input.ledger"].content.split('\n') %}
+                        <tr>
+                            <td class="line-num">{{ loop.index }}</td>
+                            <td class="line-content">{{ line if line else ' ' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
                 {% endif %}
             </div>
             
@@ -279,25 +310,15 @@
                             <th>Line</th>
                             <th>Date</th>
                             <th>Description</th>
-                            <th>Status</th>
                             <th>Account Postings</th>
                         </tr>
                     </thead>
                     <tbody>
                     {% for transaction in case_data["config.yaml"].parsed.expected %}
-                        <tr class="{% if transaction.status == '!' %}status-pending{% elif transaction.status == '*' %}status-cleared{% endif %}">
+                        <tr>
                             <td class="line-number">{{ transaction.line_number }}</td>
                             <td>{{ transaction.date }}</td>
                             <td>{{ transaction.description }}</td>
-                            <td>
-                                {% if transaction.status == '!' %}
-                                    <span class="status-marker pending">!</span>
-                                {% elif transaction.status == '*' %}
-                                    <span class="status-marker cleared">*</span>
-                                {% else %}
-                                    <span class="status-marker empty">-</span>
-                                {% endif %}
-                            </td>
                             <td>
                                 {% if transaction.account_postings %}
                                 <ul class="posting-details">

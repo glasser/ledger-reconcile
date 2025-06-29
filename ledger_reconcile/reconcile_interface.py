@@ -148,18 +148,26 @@ class ReconcileApp(App):
         table.add_columns("Amount", "Line")
 
         # Filter to show only unreconciled and semi-reconciled transactions (not fully reconciled *)
-        filtered_transactions = [t for t in self.transactions if t.status in ("", "!")]
+        # Look at the status of postings for this account
+        filtered_transactions = []
+        for t in self.transactions:
+            for posting in t.account_postings:
+                if posting.account == self.account and posting.status in ("", "!"):
+                    filtered_transactions.append(t)
+                    break
 
         # Add rows
         for transaction in filtered_transactions:
-            # Find posting for this account to get the amount
+            # Find posting for this account to get the amount and status
             amount = ""
+            posting_status = ""
             for posting in transaction.account_postings:
                 if posting.account == self.account:
                     amount = posting.amount
+                    posting_status = posting.status
                     break
 
-            status_display = transaction.status if transaction.status else "·"
+            status_display = posting_status if posting_status else "·"
             table.add_row(
                 status_display,
                 transaction.date,
@@ -194,14 +202,21 @@ class ReconcileApp(App):
         if not transaction:
             return
 
+        # Find the posting for this account to determine current status
+        current_posting_status = ""
+        for posting in transaction.account_postings:
+            if posting.account == self.account:
+                current_posting_status = posting.status
+                break
+
         # Determine new status (only toggle between empty and "!")
-        current_status = transaction.status
-        new_status = "!" if current_status == "" else ""
+        new_status = "!" if current_posting_status == "" else ""
 
         # Update the file
         if self.file_editor.update_all_postings_in_transaction(line_number, new_status):
-            # Update our local data
-            transaction.status = new_status
+            # Update our local data - update all postings in this transaction
+            for posting in transaction.account_postings:
+                posting.status = new_status
 
             # Update the table display
             status_display = new_status if new_status else "·"
@@ -237,13 +252,22 @@ class ReconcileApp(App):
         reconciled_count = 0
 
         for transaction in self.transactions:
+            # Check if this transaction has a posting for our account with pending status
+            has_pending_posting = False
+            for posting in transaction.account_postings:
+                if posting.account == self.account and posting.status == "!":
+                    has_pending_posting = True
+                    break
+
             if (
-                transaction.status == "!"
+                has_pending_posting
                 and self.file_editor.update_all_postings_in_transaction(
                     transaction.line_number, "*"
                 )
             ):
-                transaction.status = "*"
+                # Update all postings in this transaction
+                for posting in transaction.account_postings:
+                    posting.status = "*"
                 reconciled_count += 1
 
         if reconciled_count > 0:

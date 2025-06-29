@@ -67,7 +67,6 @@ def test_fixture(name, test_data):
                 "line_number": txn.line_number,
                 "date": txn.date,
                 "description": txn.description,
-                "status": txn.status,
                 "account_postings": [],
             }
 

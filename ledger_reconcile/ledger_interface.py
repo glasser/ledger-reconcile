@@ -12,11 +12,11 @@ from .sexp_parser import SExpParser
 
 @dataclass
 class LedgerPosting:
-    """Represents a posting within a transaction."""
+    """Represents a posting with its reconciliation status."""
 
     account: str
     amount: str
-    status: str  # '', '!', or '*'
+    status: str  # The reconciliation status of this posting ("", "!", or "*")
     line_number: int
     original_line: str
 
@@ -27,7 +27,6 @@ class ReconciliationEntry:
 
     date: str
     description: str
-    status: str  # '', '!', or '*'
     line_number: int  # Line number of the transaction header
     account_postings: list[LedgerPosting]  # Only postings for the target account
     original_line: str
@@ -186,27 +185,14 @@ class LedgerInterface:
 
             description = data[4] if data[4] else ""
 
-            # Transaction status will be determined from posting statuses
-            status = ""
-
-            # Parse postings
+            # Parse postings - just extract the status for each posting
             postings = []
             for i in range(5, len(data)):
                 posting_data = data[i]
                 if isinstance(posting_data, list) and len(posting_data) >= 3:
-                    posting_status = ""
-                    if len(posting_data) > 3 and posting_data[3]:
-                        # Convert posting status
-                        if posting_data[3] == "pending":
-                            posting_status = "!"
-                        elif posting_data[3] == "cleared":
-                            posting_status = "*"
-                        else:
-                            posting_status = posting_data[3]
-
-                    # If transaction has no status but posting does, promote posting status to transaction
-                    if not status and posting_status:
-                        status = posting_status
+                    posting_status = self._convert_status(
+                        posting_data[3] if len(posting_data) > 3 else None
+                    )
 
                     posting_obj = LedgerPosting(
                         account=posting_data[1] if len(posting_data) > 1 else "",
@@ -221,7 +207,6 @@ class LedgerInterface:
             return ReconciliationEntry(
                 date=date,
                 description=description,
-                status=status,
                 line_number=line_number,
                 account_postings=postings,
                 original_line="",  # Not available in emacs format
@@ -232,3 +217,15 @@ class LedgerInterface:
             # or unexpected ledger output format - fail loudly so it gets fixed
             msg = f"Failed to parse ledger emacs output: {e}\nRaw S-expression data: {data}"
             raise RuntimeError(msg) from e
+
+    def _convert_status(self, ledger_status) -> str:
+        """Convert ledger emacs status to our status format."""
+        if not ledger_status:
+            return ""
+        if ledger_status == "pending":
+            return "!"
+        if ledger_status == "cleared":
+            return "*"
+        if isinstance(ledger_status, str):
+            return ledger_status
+        return ""

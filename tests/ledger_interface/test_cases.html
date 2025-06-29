@@ -114,11 +114,33 @@
             font-size: 13px;
             white-space: pre;
             background: white;
-            padding: 15px;
+            padding: 0;
             border: 1px solid #e0e0e0;
             border-radius: 4px;
             overflow-x: auto;
             line-height: 1.5;
+        }
+        
+        .ledger-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+        
+        .ledger-content .line-num {
+            background: #f8f9fa;
+            color: #666;
+            text-align: right;
+            padding: 0 8px;
+            border-right: 1px solid #e0e0e0;
+            user-select: none;
+            width: 40px;
+            vertical-align: top;
+        }
+        
+        .ledger-content .line-content {
+            padding: 0 15px;
+            vertical-align: top;
         }
         
         .expected-table {
@@ -280,21 +302,86 @@
             <div class="input-section">
                 <div class="section-title">Input Ledger File</div>
                 
-                <div class="ledger-content">2024-01-01 Opening Balance
-    Assets:Checking              $1000.00
-    Equity:Opening Balances
-
-2024-01-02 * Cleared Transaction
-    Expenses:Food                 $45.67
-    Assets:Checking
-
-2024-01-03 ! Pending Transaction
-    Expenses:Rent                $500.00
-    Assets:Checking
-
-2024-01-04 Uncleared Transaction
-    Expenses:Gas                  $35.00
-    Assets:Checking</div>
+                <div class="ledger-content">
+                    <table>
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content">2024-01-01 Opening Balance</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content">    Assets:Checking              $1000.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content">    Equity:Opening Balances</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">5</td>
+                            <td class="line-content">2024-01-02 * Cleared Transaction</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">6</td>
+                            <td class="line-content">    Expenses:Food                 $45.67</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">7</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">8</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">9</td>
+                            <td class="line-content">2024-01-03 ! Pending Transaction</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">10</td>
+                            <td class="line-content">    Expenses:Rent                $500.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">11</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">12</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">13</td>
+                            <td class="line-content">2024-01-04 Uncleared Transaction</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">14</td>
+                            <td class="line-content">    Expenses:Gas                  $35.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">15</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                    </table>
+                </div>
                 
             </div>
             
@@ -307,21 +394,15 @@
                             <th>Line</th>
                             <th>Date</th>
                             <th>Description</th>
-                            <th>Status</th>
                             <th>Account Postings</th>
                         </tr>
                     </thead>
                     <tbody>
                     
-                        <tr class="">
+                        <tr>
                             <td class="line-number">1</td>
                             <td>2024/01/01</td>
                             <td>Opening Balance</td>
-                            <td>
-                                
-                                    <span class="status-marker empty">-</span>
-                                
-                            </td>
                             <td>
                                 
                                 <ul class="posting-details">
@@ -340,15 +421,10 @@
                             </td>
                         </tr>
                     
-                        <tr class="status-pending">
+                        <tr>
                             <td class="line-number">9</td>
                             <td>2024/01/03</td>
                             <td>Pending Transaction</td>
-                            <td>
-                                
-                                    <span class="status-marker pending">!</span>
-                                
-                            </td>
                             <td>
                                 
                                 <ul class="posting-details">
@@ -369,15 +445,10 @@
                             </td>
                         </tr>
                     
-                        <tr class="">
+                        <tr>
                             <td class="line-number">13</td>
                             <td>2024/01/04</td>
                             <td>Uncleared Transaction</td>
-                            <td>
-                                
-                                    <span class="status-marker empty">-</span>
-                                
-                            </td>
                             <td>
                                 
                                 <ul class="posting-details">
@@ -417,17 +488,66 @@
             <div class="input-section">
                 <div class="section-title">Input Ledger File</div>
                 
-                <div class="ledger-content">2024-01-07 \! This is not a status marker
-    Expenses:Food                 $25.00
-    Assets:Checking
-
-2024-01-08 \* This is also not a status marker
-    Expenses:Gas                  $40.00
-    Assets:Checking
-
-2024-01-09 ! Real pending transaction
-    Expenses:Rent                $100.00
-    Assets:Checking</div>
+                <div class="ledger-content">
+                    <table>
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content">2024-01-07 \! This is not a status marker</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content">    Expenses:Food                 $25.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">5</td>
+                            <td class="line-content">2024-01-08 \* This is also not a status marker</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">6</td>
+                            <td class="line-content">    Expenses:Gas                  $40.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">7</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">8</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">9</td>
+                            <td class="line-content">2024-01-09 ! Real pending transaction</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">10</td>
+                            <td class="line-content">    Expenses:Rent                $100.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">11</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                    </table>
+                </div>
                 
             </div>
             
@@ -440,21 +560,15 @@
                             <th>Line</th>
                             <th>Date</th>
                             <th>Description</th>
-                            <th>Status</th>
                             <th>Account Postings</th>
                         </tr>
                     </thead>
                     <tbody>
                     
-                        <tr class="">
+                        <tr>
                             <td class="line-number">1</td>
                             <td>2024/01/07</td>
                             <td>\! This is not a status marker</td>
-                            <td>
-                                
-                                    <span class="status-marker empty">-</span>
-                                
-                            </td>
                             <td>
                                 
                                 <ul class="posting-details">
@@ -473,15 +587,10 @@
                             </td>
                         </tr>
                     
-                        <tr class="">
+                        <tr>
                             <td class="line-number">5</td>
                             <td>2024/01/08</td>
                             <td>\* This is also not a status marker</td>
-                            <td>
-                                
-                                    <span class="status-marker empty">-</span>
-                                
-                            </td>
                             <td>
                                 
                                 <ul class="posting-details">
@@ -500,15 +609,10 @@
                             </td>
                         </tr>
                     
-                        <tr class="status-pending">
+                        <tr>
                             <td class="line-number">9</td>
                             <td>2024/01/09</td>
                             <td>Real pending transaction</td>
-                            <td>
-                                
-                                    <span class="status-marker pending">!</span>
-                                
-                            </td>
                             <td>
                                 
                                 <ul class="posting-details">
@@ -550,13 +654,46 @@
             <div class="input-section">
                 <div class="section-title">Input Ledger File</div>
                 
-                <div class="ledger-content">2024-01-05 Transaction with posting status
-    * Expenses:Utilities          $75.00
-    ! Assets:Checking
-
-2024-01-06 Mixed posting status
-    * Expenses:Coffee             $5.00
-    Assets:Checking               $-5.00</div>
+                <div class="ledger-content">
+                    <table>
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content">2024-01-05 Transaction with posting status</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content">    * Expenses:Utilities          $75.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content">    ! Assets:Checking</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">5</td>
+                            <td class="line-content">2024-01-06 Mixed posting status</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">6</td>
+                            <td class="line-content">    * Expenses:Coffee             $5.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">7</td>
+                            <td class="line-content">    Assets:Checking               $-5.00</td>
+                        </tr>
+                        
+                    </table>
+                </div>
                 
             </div>
             
@@ -569,21 +706,15 @@
                             <th>Line</th>
                             <th>Date</th>
                             <th>Description</th>
-                            <th>Status</th>
                             <th>Account Postings</th>
                         </tr>
                     </thead>
                     <tbody>
                     
-                        <tr class="status-pending">
+                        <tr>
                             <td class="line-number">1</td>
                             <td>2024/01/05</td>
                             <td>Transaction with posting status</td>
-                            <td>
-                                
-                                    <span class="status-marker pending">!</span>
-                                
-                            </td>
                             <td>
                                 
                                 <ul class="posting-details">
@@ -604,15 +735,10 @@
                             </td>
                         </tr>
                     
-                        <tr class="">
+                        <tr>
                             <td class="line-number">5</td>
                             <td>2024/01/06</td>
                             <td>Mixed posting status</td>
-                            <td>
-                                
-                                    <span class="status-marker empty">-</span>
-                                
-                            </td>
                             <td>
                                 
                                 <ul class="posting-details">
