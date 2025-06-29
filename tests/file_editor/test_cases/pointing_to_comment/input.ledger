@@ -1,0 +1,8 @@
+2024-01-01 Opening Balance
+    Assets:Checking              $1000.00
+    Equity:Opening Balances
+
+; This is a comment about the next transaction
+2024-01-05 Grocery Store
+    Expenses:Food                 $50.00
+    Assets:Checking

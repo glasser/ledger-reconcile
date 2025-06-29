@@ -92,3 +92,4 @@ Tests use data-driven approach with `.sexp` input files and `.json` expected out
 - Never write to ledger files without using `FileEditor` class
 - Always use `SafeFileEditor` for atomic writes
 - File watcher ignores internal changes to prevent feedback loops
+- Be careful writing test data to files with shell commands: you tend to get confused and accidentally end up with extra backslashes before exclamation points and similar things. Just write files with your file writing tool!

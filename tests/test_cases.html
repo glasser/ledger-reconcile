@@ -25,15 +25,14 @@
             background: #fafafa;
         }
         .test-suite h2 {
-            margin-top: 0;
-            color: #007acc;
+            margin: 0;
         }
-        .test-suite a {
+        .test-suite h2 a {
             text-decoration: none;
             color: #007acc;
             font-weight: bold;
         }
-        .test-suite a:hover {
+        .test-suite h2 a:hover {
             text-decoration: underline;
         }
         .summary {
@@ -42,34 +41,26 @@
             padding: 15px;
             margin-bottom: 20px;
         }
-        .stats {
-            color: #666;
-            font-size: 14px;
-        }
     </style>
 </head>
 <body>
     <h1>Test Cases Index</h1>
 
     <div class="summary">
-        <strong>Total test suites:</strong> 2
+        <strong>Total test suites:</strong> 3
     </div>
 
     
     <div class="test-suite">
-        <h2>ledger_interface</h2>
-        <p>
-            <a href="ledger_interface/test_cases.html">View test cases</a>
-        </p>
-        <p class="stats">Path: /Users/glasser/Projects/Personal/ledger-reconcile/tests/ledger_interface</p>
+        <h2><a href="file_editor/test_cases.html">File Editor</a></h2>
     </div>
     
     <div class="test-suite">
-        <h2>sexp_parser</h2>
-        <p>
-            <a href="sexp_parser/test_cases.html">View test cases</a>
-        </p>
-        <p class="stats">Path: /Users/glasser/Projects/Personal/ledger-reconcile/tests/sexp_parser</p>
+        <h2><a href="ledger_interface/test_cases.html">Ledger Interface</a></h2>
+    </div>
+    
+    <div class="test-suite">
+        <h2><a href="sexp_parser/test_cases.html">Sexp Parser</a></h2>
     </div>
     
 </body>

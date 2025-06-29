@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Editor API Test Fixtures</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .summary {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        
+        .toc {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .toc h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        .toc ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .toc a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        
+        .test-case {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .test-case.precondition-fail {
+            border-color: #f39c12;
+        }
+        
+        .test-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .precondition-fail .test-header {
+            background: #fcf8e3;
+        }
+        
+        .test-header h2 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 20px;
+        }
+        
+        .test-description {
+            color: #666;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        
+        .test-params {
+            background: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 10px 15px;
+            margin: 15px 20px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        
+        .test-params strong {
+            color: #2c3e50;
+        }
+        
+        .test-content {
+            display: flex;
+            min-height: 200px;
+        }
+        
+        .section {
+            flex: 1;
+            padding: 20px;
+        }
+        
+        .input-section {
+            border-right: 1px solid #ddd;
+            background-color: #fafafa;
+        }
+        
+        .expected-section {
+            background-color: white;
+        }
+        
+        .section-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .ledger-content {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+            font-size: 13px;
+            white-space: pre;
+            background: white;
+            padding: 0;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+        
+        .ledger-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+        
+        .ledger-content .line-num {
+            background: #f8f9fa;
+            color: #666;
+            text-align: right;
+            padding: 0 8px;
+            border-right: 1px solid #e0e0e0;
+            user-select: none;
+            width: 40px;
+            vertical-align: top;
+        }
+        
+        .ledger-content .line-content {
+            padding: 0 15px;
+            vertical-align: top;
+        }
+        
+        .line-content.updated {
+            background-color: #d4edda;
+        }
+        
+        .line-content.posting-target {
+            background-color: #cfe2ff;
+        }
+        
+        .status-marker {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .no-output {
+            color: #666;
+            font-style: italic;
+            padding: 15px;
+        }
+        
+        .result-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .result-badge.success {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .result-badge.failure {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>File Editor API Test Fixtures</h1>
+    
+    <div class="summary">
+        <strong>Total test cases:</strong> {{ total_cases }}
+        <br>
+        <strong>API:</strong> LedgerFileEditor.update_postings_status()
+    </div>
+    
+    <div class="toc">
+        <h3>Test Cases</h3>
+        <ul>
+        {% for case_name, case_data in test_cases.items() | sort %}
+            <li>
+                <a href="#{{ case_name }}">{{ case_name.replace('_', ' ').title() }}</a>
+                {% if case_data.get("config.yaml") and case_data["config.yaml"].get("parsed") and case_data["config.yaml"].parsed.get("description") %}
+                - {{ case_data["config.yaml"].parsed.description }}
+                {% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+
+    {% for case_name, case_data in test_cases.items() | sort %}
+    {% set config = case_data.get("config.yaml", {}).get("parsed", {}) %}
+    {% set test_params = config.get("test_params", {}) %}
+    {% set is_precondition_fail = test_params.get("expected_result", true) == false %}
+    
+    <div class="test-case {% if is_precondition_fail %}precondition-fail{% endif %}" id="{{ case_name }}">
+        <div class="test-header">
+            <h2>
+                {{ case_name.replace('_', ' ').title() }}
+                <span class="result-badge {% if test_params.get('expected_result', true) %}success{% else %}failure{% endif %}">
+                    Expected: {% if test_params.get('expected_result', true) %}Success{% else %}Failure{% endif %}
+                </span>
+            </h2>
+            {% if config.get("description") %}
+            <div class="test-description">
+                {{ config.description }}
+            </div>
+            {% endif %}
+        </div>
+        
+        {% if test_params %}
+        <div class="test-params">
+            <strong>Posting Lines:</strong> {{ test_params.posting_line_numbers }}
+            <br>
+            <strong>Expected Current Status:</strong> "{{ test_params.expected_current_status }}"
+            <br>
+            <strong>New Status:</strong> "{{ test_params.new_status }}"
+        </div>
+        {% endif %}
+        
+        <div class="test-content">
+            <div class="section input-section">
+                <div class="section-title">Input File</div>
+                {% if case_data.get("input.ledger") %}
+                <div class="ledger-content">
+                    <table>
+                        {% for line in case_data["input.ledger"].content.split('\n') %}
+                        {% set line_num = loop.index %}
+                        <tr>
+                            <td class="line-num">{{ line_num }}</td>
+                            <td class="line-content {% if line_num in test_params.posting_line_numbers %}posting-target{% endif %}">{{ line if line else ' ' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="section expected-section">
+                <div class="section-title">Expected Output</div>
+                {% if case_data.get("expected.ledger") %}
+                <div class="ledger-content">
+                    <table>
+                        {% set input_lines = case_data["input.ledger"].content.split('\n') %}
+                        {% set expected_lines = case_data["expected.ledger"].content.split('\n') %}
+                        {% for line in expected_lines %}
+                        {% set line_num = loop.index %}
+                        {% set changed = line != input_lines[line_num - 1] if line_num <= input_lines|length else true %}
+                        <tr>
+                            <td class="line-num">{{ line_num }}</td>
+                            <td class="line-content {% if changed %}updated{% endif %}">{{ line if line else ' ' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                {% else %}
+                <div class="no-output">
+                    No changes expected (precondition failure or error case)
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</body>
+</html>

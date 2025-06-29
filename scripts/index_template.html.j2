@@ -25,15 +25,14 @@
             background: #fafafa;
         }
         .test-suite h2 {
-            margin-top: 0;
-            color: #007acc;
+            margin: 0;
         }
-        .test-suite a {
+        .test-suite h2 a {
             text-decoration: none;
             color: #007acc;
             font-weight: bold;
         }
-        .test-suite a:hover {
+        .test-suite h2 a:hover {
             text-decoration: underline;
         }
         .summary {
@@ -41,10 +40,6 @@
             border-left: 4px solid #2196f3;
             padding: 15px;
             margin-bottom: 20px;
-        }
-        .stats {
-            color: #666;
-            font-size: 14px;
         }
     </style>
 </head>
@@ -57,11 +52,7 @@
 
     {% for name, path in test_suites %}
     <div class="test-suite">
-        <h2>{{ name }}</h2>
-        <p>
-            <a href="{{ name }}/test_cases.html">View test cases</a>
-        </p>
-        <p class="stats">Path: {{ path }}</p>
+        <h2><a href="{{ name }}/test_cases.html">{{ name.replace('_', ' ').title() }}</a></h2>
     </div>
     {% endfor %}
 </body>

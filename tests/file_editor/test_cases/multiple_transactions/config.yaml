@@ -1,0 +1,6 @@
+description: Update postings across multiple transactions
+test_params:
+  posting_line_numbers: [3, 7]  # Both Assets:Checking lines
+  expected_current_status: "!"
+  new_status: "*"
+  expected_result: true

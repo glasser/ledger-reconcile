@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Editor API Test Fixtures</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .summary {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        
+        .toc {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .toc h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        .toc ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .toc a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        
+        .test-case {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .test-case.precondition-fail {
+            border-color: #f39c12;
+        }
+        
+        .test-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .precondition-fail .test-header {
+            background: #fcf8e3;
+        }
+        
+        .test-header h2 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 20px;
+        }
+        
+        .test-description {
+            color: #666;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        
+        .test-params {
+            background: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 10px 15px;
+            margin: 15px 20px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        
+        .test-params strong {
+            color: #2c3e50;
+        }
+        
+        .test-content {
+            display: flex;
+            min-height: 200px;
+        }
+        
+        .section {
+            flex: 1;
+            padding: 20px;
+        }
+        
+        .input-section {
+            border-right: 1px solid #ddd;
+            background-color: #fafafa;
+        }
+        
+        .expected-section {
+            background-color: white;
+        }
+        
+        .section-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .ledger-content {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+            font-size: 13px;
+            white-space: pre;
+            background: white;
+            padding: 0;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            overflow-x: auto;
+            line-height: 1.5;
+        }
+        
+        .ledger-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+        
+        .ledger-content .line-num {
+            background: #f8f9fa;
+            color: #666;
+            text-align: right;
+            padding: 0 8px;
+            border-right: 1px solid #e0e0e0;
+            user-select: none;
+            width: 40px;
+            vertical-align: top;
+        }
+        
+        .ledger-content .line-content {
+            padding: 0 15px;
+            vertical-align: top;
+        }
+        
+        .line-content.updated {
+            background-color: #d4edda;
+        }
+        
+        .line-content.posting-target {
+            background-color: #cfe2ff;
+        }
+        
+        .status-marker {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .no-output {
+            color: #666;
+            font-style: italic;
+            padding: 15px;
+        }
+        
+        .result-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .result-badge.success {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .result-badge.failure {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>File Editor API Test Fixtures</h1>
+    
+    <div class="summary">
+        <strong>Total test cases:</strong> 13
+        <br>
+        <strong>API:</strong> LedgerFileEditor.update_postings_status()
+    </div>
+    
+    <div class="toc">
+        <h3>Test Cases</h3>
+        <ul>
+        
+            <li>
+                <a href="#all_pending_to_cleared">All Pending To Cleared</a>
+                
+                - Change all pending Assets:Checking postings to cleared
+                
+            </li>
+        
+            <li>
+                <a href="#empty_posting_list">Empty Posting List</a>
+                
+                - Handle empty posting list (should succeed as no-op)
+                
+            </li>
+        
+            <li>
+                <a href="#invalid_line_number">Invalid Line Number</a>
+                
+                - Fail when line number is out of bounds
+                
+            </li>
+        
+            <li>
+                <a href="#multiple_postings_same_transaction">Multiple Postings Same Transaction</a>
+                
+                - Update multiple postings in the same transaction to pending
+                
+            </li>
+        
+            <li>
+                <a href="#multiple_transactions">Multiple Transactions</a>
+                
+                - Update postings across multiple transactions
+                
+            </li>
+        
+            <li>
+                <a href="#one_posting_wrong_status">One Posting Wrong Status</a>
+                
+                - Fail when one posting has wrong status but others are correct
+                
+            </li>
+        
+            <li>
+                <a href="#partial_update_same_status">Partial Update Same Status</a>
+                
+                - Partial update results in all postings having same status
+                
+            </li>
+        
+            <li>
+                <a href="#pointing_to_blank_line">Pointing To Blank Line</a>
+                
+                - Fail when line number points to blank line
+                
+            </li>
+        
+            <li>
+                <a href="#pointing_to_comment">Pointing To Comment</a>
+                
+                - Fail when line number points to comment line
+                
+            </li>
+        
+            <li>
+                <a href="#pointing_to_transaction_header">Pointing To Transaction Header</a>
+                
+                - Fail when line number points to transaction header not posting
+                
+            </li>
+        
+            <li>
+                <a href="#precondition_failure">Precondition Failure</a>
+                
+                - Precondition fails when expected status doesn't match actual
+                
+            </li>
+        
+            <li>
+                <a href="#toggle_pending_to_uncleared">Toggle Pending To Uncleared</a>
+                
+                - Toggle a pending posting back to uncleared
+                
+            </li>
+        
+            <li>
+                <a href="#toggle_single_posting_to_pending">Toggle Single Posting To Pending</a>
+                
+                - Toggle a single uncleared posting to pending status
+                
+            </li>
+        
+        </ul>
+    </div>
+
+    
+    
+    
+    
+    
+    <div class="test-case " id="all_pending_to_cleared">
+        <div class="test-header">
+            <h2>
+                All Pending To Cleared
+                <span class="result-badge success">
+                    Expected: Success
+                </span>
+            </h2>
+            
+            <div class="test-description">
+                Change all pending Assets:Checking postings to cleared
+            </div>
+            
+        </div>
+        
+        
+        <div class="test-params">
+            <strong>Posting Lines:</strong> [3, 7, 11]
+            <br>
+            <strong>Expected Current Status:</strong> "!"
+            <br>
+            <strong>New Status:</strong> "*"
+        </div>
+        
+        
+        <div class="test-content">
+            <div class="section input-section">
+                <div class="section-title">Input File</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content ">2024-01-01 ! First Transaction</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content ">    Expenses:Food                 $30.00</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content posting-target">    Assets:Checking</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content "> </td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">5</td>
+                            <td class="line-content ">2024-01-02 ! Second Transaction  </td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">6</td>
+                            <td class="line-content ">    Expenses:Gas                  $40.00</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">7</td>
+                            <td class="line-content posting-target">    Assets:Checking</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">8</td>
+                            <td class="line-content "> </td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">9</td>
+                            <td class="line-content ">2024-01-03 Third Transaction</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">10</td>
+                            <td class="line-content ">    ! Expenses:Utilities          $50.00</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">11</td>
+                            <td class="line-content posting-target">    ! Assets:Checking</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+            
+            <div class="section expected-section">
+                <div class="section-title">Expected Output</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content updated">2024-01-01 First Transaction</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content updated">    ! Expenses:Food                 $30.00</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content updated">    * Assets:Checking</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content "> </td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">5</td>
+                            <td class="line-content updated">2024-01-02 Second Transaction</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">6</td>
+                            <td class="line-content updated">    ! Expenses:Gas                  $40.00</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">7</td>
+                            <td class="line-content updated">    * Assets:Checking</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">8</td>
+                            <td class="line-content "> </td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">9</td>
+                            <td class="line-content ">2024-01-03 Third Transaction</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">10</td>
+                            <td class="line-content ">    ! Expenses:Utilities          $50.00</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">11</td>
+                            <td class="line-content updated">    * Assets:Checking</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    
+    
+    <div class="test-case " id="empty_posting_list">
+        <div class="test-header">
+            <h2>
+                Empty Posting List
+                <span class="result-badge success">
+                    Expected: Success
+                </span>
+            </h2>
+            
+            <div class="test-description">
+                Handle empty posting list (should succeed as no-op)
+            </div>
+            
+        </div>
+        
+        
+        <div class="test-params">
+            <strong>Posting Lines:</strong> []
+            <br>
+            <strong>Expected Current Status:</strong> ""
+            <br>
+            <strong>New Status:</strong> "!"
+        </div>
+        
+        
+        <div class="test-content">
+            <div class="section input-section">
+                <div class="section-title">Input File</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content ">2024-01-01 Opening Balance</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content ">    Assets:Checking              $1000.00</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content ">    Equity:Opening Balances</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+            
+            <div class="section expected-section">
+                <div class="section-title">Expected Output</div>
+                
+                <div class="no-output">
+                    No changes expected (precondition failure or error case)
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    
+    
+    <div class="test-case precondition-fail" id="invalid_line_number">
+        <div class="test-header">
+            <h2>
+                Invalid Line Number
+                <span class="result-badge failure">
+                    Expected: Failure
+                </span>
+            </h2>
+            
+            <div class="test-description">
+                Fail when line number is out of bounds
+            </div>
+            
+        </div>
+        
+        
+        <div class="test-params">
+            <strong>Posting Lines:</strong> [10]
+            <br>
+            <strong>Expected Current Status:</strong> ""
+            <br>
+            <strong>New Status:</strong> "!"
+        </div>
+        
+        
+        <div class="test-content">
+            <div class="section input-section">
+                <div class="section-title">Input File</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content ">2024-01-01 Opening Balance</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content ">    Assets:Checking              $1000.00</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content ">    Equity:Opening Balances</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+            
+            <div class="section expected-section">
+                <div class="section-title">Expected Output</div>
+                
+                <div class="no-output">
+                    No changes expected (precondition failure or error case)
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    
+    
+    <div class="test-case " id="multiple_postings_same_transaction">
+        <div class="test-header">
+            <h2>
+                Multiple Postings Same Transaction
+                <span class="result-badge success">
+                    Expected: Success
+                </span>
+            </h2>
+            
+            <div class="test-description">
+                Update multiple postings in the same transaction to pending
+            </div>
+            
+        </div>
+        
+        
+        <div class="test-params">
+            <strong>Posting Lines:</strong> [2, 3, 4]
+            <br>
+            <strong>Expected Current Status:</strong> ""
+            <br>
+            <strong>New Status:</strong> "!"
+        </div>
+        
+        
+        <div class="test-content">
+            <div class="section input-section">
+                <div class="section-title">Input File</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content ">2024-01-01 Split Transaction</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content posting-target">    Expenses:Food                 $30.00</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content posting-target">    Expenses:Gas                  $20.00</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content posting-target">    Assets:Checking              $-50.00</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+            
+            <div class="section expected-section">
+                <div class="section-title">Expected Output</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content updated">2024-01-01 ! Split Transaction</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content ">    Expenses:Food                 $30.00</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content ">    Expenses:Gas                  $20.00</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content ">    Assets:Checking              $-50.00</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    
+    
+    <div class="test-case " id="multiple_transactions">
+        <div class="test-header">
+            <h2>
+                Multiple Transactions
+                <span class="result-badge success">
+                    Expected: Success
+                </span>
+            </h2>
+            
+            <div class="test-description">
+                Update postings across multiple transactions
+            </div>
+            
+        </div>
+        
+        
+        <div class="test-params">
+            <strong>Posting Lines:</strong> [3, 7]
+            <br>
+            <strong>Expected Current Status:</strong> "!"
+            <br>
+            <strong>New Status:</strong> "*"
+        </div>
+        
+        
+        <div class="test-content">
+            <div class="section input-section">
+                <div class="section-title">Input File</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content ">2024-01-01 ! First Transaction</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content ">    Expenses:Food                 $30.00</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content posting-target">    Assets:Checking</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content "> </td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">5</td>
+                            <td class="line-content ">2024-01-02 ! Second Transaction</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">6</td>
+                            <td class="line-content ">    Expenses:Gas                  $40.00</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">7</td>
+                            <td class="line-content posting-target">    Assets:Checking</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+            
+            <div class="section expected-section">
+                <div class="section-title">Expected Output</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content updated">2024-01-01 First Transaction</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content updated">    ! Expenses:Food                 $30.00</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content updated">    * Assets:Checking</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content "> </td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">5</td>
+                            <td class="line-content updated">2024-01-02 Second Transaction</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">6</td>
+                            <td class="line-content updated">    ! Expenses:Gas                  $40.00</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">7</td>
+                            <td class="line-content updated">    * Assets:Checking</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    
+    
+    <div class="test-case precondition-fail" id="one_posting_wrong_status">
+        <div class="test-header">
+            <h2>
+                One Posting Wrong Status
+                <span class="result-badge failure">
+                    Expected: Failure
+                </span>
+            </h2>
+            
+            <div class="test-description">
+                Fail when one posting has wrong status but others are correct
+            </div>
+            
+        </div>
+        
+        
+        <div class="test-params">
+            <strong>Posting Lines:</strong> [2, 3, 4]
+            <br>
+            <strong>Expected Current Status:</strong> ""
+            <br>
+            <strong>New Status:</strong> "!"
+        </div>
+        
+        
+        <div class="test-content">
+            <div class="section input-section">
+                <div class="section-title">Input File</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content ">2024-01-01 Transaction with mixed status</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content posting-target">    * Expenses:Food                 $30.00</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content posting-target">    Expenses:Gas                  $20.00</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content posting-target">    Assets:Checking              $-50.00</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+            
+            <div class="section expected-section">
+                <div class="section-title">Expected Output</div>
+                
+                <div class="no-output">
+                    No changes expected (precondition failure or error case)
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    
+    
+    <div class="test-case " id="partial_update_same_status">
+        <div class="test-header">
+            <h2>
+                Partial Update Same Status
+                <span class="result-badge success">
+                    Expected: Success
+                </span>
+            </h2>
+            
+            <div class="test-description">
+                Partial update results in all postings having same status
+            </div>
+            
+        </div>
+        
+        
+        <div class="test-params">
+            <strong>Posting Lines:</strong> [3, 4]
+            <br>
+            <strong>Expected Current Status:</strong> ""
+            <br>
+            <strong>New Status:</strong> "*"
+        </div>
+        
+        
+        <div class="test-content">
+            <div class="section input-section">
+                <div class="section-title">Input File</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content ">2024-01-01 Transaction with mixed status</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content ">    * Expenses:Food                 $30.00</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content posting-target">    Expenses:Gas                  $20.00</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content posting-target">    Assets:Checking              $-50.00</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+            
+            <div class="section expected-section">
+                <div class="section-title">Expected Output</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content updated">2024-01-01 * Transaction with mixed status</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content updated">    Expenses:Food                 $30.00</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content ">    Expenses:Gas                  $20.00</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content ">    Assets:Checking              $-50.00</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    
+    
+    <div class="test-case precondition-fail" id="pointing_to_blank_line">
+        <div class="test-header">
+            <h2>
+                Pointing To Blank Line
+                <span class="result-badge failure">
+                    Expected: Failure
+                </span>
+            </h2>
+            
+            <div class="test-description">
+                Fail when line number points to blank line
+            </div>
+            
+        </div>
+        
+        
+        <div class="test-params">
+            <strong>Posting Lines:</strong> [4]
+            <br>
+            <strong>Expected Current Status:</strong> ""
+            <br>
+            <strong>New Status:</strong> "!"
+        </div>
+        
+        
+        <div class="test-content">
+            <div class="section input-section">
+                <div class="section-title">Input File</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content ">2024-01-01 Opening Balance</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content ">    Assets:Checking              $1000.00</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content ">    Equity:Opening Balances</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content posting-target"> </td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">5</td>
+                            <td class="line-content ">2024-01-05 Grocery Store</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">6</td>
+                            <td class="line-content ">    Expenses:Food                 $50.00</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">7</td>
+                            <td class="line-content ">    Assets:Checking</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+            
+            <div class="section expected-section">
+                <div class="section-title">Expected Output</div>
+                
+                <div class="no-output">
+                    No changes expected (precondition failure or error case)
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    
+    
+    <div class="test-case precondition-fail" id="pointing_to_comment">
+        <div class="test-header">
+            <h2>
+                Pointing To Comment
+                <span class="result-badge failure">
+                    Expected: Failure
+                </span>
+            </h2>
+            
+            <div class="test-description">
+                Fail when line number points to comment line
+            </div>
+            
+        </div>
+        
+        
+        <div class="test-params">
+            <strong>Posting Lines:</strong> [5]
+            <br>
+            <strong>Expected Current Status:</strong> ""
+            <br>
+            <strong>New Status:</strong> "!"
+        </div>
+        
+        
+        <div class="test-content">
+            <div class="section input-section">
+                <div class="section-title">Input File</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content ">2024-01-01 Opening Balance</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content ">    Assets:Checking              $1000.00</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content ">    Equity:Opening Balances</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content "> </td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">5</td>
+                            <td class="line-content posting-target">; This is a comment about the next transaction</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">6</td>
+                            <td class="line-content ">2024-01-05 Grocery Store</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">7</td>
+                            <td class="line-content ">    Expenses:Food                 $50.00</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">8</td>
+                            <td class="line-content ">    Assets:Checking</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+            
+            <div class="section expected-section">
+                <div class="section-title">Expected Output</div>
+                
+                <div class="no-output">
+                    No changes expected (precondition failure or error case)
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    
+    
+    <div class="test-case precondition-fail" id="pointing_to_transaction_header">
+        <div class="test-header">
+            <h2>
+                Pointing To Transaction Header
+                <span class="result-badge failure">
+                    Expected: Failure
+                </span>
+            </h2>
+            
+            <div class="test-description">
+                Fail when line number points to transaction header not posting
+            </div>
+            
+        </div>
+        
+        
+        <div class="test-params">
+            <strong>Posting Lines:</strong> [1]
+            <br>
+            <strong>Expected Current Status:</strong> ""
+            <br>
+            <strong>New Status:</strong> "!"
+        </div>
+        
+        
+        <div class="test-content">
+            <div class="section input-section">
+                <div class="section-title">Input File</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content posting-target">2024-01-01 Opening Balance</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content ">    Assets:Checking              $1000.00</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content ">    Equity:Opening Balances</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+            
+            <div class="section expected-section">
+                <div class="section-title">Expected Output</div>
+                
+                <div class="no-output">
+                    No changes expected (precondition failure or error case)
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    
+    
+    <div class="test-case precondition-fail" id="precondition_failure">
+        <div class="test-header">
+            <h2>
+                Precondition Failure
+                <span class="result-badge failure">
+                    Expected: Failure
+                </span>
+            </h2>
+            
+            <div class="test-description">
+                Precondition fails when expected status doesn't match actual
+            </div>
+            
+        </div>
+        
+        
+        <div class="test-params">
+            <strong>Posting Lines:</strong> [2, 3]
+            <br>
+            <strong>Expected Current Status:</strong> ""
+            <br>
+            <strong>New Status:</strong> "*"
+        </div>
+        
+        
+        <div class="test-content">
+            <div class="section input-section">
+                <div class="section-title">Input File</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content ">2024-01-01 Mixed Status Transaction</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content posting-target">    ! Expenses:Food                 $30.00</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content posting-target">    Assets:Checking              $-30.00</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+            
+            <div class="section expected-section">
+                <div class="section-title">Expected Output</div>
+                
+                <div class="no-output">
+                    No changes expected (precondition failure or error case)
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    
+    
+    <div class="test-case " id="toggle_pending_to_uncleared">
+        <div class="test-header">
+            <h2>
+                Toggle Pending To Uncleared
+                <span class="result-badge success">
+                    Expected: Success
+                </span>
+            </h2>
+            
+            <div class="test-description">
+                Toggle a pending posting back to uncleared
+            </div>
+            
+        </div>
+        
+        
+        <div class="test-params">
+            <strong>Posting Lines:</strong> [7]
+            <br>
+            <strong>Expected Current Status:</strong> "!"
+            <br>
+            <strong>New Status:</strong> ""
+        </div>
+        
+        
+        <div class="test-content">
+            <div class="section input-section">
+                <div class="section-title">Input File</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content ">2024-01-01 Opening Balance</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content ">    Assets:Checking              $1000.00</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content ">    Equity:Opening Balances</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content "> </td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">5</td>
+                            <td class="line-content ">2024-01-05 ! Grocery Store</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">6</td>
+                            <td class="line-content ">    Expenses:Food                 $50.00</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">7</td>
+                            <td class="line-content posting-target">    Assets:Checking</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+            
+            <div class="section expected-section">
+                <div class="section-title">Expected Output</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content ">2024-01-01 Opening Balance</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content ">    Assets:Checking              $1000.00</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content ">    Equity:Opening Balances</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content "> </td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">5</td>
+                            <td class="line-content updated">2024-01-05 Grocery Store</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">6</td>
+                            <td class="line-content updated">    ! Expenses:Food                 $50.00</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">7</td>
+                            <td class="line-content ">    Assets:Checking</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    
+    
+    
+    
+    <div class="test-case " id="toggle_single_posting_to_pending">
+        <div class="test-header">
+            <h2>
+                Toggle Single Posting To Pending
+                <span class="result-badge success">
+                    Expected: Success
+                </span>
+            </h2>
+            
+            <div class="test-description">
+                Toggle a single uncleared posting to pending status
+            </div>
+            
+        </div>
+        
+        
+        <div class="test-params">
+            <strong>Posting Lines:</strong> [7]
+            <br>
+            <strong>Expected Current Status:</strong> ""
+            <br>
+            <strong>New Status:</strong> "!"
+        </div>
+        
+        
+        <div class="test-content">
+            <div class="section input-section">
+                <div class="section-title">Input File</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content ">2024-01-01 Opening Balance</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content ">    Assets:Checking              $1000.00</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content ">    Equity:Opening Balances</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content "> </td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">5</td>
+                            <td class="line-content ">2024-01-05 Grocery Store</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">6</td>
+                            <td class="line-content ">    Expenses:Food                 $50.00</td>
+                        </tr>
+                        
+                        
+                        <tr>
+                            <td class="line-num">7</td>
+                            <td class="line-content posting-target">    Assets:Checking</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+            
+            <div class="section expected-section">
+                <div class="section-title">Expected Output</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content ">2024-01-01 Opening Balance</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content ">    Assets:Checking              $1000.00</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content ">    Equity:Opening Balances</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content "> </td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">5</td>
+                            <td class="line-content ">2024-01-05 Grocery Store</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">6</td>
+                            <td class="line-content ">    Expenses:Food                 $50.00</td>
+                        </tr>
+                        
+                        
+                        
+                        <tr>
+                            <td class="line-num">7</td>
+                            <td class="line-content updated">    ! Assets:Checking</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>

@@ -1,0 +1,11 @@
+2024-01-01 ! First Transaction
+    Expenses:Food                 $30.00
+    Assets:Checking
+
+2024-01-02 ! Second Transaction  
+    Expenses:Gas                  $40.00
+    Assets:Checking
+
+2024-01-03 Third Transaction
+    ! Expenses:Utilities          $50.00
+    ! Assets:Checking
