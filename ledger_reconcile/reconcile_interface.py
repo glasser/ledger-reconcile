@@ -204,28 +204,33 @@ class ReconcileApp(App):
 
         # Find the posting for this account to determine current status
         current_posting_status = ""
+        posting_line_number = None
         for posting in transaction.account_postings:
             if posting.account == self.account:
                 current_posting_status = posting.status
+                posting_line_number = posting.line_number
                 break
+
+        if posting_line_number is None:
+            self.notify("Could not find posting for this account", severity="error")
+            return
 
         # Determine new status (only toggle between empty and "!")
         new_status = "!" if current_posting_status == "" else ""
 
-        # Update the file
-        if self.file_editor.update_all_postings_in_transaction(line_number, new_status):
-            # Update our local data - update all postings in this transaction
-            for posting in transaction.account_postings:
-                posting.status = new_status
-
-            # Update the table display
-            status_display = new_status if new_status else "·"
-            if table.cursor_row is not None:
-                table.update_cell(str(table.cursor_row), "Status", status_display)
-
-            self.notify(f"Updated transaction status to '{new_status}'")
+        # Update the file using new API - just update this specific posting
+        if self.file_editor.update_postings_status(
+            [posting_line_number], current_posting_status, new_status
+        ):
+            # Reload data from ledger to reflect the actual state
+            self.call_after_refresh(self.load_transactions)
+            self.call_after_refresh(self.refresh_table)
+            self.notify(f"Updated posting status to '{new_status}'")
         else:
-            self.notify("Failed to update transaction", severity="error")
+            self.notify(
+                "Failed to update posting (may have changed externally)",
+                severity="error",
+            )
 
     @on(DataTable.RowSelected)
     def open_in_editor(self, event: DataTable.RowSelected) -> None:
@@ -249,33 +254,28 @@ class ReconcileApp(App):
 
     def action_reconcile_all(self) -> None:
         """Reconcile all semi-reconciled (!) transactions."""
-        reconciled_count = 0
-
+        # Collect all pending postings for this account
+        pending_posting_lines = []
         for transaction in self.transactions:
-            # Check if this transaction has a posting for our account with pending status
-            has_pending_posting = False
             for posting in transaction.account_postings:
                 if posting.account == self.account and posting.status == "!":
-                    has_pending_posting = True
-                    break
+                    pending_posting_lines.append(posting.line_number)
 
-            if (
-                has_pending_posting
-                and self.file_editor.update_all_postings_in_transaction(
-                    transaction.line_number, "*"
-                )
-            ):
-                # Update all postings in this transaction
-                for posting in transaction.account_postings:
-                    posting.status = "*"
-                reconciled_count += 1
+        if not pending_posting_lines:
+            self.notify("No semi-reconciled transactions to reconcile")
+            return
 
-        if reconciled_count > 0:
-            self.notify(f"Reconciled {reconciled_count} transactions")
+        # Update all pending postings to cleared using new API
+        if self.file_editor.update_postings_status(pending_posting_lines, "!", "*"):
+            self.notify(f"Reconciled {len(pending_posting_lines)} postings")
             # Refresh the table to hide reconciled transactions
+            self.call_after_refresh(self.load_transactions)
             self.call_after_refresh(self.refresh_table)
         else:
-            self.notify("No semi-reconciled transactions to reconcile")
+            self.notify(
+                "Failed to reconcile postings (may have changed externally)",
+                severity="error",
+            )
 
     async def refresh_table(self) -> None:
         """Refresh the transactions table."""
