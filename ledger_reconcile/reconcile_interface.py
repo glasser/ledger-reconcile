@@ -21,6 +21,12 @@ from .ledger_interface import LedgerInterface, ReconciliationEntry
 class ConfirmationScreen(ModalScreen[bool]):
     """A simple confirmation dialog."""
 
+    BINDINGS: ClassVar = [
+        ("y", "confirm", "Yes"),
+        ("n", "cancel", "No"),
+        ("escape", "cancel", "Cancel"),
+    ]
+
     DEFAULT_CSS = """
     ConfirmationScreen {
         align: center middle;
@@ -80,12 +86,13 @@ class ConfirmationScreen(ModalScreen[bool]):
         else:
             self.dismiss(False)
 
-    def on_key(self, event) -> None:
-        """Handle key presses."""
-        if event.key == "y":
-            self.dismiss(True)
-        elif event.key in ("n", "escape"):
-            self.dismiss(False)
+    def action_confirm(self) -> None:
+        """Confirm the dialog."""
+        self.dismiss(True)
+
+    def action_cancel(self) -> None:
+        """Cancel the dialog."""
+        self.dismiss(False)
 
 
 class ReconcileApp(App):
