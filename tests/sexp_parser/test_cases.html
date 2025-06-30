@@ -7,11 +7,79 @@
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-            max-width: 1200px;
+            max-width: 1600px;
             margin: 0 auto;
             padding: 20px;
             line-height: 1.6;
+            background-color: #f5f5f5;
         }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .navigation {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .navigation a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .navigation a:hover {
+            text-decoration: underline;
+        }
+        
+        .back-arrow {
+            font-size: 16px;
+        }
+        
+        .summary {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        
+        .toc {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .toc h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        .toc ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .toc a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        
+        
         .test-case {
             border: 1px solid #ddd;
             border-radius: 8px;
@@ -69,43 +137,22 @@
             background: #fed7d7;
             border-color: #feb2b2;
         }
-        
-        .summary {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .toc {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .toc ul {
-            margin: 0;
-            padding-left: 20px;
-        }
-        
-        .toc a {
-            text-decoration: none;
-            color: #007acc;
-        }
-        
-        .toc a:hover {
-            text-decoration: underline;
-        }
+
     </style>
 </head>
 <body>
+    <div class="navigation">
+        <span class="back-arrow">←</span>
+        <a href="../test_cases.html">Back to Test Cases Index</a>
+    </div>
+    
     <h1>S-Expression Parser Test Fixtures</h1>
     
     <div class="summary">
         <strong>Total test cases:</strong> 43
     </div>
+    
+    
     
     <div class="toc">
         <h3>Test Cases</h3>
@@ -421,14 +468,14 @@
             
             <div class="file-section input-section">
                 <h3>Input</h3>
-                <div class="file-content sexp-content">("/path/to/file.ledger" 123 (2024 1 15) nil "Grocery Store" ((account "Expenses:Food") (amount "$50.00") (status "*")))</div>
+                <div class="file-content sexp-content">(&#34;/path/to/file.ledger&#34; 123 (2024 1 15) nil &#34;Grocery Store&#34; ((account &#34;Expenses:Food&#34;) (amount &#34;$50.00&#34;) (status &#34;*&#34;)))</div>
             </div>
             
             
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">["/path/to/file.ledger", 123, [2024, 1, 15], null, "Grocery Store", [["account", "Expenses:Food"], ["amount", "$50.00"], ["status", "*"]]]</div>
+                <div class="file-content json-content">[&#34;/path/to/file.ledger&#34;, 123, [2024, 1, 15], null, &#34;Grocery Store&#34;, [[&#34;account&#34;, &#34;Expenses:Food&#34;], [&#34;amount&#34;, &#34;$50.00&#34;], [&#34;status&#34;, &#34;*&#34;]]]</div>
             </div>
             
         </div>
@@ -442,14 +489,14 @@
             
             <div class="file-section input-section">
                 <h3>Input</h3>
-                <div class="file-content sexp-content">((1 2) "nested" (foo bar))</div>
+                <div class="file-content sexp-content">((1 2) &#34;nested&#34; (foo bar))</div>
             </div>
             
             
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">[[1, 2], "nested", ["foo", "bar"]]</div>
+                <div class="file-content json-content">[[1, 2], &#34;nested&#34;, [&#34;foo&#34;, &#34;bar&#34;]]</div>
             </div>
             
         </div>
@@ -470,7 +517,7 @@
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">["a", ["b", ["c", "d"], "e"], "f"]</div>
+                <div class="file-content json-content">[&#34;a&#34;, [&#34;b&#34;, [&#34;c&#34;, &#34;d&#34;], &#34;e&#34;], &#34;f&#34;]</div>
             </div>
             
         </div>
@@ -505,14 +552,14 @@
             
             <div class="file-section input-section">
                 <h3>Input</h3>
-                <div class="file-content sexp-content">(1 "two" three)</div>
+                <div class="file-content sexp-content">(1 &#34;two&#34; three)</div>
             </div>
             
             
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">[1, "two", "three"]</div>
+                <div class="file-content json-content">[1, &#34;two&#34;, &#34;three&#34;]</div>
             </div>
             
         </div>
@@ -554,7 +601,7 @@
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">["a", "b"]</div>
+                <div class="file-content json-content">[&#34;a&#34;, &#34;b&#34;]</div>
             </div>
             
         </div>
@@ -652,14 +699,14 @@
             
             <div class="file-section input-section">
                 <h3>Input</h3>
-                <div class="file-content sexp-content">("hello" "world")</div>
+                <div class="file-content sexp-content">(&#34;hello&#34; &#34;world&#34;)</div>
             </div>
             
             
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">["hello", "world"]</div>
+                <div class="file-content json-content">[&#34;hello&#34;, &#34;world&#34;]</div>
             </div>
             
         </div>
@@ -680,7 +727,7 @@
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">["foo", "bar"]</div>
+                <div class="file-content json-content">[&#34;foo&#34;, &#34;bar&#34;]</div>
             </div>
             
         </div>
@@ -694,14 +741,14 @@
             
             <div class="file-section input-section">
                 <h3>Input</h3>
-                <div class="file-content sexp-content">("")</div>
+                <div class="file-content sexp-content">(&#34;&#34;)</div>
             </div>
             
             
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">[""]</div>
+                <div class="file-content json-content">[&#34;&#34;]</div>
             </div>
             
         </div>
@@ -715,14 +762,14 @@
             
             <div class="file-section input-section">
                 <h3>Input</h3>
-                <div class="file-content sexp-content">(nil 42 "string")</div>
+                <div class="file-content sexp-content">(nil 42 &#34;string&#34;)</div>
             </div>
             
             
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">[null, 42, "string"]</div>
+                <div class="file-content json-content">[null, 42, &#34;string&#34;]</div>
             </div>
             
         </div>
@@ -736,14 +783,14 @@
             
             <div class="file-section input-section">
                 <h3>Input</h3>
-                <div class="file-content sexp-content">(outer (inner "string with ) paren"))</div>
+                <div class="file-content sexp-content">(outer (inner &#34;string with ) paren&#34;))</div>
             </div>
             
             
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">["outer", ["inner", "string with ) paren"]]</div>
+                <div class="file-content json-content">[&#34;outer&#34;, [&#34;inner&#34;, &#34;string with ) paren&#34;]]</div>
             </div>
             
         </div>
@@ -778,14 +825,14 @@
             
             <div class="file-section input-section">
                 <h3>Input</h3>
-                <div class="file-content sexp-content">""</div>
+                <div class="file-content sexp-content">&#34;&#34;</div>
             </div>
             
             
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">""</div>
+                <div class="file-content json-content">&#34;&#34;</div>
             </div>
             
         </div>
@@ -799,14 +846,14 @@
             
             <div class="file-section input-section">
                 <h3>Input</h3>
-                <div class="file-content sexp-content">"back\\slash"</div>
+                <div class="file-content sexp-content">&#34;back\\slash&#34;</div>
             </div>
             
             
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">"back\\slash"</div>
+                <div class="file-content json-content">&#34;back\\slash&#34;</div>
             </div>
             
         </div>
@@ -820,14 +867,14 @@
             
             <div class="file-section input-section">
                 <h3>Input</h3>
-                <div class="file-content sexp-content">"line\nbreak"</div>
+                <div class="file-content sexp-content">&#34;line\nbreak&#34;</div>
             </div>
             
             
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">"line\nbreak"</div>
+                <div class="file-content json-content">&#34;line\nbreak&#34;</div>
             </div>
             
         </div>
@@ -841,14 +888,14 @@
             
             <div class="file-section input-section">
                 <h3>Input</h3>
-                <div class="file-content sexp-content">"hello\"world"</div>
+                <div class="file-content sexp-content">&#34;hello\&#34;world&#34;</div>
             </div>
             
             
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">"hello\"world"</div>
+                <div class="file-content json-content">&#34;hello\&#34;world&#34;</div>
             </div>
             
         </div>
@@ -862,14 +909,14 @@
             
             <div class="file-section input-section">
                 <h3>Input</h3>
-                <div class="file-content sexp-content">"hello"</div>
+                <div class="file-content sexp-content">&#34;hello&#34;</div>
             </div>
             
             
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">"hello"</div>
+                <div class="file-content json-content">&#34;hello&#34;</div>
             </div>
             
         </div>
@@ -883,14 +930,14 @@
             
             <div class="file-section input-section">
                 <h3>Input</h3>
-                <div class="file-content sexp-content">"café"</div>
+                <div class="file-content sexp-content">&#34;café&#34;</div>
             </div>
             
             
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">"café"</div>
+                <div class="file-content json-content">&#34;café&#34;</div>
             </div>
             
         </div>
@@ -904,14 +951,14 @@
             
             <div class="file-section input-section">
                 <h3>Input</h3>
-                <div class="file-content sexp-content">"emoji 😀"</div>
+                <div class="file-content sexp-content">&#34;emoji 😀&#34;</div>
             </div>
             
             
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">"emoji 😀"</div>
+                <div class="file-content json-content">&#34;emoji 😀&#34;</div>
             </div>
             
         </div>
@@ -925,14 +972,14 @@
             
             <div class="file-section input-section">
                 <h3>Input</h3>
-                <div class="file-content sexp-content">"日本語"</div>
+                <div class="file-content sexp-content">&#34;日本語&#34;</div>
             </div>
             
             
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">"日本語"</div>
+                <div class="file-content json-content">&#34;日本語&#34;</div>
             </div>
             
         </div>
@@ -946,14 +993,14 @@
             
             <div class="file-section input-section">
                 <h3>Input</h3>
-                <div class="file-content sexp-content">"with spaces and numbers 123"</div>
+                <div class="file-content sexp-content">&#34;with spaces and numbers 123&#34;</div>
             </div>
             
             
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">"with spaces and numbers 123"</div>
+                <div class="file-content json-content">&#34;with spaces and numbers 123&#34;</div>
             </div>
             
         </div>
@@ -967,14 +1014,14 @@
             
             <div class="file-section input-section">
                 <h3>Input</h3>
-                <div class="file-content sexp-content">("string with (parens)")</div>
+                <div class="file-content sexp-content">(&#34;string with (parens)&#34;)</div>
             </div>
             
             
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">["string with (parens)"]</div>
+                <div class="file-content json-content">[&#34;string with (parens)&#34;]</div>
             </div>
             
         </div>
@@ -988,14 +1035,14 @@
             
             <div class="file-section input-section">
                 <h3>Input</h3>
-                <div class="file-content sexp-content">"hello world"</div>
+                <div class="file-content sexp-content">&#34;hello world&#34;</div>
             </div>
             
             
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">"hello world"</div>
+                <div class="file-content json-content">&#34;hello world&#34;</div>
             </div>
             
         </div>
@@ -1016,7 +1063,7 @@
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">"kebab-case"</div>
+                <div class="file-content json-content">&#34;kebab-case&#34;</div>
             </div>
             
         </div>
@@ -1037,7 +1084,7 @@
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">"pending"</div>
+                <div class="file-content json-content">&#34;pending&#34;</div>
             </div>
             
         </div>
@@ -1058,7 +1105,7 @@
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">"foo"</div>
+                <div class="file-content json-content">&#34;foo&#34;</div>
             </div>
             
         </div>
@@ -1079,7 +1126,7 @@
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">"snake_case"</div>
+                <div class="file-content json-content">&#34;snake_case&#34;</div>
             </div>
             
         </div>
@@ -1100,7 +1147,7 @@
             
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
-                <div class="file-content json-content">"bar123"</div>
+                <div class="file-content json-content">&#34;bar123&#34;</div>
             </div>
             
         </div>
@@ -1194,5 +1241,6 @@
         </div>
     </div>
     
+
 </body>
 </html>

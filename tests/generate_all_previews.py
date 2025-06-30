@@ -24,9 +24,15 @@ def generate_preview(test_dir: Path):
         if not template_file.exists():
             raise FileNotFoundError(f"No template found at {template_file}")
 
-    # Load template
-    template_content = template_file.read_text(encoding="utf-8")
-    template = jinja2.Template(template_content)
+    # Set up Jinja2 environment with FileSystemLoader for template inheritance
+    tests_dir = Path(__file__).parent
+    env = jinja2.Environment(
+        loader=jinja2.FileSystemLoader(str(tests_dir)), autoescape=True
+    )
+
+    # Load template (relative to tests directory)
+    template_rel_path = template_file.relative_to(tests_dir)
+    template = env.get_template(str(template_rel_path))
 
     # Prepare template data
     template_data = {
@@ -46,10 +52,14 @@ def generate_preview(test_dir: Path):
 
 def generate_index(test_dirs: list[tuple[str, Path]], output_file: Path):
     """Generate index HTML file listing all test suites."""
+    # Set up Jinja2 environment for template loading
+    tests_dir = Path(__file__).parent
+    env = jinja2.Environment(
+        loader=jinja2.FileSystemLoader(str(tests_dir)), autoescape=True
+    )
+
     # Load template
-    template_file = Path(__file__).parent / "index_template.html.j2"
-    template_content = template_file.read_text(encoding="utf-8")
-    template = jinja2.Template(template_content)
+    template = env.get_template("index_template.html.j2")
 
     template_data = {
         "test_suites": test_dirs,

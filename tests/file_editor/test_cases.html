@@ -54,6 +54,31 @@
             text-decoration: underline;
         }
         
+        .navigation {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .navigation a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .navigation a:hover {
+            text-decoration: underline;
+        }
+        
+        .back-arrow {
+            font-size: 16px;
+        }
+        
         .test-case {
             background: white;
             border: 1px solid #ddd;
@@ -203,6 +228,11 @@
     </style>
 </head>
 <body>
+    <div class="navigation">
+        <span class="back-arrow">←</span>
+        <a href="../test_cases.html">Back to Test Cases Index</a>
+    </div>
+    
     <h1>File Editor API Test Fixtures</h1>
     
     <div class="summary">
@@ -288,7 +318,7 @@
             <li>
                 <a href="#precondition_failure">Precondition Failure</a>
                 
-                - Precondition fails when expected status doesn't match actual
+                - Precondition fails when expected status doesn&#39;t match actual
                 
             </li>
         
@@ -1366,7 +1396,7 @@
             </h2>
             
             <div class="test-description">
-                Precondition fails when expected status doesn't match actual
+                Precondition fails when expected status doesn&#39;t match actual
             </div>
             
         </div>

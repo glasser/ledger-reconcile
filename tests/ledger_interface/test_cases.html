@@ -19,6 +19,31 @@
             margin-bottom: 20px;
         }
         
+        .navigation {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .navigation a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .navigation a:hover {
+            text-decoration: underline;
+        }
+        
+        .back-arrow {
+            font-size: 16px;
+        }
+        
         .summary {
             background: #2c3e50;
             color: white;
@@ -54,6 +79,7 @@
             text-decoration: underline;
         }
         
+        
         .test-case {
             background: white;
             border: 1px solid #ddd;
@@ -82,43 +108,36 @@
         
         .test-content {
             display: flex;
-            min-height: 300px;
-        }
-        
-        .input-section,
-        .expected-section {
-            flex: 1;
-            padding: 20px;
+            min-height: 400px;
         }
         
         .input-section {
-            border-right: 1px solid #ddd;
-            background-color: #fafafa;
+            flex: 1;
+            padding: 20px;
+            border-right: 2px solid #e0e0e0;
         }
         
         .expected-section {
-            background-color: white;
+            flex: 1;
+            padding: 20px;
+            background: #fafafa;
         }
         
         .section-title {
             font-weight: bold;
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 16px;
         }
         
         .ledger-content {
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
-            font-size: 13px;
-            white-space: pre;
-            background: white;
-            padding: 0;
-            border: 1px solid #e0e0e0;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
             border-radius: 4px;
+            padding: 0;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+            font-size: 13px;
             overflow-x: auto;
-            line-height: 1.5;
         }
         
         .ledger-content table {
@@ -128,73 +147,65 @@
         }
         
         .ledger-content .line-num {
-            background: #f8f9fa;
-            color: #666;
+            background: #e9ecef;
+            border-right: 1px solid #ddd;
+            padding: 4px 8px;
             text-align: right;
-            padding: 0 8px;
-            border-right: 1px solid #e0e0e0;
-            user-select: none;
+            color: #6c757d;
+            font-size: 11px;
             width: 40px;
-            vertical-align: top;
         }
         
         .ledger-content .line-content {
-            padding: 0 15px;
-            vertical-align: top;
+            padding: 4px 12px;
+            white-space: pre;
         }
         
         .expected-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
         }
         
         .expected-table th {
-            background-color: #f0f0f0;
-            padding: 8px;
+            background: #f8f9fa;
+            padding: 8px 12px;
             text-align: left;
-            border: 1px solid #ddd;
-            font-weight: 600;
-            position: sticky;
-            top: 0;
-            z-index: 10;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+            color: #2c3e50;
         }
         
         .expected-table td {
-            padding: 8px;
-            border: 1px solid #ddd;
+            padding: 8px 12px;
+            border-bottom: 1px solid #f0f0f0;
             vertical-align: top;
         }
         
-        .expected-table tr:hover {
-            background-color: #f8f9fa;
-        }
-        
-        .status-pending {
-            background-color: #fff3cd;
-        }
-        
-        .status-cleared {
-            background-color: #d4edda;
+        .expected-table tr:last-child td {
+            border-bottom: none;
         }
         
         .line-number {
-            color: #666;
             font-family: monospace;
+            font-weight: bold;
+            color: #6c757d;
         }
         
         .amount {
             font-family: monospace;
-            text-align: right;
-            white-space: nowrap;
-        }
-        
-        .amount.negative {
-            color: #dc3545;
+            font-weight: bold;
         }
         
         .amount.positive {
             color: #28a745;
+        }
+        
+        .amount.negative {
+            color: #dc3545;
         }
         
         .posting-details {
@@ -247,17 +258,24 @@
             
             .input-section {
                 border-right: none;
-                border-bottom: 1px solid #ddd;
+                border-bottom: 2px solid #e0e0e0;
             }
         }
+
     </style>
 </head>
 <body>
+    <div class="navigation">
+        <span class="back-arrow">←</span>
+        <a href="../test_cases.html">Back to Test Cases Index</a>
+    </div>
+    
     <h1>Ledger Interface Test Fixtures</h1>
     
     <div class="summary">
         <strong>Total test cases:</strong> 6
     </div>
+    
     
     <div class="toc">
         <h3>Test Cases</h3>
@@ -453,7 +471,7 @@
                                     <li>
                                         <strong>Assets:Checking</strong>
                                         
-                                        <span class="amount negative">$-500.00</span>
+                                        <span class="amount positive">$-500.00</span>
                                         
                                         
                                         <span class="status-marker pending">!</span>
@@ -477,7 +495,7 @@
                                     <li>
                                         <strong>Assets:Checking</strong>
                                         
-                                        <span class="amount negative">$-35.00</span>
+                                        <span class="amount positive">$-35.00</span>
                                         
                                         
                                         <span class="line-number">(line 15)</span>
@@ -597,7 +615,7 @@
                                     <li>
                                         <strong>Assets:Checking</strong>
                                         
-                                        <span class="amount negative">$-25.00</span>
+                                        <span class="amount positive">$-25.00</span>
                                         
                                         
                                         <span class="line-number">(line 3)</span>
@@ -619,7 +637,7 @@
                                     <li>
                                         <strong>Assets:Checking</strong>
                                         
-                                        <span class="amount negative">$-40.00</span>
+                                        <span class="amount positive">$-40.00</span>
                                         
                                         
                                         <span class="line-number">(line 7)</span>
@@ -641,7 +659,7 @@
                                     <li>
                                         <strong>Assets:Checking</strong>
                                         
-                                        <span class="amount negative">$-100.00</span>
+                                        <span class="amount positive">$-100.00</span>
                                         
                                         
                                         <span class="status-marker pending">!</span>
@@ -1238,7 +1256,7 @@
                                     <li>
                                         <strong>Assets:Checking</strong>
                                         
-                                        <span class="amount negative">$-75.00</span>
+                                        <span class="amount positive">$-75.00</span>
                                         
                                         
                                         <span class="status-marker pending">!</span>
@@ -1262,7 +1280,7 @@
                                     <li>
                                         <strong>Assets:Checking</strong>
                                         
-                                        <span class="amount negative">$-5.00</span>
+                                        <span class="amount positive">$-5.00</span>
                                         
                                         
                                         <span class="line-number">(line 7)</span>
@@ -1280,5 +1298,6 @@
         </div>
     </div>
     
+
 </body>
 </html>

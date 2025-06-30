@@ -1,17 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S-Expression Parser Test Fixtures</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            line-height: 1.6;
-        }
+{% extends "base_template.html.j2" %}
+
+{% block title %}S-Expression Parser Test Fixtures{% endblock %}
+{% block page_title %}S-Expression Parser Test Fixtures{% endblock %}
+
+{% block extra_styles %}
         .test-case {
             border: 1px solid #ddd;
             border-radius: 8px;
@@ -69,43 +61,9 @@
             background: #fed7d7;
             border-color: #feb2b2;
         }
-        
-        .summary {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .toc {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .toc ul {
-            margin: 0;
-            padding-left: 20px;
-        }
-        
-        .toc a {
-            text-decoration: none;
-            color: #007acc;
-        }
-        
-        .toc a:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
-    <h1>S-Expression Parser Test Fixtures</h1>
-    
-    <div class="summary">
-        <strong>Total test cases:</strong> {{ total_cases }}
-    </div>
+{% endblock %}
+
+{% block content %}
     
     <div class="toc">
         <h3>Test Cases</h3>
@@ -145,5 +103,4 @@
         </div>
     </div>
     {% endfor %}
-</body>
-</html>
+{% endblock %}

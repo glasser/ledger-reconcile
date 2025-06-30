@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Test Cases{% endblock %}</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .navigation {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .navigation a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .navigation a:hover {
+            text-decoration: underline;
+        }
+        
+        .back-arrow {
+            font-size: 16px;
+        }
+        
+        .summary {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        
+        .toc {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .toc h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        .toc ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .toc a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        
+        {% block extra_styles %}{% endblock %}
+    </style>
+</head>
+<body>
+    <div class="navigation">
+        <span class="back-arrow">←</span>
+        <a href="../test_cases.html">Back to Test Cases Index</a>
+    </div>
+    
+    <h1>{% block page_title %}Test Cases{% endblock %}</h1>
+    
+    <div class="summary">
+        <strong>Total test cases:</strong> {{ total_cases }}
+    </div>
+    
+    {% block content %}{% endblock %}
+</body>
+</html>
