@@ -370,7 +370,7 @@ class ReconcileApp(App):
     async def refresh_table(self) -> None:
         """Refresh the transactions table."""
         table = self.query_one("#transactions-table", DataTable)
-        table.clear()
+        table.clear(columns=True)
         await self.setup_table()
 
     async def _refresh_and_restore_cursor(
