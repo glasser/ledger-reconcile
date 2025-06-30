@@ -103,19 +103,17 @@
     <div class="header">
         <h1>UI Snapshot Test Report</h1>
         <p>{{ failures|length }} snapshot{{ 's' if failures|length != 1 else '' }} failed</p>
+        <div style="margin: 15px 0;">
+            <input type="checkbox" id="global-diff-toggle" onchange="toggleAllDifferences(this)" style="margin: 0;">
+            <label for="global-diff-toggle" style="margin: 0; font-weight: normal; color: white;">Show all differences</label>
+        </div>
         <p><small>Generated on {{ now.strftime('%Y-%m-%d %H:%M:%S UTC') }}</small></p>
     </div>
 
     {% for failure in failures %}
     <div class="failure">
-        <div class="failure-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="failure-header">
             <span>{{ failure.test_name }} → {{ failure.step_name }}</span>
-            {% if failure.expected_svg %}
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <input type="checkbox" id="diff-toggle-{{ loop.index0 }}" onchange="toggleDifference(this, {{ loop.index0 }})" style="margin: 0;">
-                <label for="diff-toggle-{{ loop.index0 }}" style="margin: 0; font-weight: normal; color: #f0f0f0;">Show difference</label>
-            </div>
-            {% endif %}
         </div>
         <div class="failure-content">
             <div class="meta-info">
@@ -165,9 +163,11 @@
     {% endfor %}
 
 <script type="application/javascript">
-    function toggleDifference(element, index) {
-        const overlay = document.getElementById(`diff-overlay-${index}`);
-        overlay.hidden = !overlay.hidden;
+    function toggleAllDifferences(globalCheckbox) {
+        const overlays = document.querySelectorAll('[id^="diff-overlay-"]');
+        overlays.forEach(overlay => {
+            overlay.hidden = !globalCheckbox.checked;
+        });
     }
 </script>
 

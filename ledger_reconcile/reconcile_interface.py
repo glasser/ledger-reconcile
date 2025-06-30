@@ -12,7 +12,7 @@ from textual.app import App, ComposeResult
 from textual.containers import Container, HorizontalGroup, Vertical
 from textual.coordinate import Coordinate
 from textual.screen import ModalScreen
-from textual.widgets import Button, DataTable, Footer, Label
+from textual.widgets import Button, DataTable, Footer, Input, Label
 
 from .file_editor import LedgerFileEditor
 from .file_watcher import LedgerFileWatcher
@@ -98,6 +98,108 @@ class ConfirmationScreen(ModalScreen[bool]):
         self.dismiss(False)
 
 
+class TargetBalanceScreen(ModalScreen[str | None]):
+    """Modal dialog for adjusting the target balance."""
+
+    BINDINGS: ClassVar = [
+        ("escape", "cancel", "Cancel"),
+    ]
+
+    DEFAULT_CSS = """
+    TargetBalanceScreen {
+        align: center middle;
+    }
+
+    .target-dialog {
+        background: $surface;
+        border: thick $primary;
+        width: 60;
+        height: auto;
+        padding: 1 2;
+    }
+
+    .dialog-title {
+        text-align: center;
+        text-style: bold;
+        margin-bottom: 0;
+    }
+
+    .input-container {
+        margin: 0;
+        height: auto;
+    }
+
+    .input-label {
+        margin-bottom: 0;
+    }
+
+    .dialog-buttons {
+        align: center middle;
+        margin-top: 0;
+    }
+
+    .dialog-buttons Button {
+        margin: 0 1;
+    }
+
+    Input {
+        width: 100%;
+        margin: 1 0;
+    }
+    """
+
+    def __init__(self, current_target: str) -> None:
+        super().__init__()
+        self.current_target = current_target
+
+    def compose(self) -> ComposeResult:
+        """Create the target balance dialog."""
+        with Container(classes="target-dialog"):
+            yield Label("Adjust Target Balance", classes="dialog-title")
+            with Container(classes="input-container"):
+                yield Label("Enter new target balance:", classes="input-label")
+                yield Input(
+                    value=self.current_target,
+                    placeholder="e.g., $1,234.56",
+                    id="target-input",
+                )
+            with HorizontalGroup(classes="dialog-buttons"):
+                yield Button("Submit", variant="primary", id="submit")
+                yield Button("Cancel", variant="default", id="cancel")
+
+    def on_mount(self) -> None:
+        """Focus the input when the dialog opens."""
+        input_widget = self.query_one("#target-input", Input)
+        input_widget.focus()
+        # Move cursor to end for easy editing
+        if input_widget.value:
+            input_widget.cursor_position = len(input_widget.value)
+
+    @on(Button.Pressed, "#submit")
+    @on(Input.Submitted, "#target-input")
+    def action_submit(self) -> None:
+        """Submit the new target balance."""
+        input_widget = self.query_one("#target-input", Input)
+        new_target = input_widget.value.strip()
+
+        if not new_target:
+            self.notify("Target balance cannot be empty", severity="error")
+            return
+
+        # Try to parse the new target to validate it
+        try:
+            parser = TargetBalanceParser()
+            parser.parse(new_target)
+            self.dismiss(new_target)
+        except ValueError as e:
+            self.notify(f"Invalid target balance: {e}", severity="error")
+
+    @on(Button.Pressed, "#cancel")
+    def action_cancel(self) -> None:
+        """Cancel the dialog."""
+        self.dismiss(None)
+
+
 class ReconcileApp(App):
     """Main reconciliation application using Textual."""
 
@@ -173,6 +275,7 @@ class ReconcileApp(App):
         ("ctrl+c", "quit", "Quit"),
         ("space", "toggle_status", "Toggle Status"),
         ("r", "reconcile_all", "Reconcile All !"),
+        ("t", "adjust_target", "Adjust Target"),
     ]
 
     def __init__(self, ledger_file: Path, account: str, target_amount: str):
@@ -438,6 +541,38 @@ class ReconcileApp(App):
                 "Failed to reconcile postings (may have changed externally)",
                 severity="error",
             )
+
+    def action_adjust_target(self) -> None:
+        """Show modal to adjust the target balance."""
+        # Use run_worker to handle the async operation
+        self.run_worker(self._adjust_target_worker(), exclusive=True)
+
+    async def _adjust_target_worker(self) -> None:
+        """Worker method to handle target balance adjustment."""
+        target_screen = TargetBalanceScreen(self.target_amount)
+        new_target = await self.push_screen_wait(target_screen)
+
+        if new_target is not None:
+            # Parse and update the target amount
+            try:
+                parser = TargetBalanceParser()
+                self.target_amount_parsed = parser.parse(new_target)
+                self.target_amount = self.target_amount_parsed.formatted_display
+
+                # Update the target label
+                target_label = self.query_one("#target-label", Label)
+                target_label.update(f"Target: {self.target_amount}")
+
+                # Recalculate and update delta
+                self.delta = calculate_delta(
+                    self.target_amount, self.cleared_pending_balance
+                )
+                delta_label = self.query_one("#delta-label", Label)
+                delta_label.update(f"Delta: {self.delta}")
+
+                self.notify(f"Target balance updated to {self.target_amount}")
+            except ValueError as e:
+                self.notify(f"Error updating target: {e}", severity="error")
 
     async def refresh_table(self) -> None:
         """Refresh the transactions table."""

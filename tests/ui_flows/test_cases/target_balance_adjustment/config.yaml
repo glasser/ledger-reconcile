@@ -1,0 +1,39 @@
+name: "Target Balance Adjustment Modal"
+description: "Test the target balance adjustment modal dialog functionality"
+account: "Assets:Checking"
+target_amount: "$500.00"
+steps:
+  - action: snapshot
+    description: "Initial state with original target balance"
+    data:
+      name: "initial_state"
+
+  - action: key
+    description: "Open target balance adjustment modal"
+    data:
+      key: "t"
+
+  - action: snapshot
+    description: "Target balance adjustment modal open"
+    data:
+      name: "modal_open"
+
+  - action: key
+    description: "Type new target amount"
+    data:
+      key: "shift+4 7 5 0 full_stop 0 0"
+
+  - action: snapshot
+    description: "New target entered in modal"
+    data:
+      name: "new_target_entered"
+
+  - action: key
+    description: "Submit with Enter key"
+    data:
+      key: "enter"
+
+  - action: snapshot
+    description: "After target balance update"
+    data:
+      name: "after_target_update"
