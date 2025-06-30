@@ -5,6 +5,7 @@
 from .ui_flows import (
     pytest_addoption,
     pytest_sessionfinish,
+    pytest_sessionstart,
     pytest_terminal_summary,
 )
 
@@ -13,5 +14,6 @@ from .ui_flows import (
 __all__ = [
     "pytest_addoption",
     "pytest_sessionfinish",
+    "pytest_sessionstart",
     "pytest_terminal_summary",
 ]
