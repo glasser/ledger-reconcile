@@ -4,7 +4,7 @@
 import os
 import re
 import tempfile
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -72,7 +72,7 @@ class UITestStep(DataClassDictMixin):
     """Represents a single step in a UI test flow."""
 
     action: str  # 'key', 'snapshot', 'assert_file', 'wait'
-    data: dict[str, Any]  # Action-specific data
+    data: dict[str, Any] = field(default_factory=dict)  # Action-specific data
     description: str = ""
 
 
@@ -129,11 +129,15 @@ class UITestRunner:
         """Simulate key press."""
         key = step.data["key"]
         await self.pilot.press(key)
+        await self.pilot.pause()
 
     async def run_wait(self, step: UITestStep, _step_index: int) -> None:
-        """Wait for specified duration."""
-        duration = step.data.get("duration", 0.1)
-        await self.pilot.pause(duration)
+        """Wait for specified duration or until all messages are processed."""
+        duration = step.data.get("duration")
+        if duration is not None:
+            await self.pilot.pause(duration)
+        else:
+            await self.pilot.pause()
 
     async def run_snapshot(self, step: UITestStep, step_index: int) -> None:
         """Take a screenshot snapshot and assert it matches."""
@@ -231,9 +235,6 @@ class UITestRunner:
         # Force filesystem sync
         os.sync()
 
-        # Wait a moment for the file watcher to detect the change
-        await self.pilot.pause(0.5)
-
 
 # Test discovery and execution
 def discover_ui_test_cases(base_dir: Path) -> list[tuple[str, dict]]:
@@ -288,6 +289,7 @@ async def test_ui_flow(test_case_data, snapshot, request):
     app = ReconcileApp(temp_file, test_case.account, test_case.target_amount)
 
     async with app.run_test() as pilot:
+        await pilot.pause()
         with UITestRunner(
             test_case, test_case_data, pilot, app, temp_file, snapshot, request
         ) as runner:

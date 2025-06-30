@@ -4,11 +4,6 @@ account: "Assets:Checking"
 target_amount: "$1000.00"
 
 steps:
-  - action: wait
-    description: "Wait for app to initialize"
-    data:
-      duration: 0.5
-
   - action: snapshot
     description: "Initial state with uncleared posting"
     data:
@@ -36,11 +31,6 @@ steps:
     data:
       key: "space"
 
-  - action: wait
-    description: "Wait for update to process"
-    data:
-      duration: 0.2
-
   - action: snapshot
     description: "After toggling to pending"
     data:
@@ -51,20 +41,10 @@ steps:
     data:
       file: "expected_pending.ledger"
 
-  - action: wait
-    description: "Wait for refresh to complete before second toggle"
-    data:
-      duration: 0.5
-
   - action: key
     description: "Press space again to toggle back to uncleared"
     data:
       key: "space"
-
-  - action: wait
-    description: "Wait for update to process"
-    data:
-      duration: 0.2
 
   - action: snapshot
     description: "After toggling back to uncleared"

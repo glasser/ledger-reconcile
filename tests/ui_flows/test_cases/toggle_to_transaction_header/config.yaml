@@ -3,10 +3,6 @@ description: "Test toggling between mixed and uniform posting statuses"
 account: "Assets:Checking"
 target_amount: "$465.00"
 steps:
-  - action: wait
-    description: "Wait for app to initialize"
-    data:
-      duration: 0.5
   - action: snapshot
     description: "Initial state with mixed posting statuses"
     data:

@@ -4,11 +4,6 @@ account: "Assets:Checking"
 target_amount: "$900.00"
 
 steps:
-  - action: wait
-    description: "Wait for app to initialize"
-    data:
-      duration: 0.5
-
   - action: assert_ui
     description: "Balance should be updated from async loading (not initial $0.00)"
     data:
@@ -35,11 +30,6 @@ steps:
     description: "Press 'y' to confirm reconciliation"
     data:
       key: "y"
-
-  - action: wait
-    description: "Wait for reconciliation to process"
-    data:
-      duration: 0.3
 
   - action: snapshot
     description: "After reconciling all pending"

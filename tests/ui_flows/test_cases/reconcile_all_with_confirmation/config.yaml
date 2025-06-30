@@ -3,10 +3,6 @@ description: "Test the confirmation dialog for reconcile all command with both a
 account: "Assets:Checking"
 target_amount: "$540.00"
 steps:
-  - action: wait
-    description: "Wait for app to initialize"
-    data:
-      duration: 0.5
   - action: snapshot
     description: "Initial state with pending transactions"
     data:

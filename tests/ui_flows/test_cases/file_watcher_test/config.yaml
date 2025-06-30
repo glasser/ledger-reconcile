@@ -28,8 +28,7 @@ steps:
   - action: "wait"
     description: "Wait for file watcher to trigger reload"
     data:
-      duration: 1.0
-
+      duration: 0.1
 
   - action: "snapshot"
     description: "UI updated with new transaction"
@@ -60,8 +59,7 @@ steps:
   - action: "wait"
     description: "Wait for file watcher to trigger reload"
     data:
-      duration: 1.0
-
+      duration: 0.1
 
   - action: "snapshot"
     description: "UI updated with transaction removed"
