@@ -1,0 +1,13 @@
+name: "Table Layout Test"
+description: "Test table layout with both short and long transaction descriptions"
+account: "Assets:Checking"
+target_amount: "$500.00"
+steps:
+  - action: wait
+    description: "Wait for app to initialize"
+    data:
+      duration: 0.5
+  - action: snapshot
+    description: "Table layout with mixed description lengths"
+    data:
+      name: "table_layout_mixed"

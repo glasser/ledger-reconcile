@@ -115,6 +115,7 @@ class ReconcileApp(App):
     .transactions-table {
         height: 1fr;
         border: solid $primary;
+        overflow-x: hidden;
     }
 
     DataTable > .datatable--cursor {
@@ -206,10 +207,12 @@ class ReconcileApp(App):
         # Select full rows
         table.cursor_type = "row"
 
-        # Add columns
-        table.add_columns("Status", "Date")
-        table.add_column("Description", width=50)
-        table.add_columns("Amount", "Line")
+        # Add columns with optimized widths for better layout
+        table.add_column("", width=3)  # Status column - no header, minimal width
+        table.add_column("Date", width=12)  # Date column - fixed width for YYYY-MM-DD
+        table.add_column("Amount", width=15)  # Amount column - fixed width for currency
+        table.add_column("Description")  # Description - takes remaining space
+        table.add_column("Line", width=6)  # Line number - minimal width
 
         # Filter to show only unreconciled and semi-reconciled transactions (not fully reconciled *)
         # Look at the status of postings for this account
@@ -235,8 +238,8 @@ class ReconcileApp(App):
             table.add_row(
                 status_display,
                 transaction.date,
-                transaction.description,
                 amount,
+                transaction.description,
                 str(transaction.line_number),
                 key=str(transaction.line_number),
             )

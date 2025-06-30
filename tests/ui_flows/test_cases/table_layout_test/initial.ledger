@@ -1,0 +1,15 @@
+2024-01-01 Opening Balance  
+    Assets:Checking              $1000.00
+    Equity:Opening Balances
+
+2024-01-05 ! Short Description
+    Expenses:Food                 $25.00
+    Assets:Checking
+
+2024-01-10 ! This is a very long transaction description that might cause horizontal scrolling issues if not handled properly in the table layout
+    Expenses:Utilities           $150.00
+    Assets:Checking
+
+2024-01-15 ! Medium Length Transaction for Testing Table
+    Expenses:Gas                  $45.00
+    Assets:Checking
