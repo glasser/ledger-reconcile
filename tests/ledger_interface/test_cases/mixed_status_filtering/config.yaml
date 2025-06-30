@@ -1,0 +1,34 @@
+description: "Test filtering by account AND only returning uncleared transactions"
+expected:
+  # Should include: Opening Balance (uncleared), Pending Transaction (pending), Uncleared Transaction (uncleared)
+  # Should exclude: Fully Reconciled Transaction (cleared with *), Transaction for Different Account (wrong account)
+  - filename: input.ledger
+    line_number: 1
+    date: "2024/01/01"
+    description: "Opening Balance"
+    account_postings:
+      - account: "Assets:Checking"
+        amount: "$1000.00"
+        status: ""
+        line_number: 2
+        original_line: ""
+  - filename: input.ledger
+    line_number: 5
+    date: "2024/01/02"
+    description: "Pending Transaction"
+    account_postings:
+      - account: "Assets:Checking"
+        amount: "$100.00"
+        status: "!"
+        line_number: 6
+        original_line: ""
+  - filename: input.ledger
+    line_number: 17
+    date: "2024/01/05"
+    description: "Uncleared Transaction"
+    account_postings:
+      - account: "Assets:Checking"
+        amount: "$400.00"
+        status: ""
+        line_number: 18
+        original_line: ""

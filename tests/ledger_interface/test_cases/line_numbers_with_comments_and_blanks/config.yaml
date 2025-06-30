@@ -1,0 +1,12 @@
+description: "Test that line numbers correctly map to the original file with comments and blank lines"
+expected:
+  - filename: input.ledger
+    line_number: 4
+    date: "2024/01/01"
+    description: "Opening Balance"
+    account_postings:
+      - account: "Assets:Checking"
+        amount: "$1000.00"
+        status: ""
+        line_number: 5
+        original_line: ""

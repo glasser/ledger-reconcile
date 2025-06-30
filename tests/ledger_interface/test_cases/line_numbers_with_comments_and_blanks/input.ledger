@@ -1,0 +1,12 @@
+# This is a comment on line 1
+# Another comment on line 2
+
+2024-01-01 Opening Balance
+    Assets:Checking              $1000.00
+    Equity:Opening Balances
+
+# Comment before second transaction
+
+2024-01-02 ! Grocery Store
+    Expenses:Food                 $45.67
+    CC:Visa                      -$45.67

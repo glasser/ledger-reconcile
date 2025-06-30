@@ -9,6 +9,12 @@ steps:
     data:
       duration: 0.5
 
+  - action: assert_ui
+    description: "Balance should be updated from async loading (not initial $0.00)"
+    data:
+      type: "balance"
+      value: "$900.00"
+
   - action: snapshot
     description: "Initial state with pending transactions"
     data:

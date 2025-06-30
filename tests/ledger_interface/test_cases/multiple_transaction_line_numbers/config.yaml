@@ -1,0 +1,32 @@
+description: "Test line numbers for multiple transactions in sequence"
+expected:
+  - filename: input.ledger
+    line_number: 1
+    date: "2024/01/01"
+    description: "Transaction One"
+    account_postings:
+      - account: "Assets:Checking"
+        amount: "$100.00"
+        status: ""
+        line_number: 2
+        original_line: ""
+  - filename: input.ledger
+    line_number: 5
+    date: "2024/01/02"
+    description: "Transaction Two"
+    account_postings:
+      - account: "Assets:Checking"
+        amount: "$200.00"
+        status: ""
+        line_number: 6
+        original_line: ""
+  - filename: input.ledger
+    line_number: 9
+    date: "2024/01/03"
+    description: "Transaction Three"
+    account_postings:
+      - account: "Assets:Checking"
+        amount: "$300.00"
+        status: ""
+        line_number: 10
+        original_line: ""

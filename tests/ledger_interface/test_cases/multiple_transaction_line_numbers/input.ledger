@@ -1,0 +1,11 @@
+2024-01-01 Transaction One
+    Assets:Checking               $100.00
+    Expenses:Test
+
+2024-01-02 Transaction Two
+    Assets:Checking               $200.00
+    Expenses:Other
+
+2024-01-03 Transaction Three
+    Assets:Checking               $300.00
+    Expenses:More
