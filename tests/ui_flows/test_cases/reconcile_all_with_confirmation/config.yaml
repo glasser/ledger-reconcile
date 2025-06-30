@@ -1,0 +1,49 @@
+name: "Reconcile All with Confirmation"
+description: "Test the confirmation dialog for reconcile all command with both acceptance and cancellation"
+account: "Assets:Checking"
+target_amount: "$540.00"
+steps:
+  - action: wait
+    description: "Wait for app to initialize"
+    data:
+      duration: 0.5
+  - action: snapshot
+    description: "Initial state with pending transactions"
+    data:
+      name: "initial_with_pending"
+  - action: key
+    description: "Press 'r' to trigger reconcile all"
+    data:
+      key: "r"
+  - action: snapshot
+    description: "Confirmation dialog appears"
+    data:
+      name: "confirmation_dialog"
+  - action: key
+    description: "Press 'n' to cancel"
+    data:
+      key: "n"
+  - action: snapshot
+    description: "Back to main screen after cancellation"
+    data:
+      name: "after_cancel"
+  - action: assert_file
+    description: "File should be unchanged after cancellation"
+    data:
+      file: "expected_unchanged.ledger"
+  - action: key
+    description: "Press 'r' again to trigger reconcile all"
+    data:
+      key: "r"
+  - action: key
+    description: "Press 'y' to confirm"
+    data:
+      key: "y"
+  - action: snapshot
+    description: "After confirming reconciliation"
+    data:
+      name: "after_confirm"
+  - action: assert_file
+    description: "File should show all postings reconciled"
+    data:
+      file: "expected_reconciled.ledger"

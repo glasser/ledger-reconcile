@@ -10,11 +10,75 @@ from typing import ClassVar
 from textual import on
 from textual.app import App, ComposeResult
 from textual.containers import Container, HorizontalGroup, Vertical
-from textual.widgets import DataTable, Footer, Label
+from textual.screen import ModalScreen
+from textual.widgets import Button, DataTable, Footer, Label
 
 from .file_editor import LedgerFileEditor
 from .file_watcher import LedgerFileWatcher
 from .ledger_interface import LedgerInterface, ReconciliationEntry
+
+
+class ConfirmationScreen(ModalScreen[bool]):
+    """A simple confirmation dialog."""
+
+    DEFAULT_CSS = """
+    ConfirmationScreen {
+        align: center middle;
+    }
+
+    .confirmation-dialog {
+        background: $surface;
+        border: thick $primary;
+        width: 60;
+        height: 10;
+        padding: 1;
+    }
+
+    .confirmation-message {
+        margin: 1 0;
+        text-align: center;
+    }
+
+    .confirmation-buttons {
+        align: center middle;
+        height: 3;
+    }
+    """
+
+    def __init__(self, message: str, count: int) -> None:
+        super().__init__()
+        self.message = message
+        self.count = count
+
+    def compose(self) -> ComposeResult:
+        """Create the confirmation dialog."""
+        yield Container(
+            Label(self.message, classes="confirmation-message"),
+            Label(
+                f"This will reconcile {self.count} postings.",
+                classes="confirmation-message",
+            ),
+            HorizontalGroup(
+                Button("Yes (y)", id="confirm", variant="success"),
+                Button("Cancel", id="cancel", variant="error"),
+                classes="confirmation-buttons",
+            ),
+            classes="confirmation-dialog",
+        )
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        """Handle button presses."""
+        if event.button.id == "confirm":
+            self.dismiss(True)
+        else:
+            self.dismiss(False)
+
+    def on_key(self, event) -> None:
+        """Handle key presses."""
+        if event.key == "y":
+            self.dismiss(True)
+        elif event.key in ("n", "escape"):
+            self.dismiss(False)
 
 
 class ReconcileApp(App):
@@ -261,6 +325,11 @@ class ReconcileApp(App):
 
     def action_reconcile_all(self) -> None:
         """Reconcile all semi-reconciled (!) transactions."""
+        # Use run_worker to handle the async operation
+        self.run_worker(self._reconcile_all_worker(), exclusive=True)
+
+    async def _reconcile_all_worker(self) -> None:
+        """Worker method to handle reconcile all with confirmation."""
         # Collect all pending postings for this account
         pending_posting_lines = []
         for transaction in self.transactions:
@@ -270,6 +339,17 @@ class ReconcileApp(App):
 
         if not pending_posting_lines:
             self.notify("No semi-reconciled transactions to reconcile")
+            return
+
+        # Show confirmation dialog
+        confirmation_screen = ConfirmationScreen(
+            "Are you sure you want to reconcile all pending transactions?",
+            len(pending_posting_lines),
+        )
+        confirmed = await self.push_screen_wait(confirmation_screen)
+
+        if not confirmed:
+            self.notify("Reconciliation cancelled")
             return
 
         # Update all pending postings to cleared using new API

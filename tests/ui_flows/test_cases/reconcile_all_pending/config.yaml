@@ -21,9 +21,14 @@ steps:
       count: 3
 
   - action: key
-    description: "Press 'r' to reconcile all pending transactions"
+    description: "Press 'r' to show reconcile confirmation"
     data:
       key: "r"
+
+  - action: key
+    description: "Press 'y' to confirm reconciliation"
+    data:
+      key: "y"
 
   - action: wait
     description: "Wait for reconciliation to process"
