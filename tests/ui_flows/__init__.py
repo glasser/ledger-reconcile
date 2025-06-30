@@ -293,16 +293,18 @@ def pytest_sessionfinish(session, exitstatus):  # noqa: ARG001
         report_path = Path(session.config.getoption("--ui-snapshot-report"))
         _generate_snapshot_report(failures, report_path)
 
-        # Store report path in stash for terminal summary
-        session.stash[_UI_SNAPSHOT_REPORT_PATH_KEY] = report_path
+        # Store data in config stash for terminal summary (accessible from config)
+        session.config.stash[_UI_SNAPSHOT_FAILURES_KEY] = failures
+        session.config.stash[_UI_SNAPSHOT_REPORT_PATH_KEY] = report_path
 
 
 def pytest_terminal_summary(terminalreporter, exitstatus, config):  # noqa: ARG001
     """Add UI snapshot report info to terminal summary."""
-    session = config.session
-    failures = session.stash.get(_UI_SNAPSHOT_FAILURES_KEY, [])
+    # Access data from config stash (no private attributes needed)
+    failures = config.stash.get(_UI_SNAPSHOT_FAILURES_KEY, [])
+
     if failures:
-        report_path = session.stash.get(_UI_SNAPSHOT_REPORT_PATH_KEY)
+        report_path = config.stash.get(_UI_SNAPSHOT_REPORT_PATH_KEY, None)
         terminalreporter.write_line("")
         terminalreporter.write_line("=" * 60, red=True)
         terminalreporter.write_line(

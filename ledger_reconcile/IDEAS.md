@@ -7,6 +7,6 @@ This is a list of ideas to work on. When you finish one, check it off and re-che
 - [x] Using TDD, fix this issue: does anything care about the outermost close paren?
 - [x] S-expression parser should be less forgiving: if it sees anything at all surprising, it should fail.
 - [x] In _create_transaction_from_data why do you think statuses are ever in the description?
-- [ ] The table shows transactions but it should show postings
+- [x] The table shows transactions but it should show postings
 - [ ] Instead of getting the overall balance, it should be getting the cleared balance, as the goal is to make the cleared balance match the target.
 - [ ] It should tell you how far the cleared balance is from the target.

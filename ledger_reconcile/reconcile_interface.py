@@ -36,26 +36,25 @@ class ConfirmationScreen(ModalScreen[bool]):
         background: $surface;
         border: thick $primary;
         width: 70;
-        height: 12;
-        padding: 2;
+        height: auto;
+        padding: 0 2;
     }
 
     .confirmation-message {
         margin: 1 0;
-        text-align: center;
-        color: $text;
     }
 
     .confirmation-buttons {
         align: center middle;
-        height: 4;
         margin-top: 1;
     }
 
     .confirmation-buttons Button {
         margin: 0 1;
-        min-width: 12;
-        color: $text;
+    }
+
+    Footer {
+        margin-top: 1;
     }
     """
 
@@ -73,10 +72,11 @@ class ConfirmationScreen(ModalScreen[bool]):
                 classes="confirmation-message",
             ),
             HorizontalGroup(
-                Button("Yes (y)", id="confirm", variant="success"),
-                Button("Cancel", id="cancel", variant="error"),
+                Button("Yes", id="confirm", variant="success"),
+                Button("No", id="cancel", variant="error"),
                 classes="confirmation-buttons",
             ),
+            Footer(),
             classes="confirmation-dialog",
         )
 
