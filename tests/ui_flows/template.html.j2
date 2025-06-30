@@ -251,6 +251,14 @@
             font-size: 12px;
         }
         
+        .action-modify {
+            background: #e67e22;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        
         .yaml-content {
             background: #f8f9fa;
             border: 1px solid #e0e0e0;
@@ -362,7 +370,7 @@
             {# Create chunks where each chunk starts when we encounter a media step or the first step #}
             {% set chunk_starts = [] %}
             {% for step in config.steps %}
-                {% set has_media = (step.action == "snapshot") or (step.action == "assert_file") %}
+                {% set has_media = (step.action == "snapshot") or (step.action == "assert_file") or (step.action == "modify_file") %}
                 {% if has_media or loop.index0 == 0 %}
                     {% set _ = chunk_starts.append(loop.index0) %}
                 {% endif %}
@@ -379,13 +387,13 @@
                 {% endif %}
                 
                 {% set chunk_steps = config.steps[chunk_start:chunk_end] %}
-                {% set chunk_has_media = chunk_steps|selectattr('action', 'equalto', 'snapshot')|list|length > 0 or chunk_steps|selectattr('action', 'equalto', 'assert_file')|list|length > 0 %}
+                {% set chunk_has_media = chunk_steps|selectattr('action', 'equalto', 'snapshot')|list|length > 0 or chunk_steps|selectattr('action', 'equalto', 'assert_file')|list|length > 0 or chunk_steps|selectattr('action', 'equalto', 'modify_file')|list|length > 0 %}
                 
                 {% if chunk_has_media %}
                     {# Find the first media step in chunk #}
                     {% set ns = namespace(media_step=none, media_step_index=0) %}
                     {% for step in chunk_steps %}
-                        {% set has_media = (step.action == "snapshot") or (step.action == "assert_file") %}
+                        {% set has_media = (step.action == "snapshot") or (step.action == "assert_file") or (step.action == "modify_file") %}
                         {% if has_media and not ns.media_step %}
                             {% set ns.media_step = step %}
                             {% set ns.media_step_index = chunk_start + loop.index %}
@@ -407,6 +415,8 @@
                                             <span class="action-assert">ASSERT</span>
                                             {% elif step.action == "wait" %}
                                             <span class="action-wait">WAIT</span>
+                                            {% elif step.action == "modify_file" %}
+                                            <span class="action-modify">MODIFY</span>
                                             {% endif %}
                                             {{ step.action|title }}
                                         </div>
@@ -433,6 +443,8 @@
                                                 Expected balance: <strong>{{ step.data.value }}</strong>
                                                 {% endif %}
                                             </div>
+                                        {% elif step.action == "modify_file" %}
+                                            <div class="step-data">Content file: <strong>{{ step.data.content_file }}</strong></div>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -462,6 +474,14 @@
                                     <div class="ledger-content">{{ test_case_data[expected_file].content }}</div>
                                 </div>
                                 {% endif %}
+                            {% elif ns.media_step.action == "modify_file" %}
+                                {% set content_file = ns.media_step.data.content_file %}
+                                {% if content_file in test_case_data %}
+                                <div class="file-content">
+                                    <h4>New File Content</h4>
+                                    <div class="ledger-content">{{ test_case_data[content_file].content }}</div>
+                                </div>
+                                {% endif %}
                             {% endif %}
                         </div>
                     </div>
@@ -481,6 +501,8 @@
                                         <span class="action-assert">ASSERT</span>
                                         {% elif step.action == "wait" %}
                                         <span class="action-wait">WAIT</span>
+                                        {% elif step.action == "modify_file" %}
+                                        <span class="action-modify">MODIFY</span>
                                         {% endif %}
                                         {{ step.action|title }}
                                     </div>
@@ -507,6 +529,8 @@
                                             Expected balance: <strong>{{ step.data.value }}</strong>
                                             {% endif %}
                                         </div>
+                                    {% elif step.action == "modify_file" %}
+                                        <div class="step-data">Content file: <strong>{{ step.data.content_file }}</strong></div>
                                     {% endif %}
                                 </div>
                             </div>

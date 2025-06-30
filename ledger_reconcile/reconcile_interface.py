@@ -10,6 +10,7 @@ from typing import ClassVar
 from textual import on
 from textual.app import App, ComposeResult
 from textual.containers import Container, HorizontalGroup, Vertical
+from textual.coordinate import Coordinate
 from textual.screen import ModalScreen
 from textual.widgets import Button, DataTable, Footer, Label
 
@@ -412,8 +413,6 @@ class ReconcileApp(App):
 
         # Try to find the same row by key first (more reliable)
         if target_row_key and target_row_key.value:
-            from textual.coordinate import Coordinate
-
             for row_idx in range(table.row_count):
                 cell_key = table.coordinate_to_cell_key(Coordinate(row_idx, 0))
                 if cell_key.row_key and cell_key.row_key.value == target_row_key.value:
@@ -431,8 +430,18 @@ class ReconcileApp(App):
 
     async def _refresh_from_file_change(self) -> None:
         """Refresh data after external file change."""
-        await self.load_transactions()
-        await self.refresh_table()
+        table = self.query_one("#transactions-table", DataTable)
+
+        # Save current cursor position for restoration
+        current_row = table.cursor_row if table.cursor_row is not None else 0
+        current_row_key = None
+
+        if table.cursor_coordinate is not None:
+            cell_key = table.coordinate_to_cell_key(table.cursor_coordinate)
+            current_row_key = cell_key.row_key
+
+        # Refresh data and restore cursor position
+        await self._refresh_and_restore_cursor(current_row, current_row_key)
         self.notify("File updated externally - data refreshed")
 
 

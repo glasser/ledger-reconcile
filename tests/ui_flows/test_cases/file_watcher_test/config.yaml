@@ -1,0 +1,75 @@
+name: "File Watcher External Changes"
+account: "CC:Amazon Chase"
+target_amount: "$0.00"
+description: "Test file watcher detecting external changes"
+
+steps:
+  - action: "key"
+    description: "Move cursor down to observe cursor behavior during reload"
+    data:
+      key: "down"
+
+  - action: "snapshot"
+    description: "Initial state with 2 transactions"
+    data:
+      name: "initial_state"
+
+  - action: "assert_ui"
+    description: "Verify initial table has 2 rows"
+    data:
+      type: "table_rows"
+      count: 2
+
+  - action: "modify_file"
+    description: "External process adds a new transaction"
+    data:
+      content_file: "modified.ledger"
+
+  - action: "wait"
+    description: "Wait for file watcher to trigger reload"
+    data:
+      duration: 1.0
+
+
+  - action: "snapshot"
+    description: "UI updated with new transaction"
+    data:
+      name: "after_external_change"
+
+  - action: "assert_ui"
+    description: "Verify table now has 3 rows"
+    data:
+      type: "table_rows"
+      count: 3
+
+  - action: "key"
+    description: "Move cursor down to the new transaction that will be removed"
+    data:
+      key: "down"
+
+  - action: "snapshot"
+    description: "Cursor is now on row 3 (the transaction that will be removed)"
+    data:
+      name: "cursor_on_row_to_be_removed"
+
+  - action: "modify_file"
+    description: "External process removes a transaction"
+    data:
+      content_file: "reduced.ledger"
+
+  - action: "wait"
+    description: "Wait for file watcher to trigger reload"
+    data:
+      duration: 1.0
+
+
+  - action: "snapshot"
+    description: "UI updated with transaction removed"
+    data:
+      name: "after_external_removal"
+
+  - action: "assert_ui"
+    description: "Verify table now has 2 rows again"
+    data:
+      type: "table_rows"
+      count: 2

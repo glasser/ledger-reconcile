@@ -91,7 +91,11 @@ class LedgerFileEventHandler(FileSystemEventHandler):
         if event.is_directory:
             return
 
-        if Path(str(event.src_path)) == self.watcher.file_path:
+        # Resolve both paths to handle symlinks (e.g., /var -> /private/var on macOS)
+        event_path = Path(str(event.src_path)).resolve()
+        watched_path = self.watcher.file_path.resolve()
+
+        if event_path == watched_path:
             self.watcher._handle_file_change()
 
 

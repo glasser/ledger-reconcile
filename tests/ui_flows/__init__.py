@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # UI flow testing framework
 
+import os
+import re
 import tempfile
 from dataclasses import dataclass
 from datetime import datetime
@@ -10,6 +12,7 @@ from typing import Any
 import pytest
 from jinja2 import Template
 from mashumaro import DataClassDictMixin
+from rich.console import Console
 from syrupy.extensions.image import SVGImageSnapshotExtension
 from textual.pilot import Pilot
 from textual.widgets import DataTable, Label
@@ -39,8 +42,6 @@ class CustomLocationSVGExtension(SVGImageSnapshotExtension):
     def get_location(cls, *, test_location, index) -> str:
         """Returns full filepath where snapshot data is stored."""
         # Extract test case name from parametrized test
-        import re
-
         nodename = test_location.nodename
         if nodename:
             match = re.search(r"\[(.*?)\]", nodename)
@@ -213,6 +214,26 @@ class UITestRunner:
                 f"Expected balance '{expected_balance}' not found in '{actual_balance}' at step {step_index}: {step.description}"
             )
 
+    async def run_modify_file(self, step: UITestStep, _step_index: int) -> None:
+        """Modify the ledger file externally to test file watcher functionality."""
+        new_content_file = step.data["content_file"]
+        new_content_data = self.test_case_tree.get(new_content_file)
+
+        if not new_content_data or "content" not in new_content_data:
+            raise FileNotFoundError(f"Content file not found: {new_content_file}")
+
+        new_content = new_content_data["content"]
+
+        # Write new content to the ledger file (simulating external modification)
+        with self.temp_ledger_file.open("w") as f:
+            f.write(new_content)
+
+        # Force filesystem sync
+        os.sync()
+
+        # Wait a moment for the file watcher to detect the change
+        await self.pilot.pause(0.5)
+
 
 # Test discovery and execution
 def discover_ui_test_cases(base_dir: Path) -> list[tuple[str, dict]]:
@@ -305,15 +326,14 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):  # noqa: ARG0
 
     if failures:
         report_path = config.stash.get(_UI_SNAPSHOT_REPORT_PATH_KEY, None)
-        terminalreporter.write_line("")
-        terminalreporter.write_line("=" * 60, red=True)
-        terminalreporter.write_line(
-            f"UI SNAPSHOT FAILURES: {len(failures)} mismatched snapshots", red=True
-        )
-        if report_path:
-            file_url = f"file://{report_path.absolute()}"
-            terminalreporter.write_line(f"View report: {file_url}", yellow=True)
-        terminalreporter.write_line("=" * 60, red=True)
+        console = Console(legacy_windows=False, force_terminal=True)
+        with console.capture() as capture:
+            console.print(
+                f"[black on red]{len(failures)} mismatched UI Flow snapshots[/]\n"
+                f"[b]View the [link=file://{report_path.absolute()}]failure report[/].\n"
+            )
+        terminalreporter.write_sep("-", title="UI Flows snapshot report")
+        terminalreporter.write(capture.get())
 
 
 def _generate_snapshot_report(failures: list[UISnapshotDiff], report_path: Path):

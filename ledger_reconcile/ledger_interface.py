@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import datetime
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
@@ -175,8 +176,6 @@ class LedgerInterface:
             date_info = data[2]
             if isinstance(date_info, list) and len(date_info) >= 2:
                 # Convert emacs time to date
-                import datetime
-
                 seconds = date_info[0] * 65536 + date_info[1]
                 dt = datetime.datetime.fromtimestamp(seconds)
                 date = dt.strftime("%Y/%m/%d")

@@ -290,7 +290,5 @@ class TestReconcileInterface:
 
     def test_ui_snapshot(self, snap_compare):
         """Test the UI layout using snapshot testing."""
-        from pathlib import Path
-
         test_app_path = Path(__file__).parent / "test_app.py"
         assert snap_compare(str(test_app_path), terminal_size=(80, 24))
