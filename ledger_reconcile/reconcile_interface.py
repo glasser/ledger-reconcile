@@ -29,19 +29,28 @@ class ConfirmationScreen(ModalScreen[bool]):
     .confirmation-dialog {
         background: $surface;
         border: thick $primary;
-        width: 60;
-        height: 10;
-        padding: 1;
+        border-radius: 1;
+        width: 70;
+        height: 12;
+        padding: 2;
+        box-shadow: 0 0 20 rgba(0, 0, 0, 0.3);
     }
 
     .confirmation-message {
         margin: 1 0;
         text-align: center;
+        color: $text;
     }
 
     .confirmation-buttons {
         align: center middle;
-        height: 3;
+        height: 4;
+        margin-top: 1;
+    }
+
+    .confirmation-buttons Button {
+        margin: 0 1;
+        min-width: 12;
     }
     """
 
