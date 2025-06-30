@@ -29,11 +29,9 @@ class ConfirmationScreen(ModalScreen[bool]):
     .confirmation-dialog {
         background: $surface;
         border: thick $primary;
-        border-radius: 1;
         width: 70;
         height: 12;
         padding: 2;
-        box-shadow: 0 0 20 rgba(0, 0, 0, 0.3);
     }
 
     .confirmation-message {
