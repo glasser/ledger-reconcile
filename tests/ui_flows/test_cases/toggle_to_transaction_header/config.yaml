@@ -1,0 +1,41 @@
+name: "Toggle Transaction Header Status"
+description: "Test toggling between mixed and uniform posting statuses"
+account: "Assets:Checking"
+target_amount: "$465.00"
+steps:
+  - action: wait
+    description: "Wait for app to initialize"
+    data:
+      duration: 0.5
+  - action: snapshot
+    description: "Initial state with mixed posting statuses"
+    data:
+      name: "initial_mixed_postings"
+  - action: key
+    description: "Navigate to Grocery Store transaction"
+    data:
+      key: "down"
+  - action: key
+    description: "Toggle Assets:Checking posting to pending"
+    data:
+      key: "space"
+  - action: snapshot
+    description: "After toggling - status consolidated to transaction header"
+    data:
+      name: "status_consolidated_to_header"
+  - action: assert_file
+    description: "Verify status consolidated to transaction header"
+    data:
+      file: "expected_consolidated_header.ledger"
+  - action: key
+    description: "Toggle Assets:Checking posting back to uncleared"
+    data:
+      key: "space"
+  - action: snapshot
+    description: "After toggling back - should split back to individual postings"
+    data:
+      name: "split_back_to_postings"
+  - action: assert_file
+    description: "Verify status split back to individual postings"
+    data:
+      file: "expected_split_back.ledger"
