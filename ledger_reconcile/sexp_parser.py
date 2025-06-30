@@ -11,6 +11,12 @@ class SExpParseError(ValueError):
 class SExpParser:
     """Parser for S-expressions returned by ledger emacs command."""
 
+    def _truncate_for_error(self, text: str, max_length: int = 20) -> str:
+        """Truncate text for error messages, adding ellipsis if truncated."""
+        if len(text) <= max_length:
+            return text
+        return text[:max_length] + "..."
+
     def parse(self, s: str):
         """Parse an S-expression string."""
         s = s.strip()
@@ -22,7 +28,7 @@ class SExpParser:
             remaining = s[consumed:].strip()
             if remaining:
                 raise SExpParseError(
-                    f"Unexpected content after string: {remaining[:20]}"
+                    f"Unexpected content after string: {self._truncate_for_error(remaining)}"
                 )
             return result
 
@@ -31,14 +37,18 @@ class SExpParser:
             result, consumed = self._parse_atom(s)
             remaining = s[consumed:].strip()
             if remaining:
-                raise SExpParseError(f"Unexpected content after atom: {remaining[:20]}")
+                raise SExpParseError(
+                    f"Unexpected content after atom: {self._truncate_for_error(remaining)}"
+                )
             return result
 
         # Parse the list and get how much was consumed
         result, consumed = self._parse_list(s)
         remaining = s[consumed:].strip()
         if remaining:
-            raise SExpParseError(f"Unexpected content after list: {remaining[:20]}")
+            raise SExpParseError(
+                f"Unexpected content after list: {self._truncate_for_error(remaining)}"
+            )
         return result
 
     def _parse_quoted_string(self, s: str) -> tuple[str, int]:
@@ -138,13 +148,3 @@ class SExpParser:
 
         # If we reach here, we ran out of characters without finding a closing paren
         raise SExpParseError("Unclosed list - missing closing parenthesis")
-
-    def _find_string_end(self, s: str, start: int) -> int:
-        """Find the end of a quoted string."""
-        i = start + 1
-        while i < len(s) and s[i] != '"':
-            if s[i] == "\\":
-                i += 2
-            else:
-                i += 1
-        return i + 1  # include closing quote

@@ -25,8 +25,12 @@ description = "Check code formatting without modifying files"
 run = "uv run pyright"
 description = "Run pyright type checker"
 
+[tasks.deptry]
+run = "uv run deptry ."
+description = "Check for unused dependencies"
+
 [tasks.generate-test-previews]
-run = "uv run python scripts/generate_all_previews.py"
+run = "uv run python tests/generate_all_previews.py"
 description = "Generate HTML previews for all test cases"
 
 [tasks.check]
@@ -34,6 +38,7 @@ depends = [
     "lint",
     "format-check",
     "typecheck",
+    "deptry",
     "test",
     "generate-test-previews",
 ]

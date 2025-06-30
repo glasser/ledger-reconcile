@@ -125,14 +125,13 @@ class LedgerInterface:
                 parts = balance_line.strip().split()
                 if parts:
                     return parts[0]
+                else:
+                    return "$0.00"
             else:
                 return "$0.00"
         except subprocess.CalledProcessError:
             # For non-existent accounts, return $0.00
             return "$0.00"
-
-        # Fallback return (should never be reached)
-        return "$0.00"
 
     def _parse_ledger_emacs_output(
         self, ledger_output: str

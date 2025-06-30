@@ -23,7 +23,7 @@ ledger-reconcile path/to/your.ledger --account "CC:Amazon Chase" --target "$1,23
 
 ## Controls
 
-- **Space**: Toggle transaction status (empty → ! → *)  
+- **Space**: Toggle transaction status (empty ↔ !)  
 - **Enter**: Open transaction in VSCode
 - **R**: Reconcile all semi-reconciled (!) transactions
 - **Up/Down**: Navigate transactions

@@ -9,6 +9,7 @@ from pathlib import Path
 
 from watchdog.events import FileSystemEvent, FileSystemEventHandler
 from watchdog.observers import Observer
+from watchdog.observers.api import BaseObserver
 
 
 class LedgerFileWatcher:
@@ -17,7 +18,7 @@ class LedgerFileWatcher:
     def __init__(self, file_path: Path, on_change: Callable[[], None]) -> None:
         self.file_path = file_path
         self.on_change = on_change
-        self.observer: Observer | None = None  # type: ignore[misc]
+        self.observer: BaseObserver | None = None
         self.last_modification_time = 0.0
         self.ignore_next_change = False
 
