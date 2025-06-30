@@ -1,0 +1,5 @@
+description: Spaces mixed with commas (common copy-paste from PDFs)
+input: "$1, 234, 56.78"
+expected:
+  parsed_amount: 123456.78
+  formatted_display: "$123,456.78"

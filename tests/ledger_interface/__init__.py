@@ -40,6 +40,9 @@ def test_fixture(name, test_data):
 
     config = test_data["config.yaml"]["parsed"]
     expected = config.get("expected")
+    test_type = config.get(
+        "test_type", "transactions"
+    )  # Default to transaction parsing
     assert expected is not None, f"No 'expected' key in config.yaml for test {name}"
 
     # Create temporary file with ledger content
@@ -54,37 +57,53 @@ def test_fixture(name, test_data):
         # Create LedgerInterface with the test file
         interface = LedgerInterface(ledger_path)
 
-        # Get uncleared transactions for Assets:Checking
-        transactions = interface.get_uncleared_transactions_for_account(
-            "Assets:Checking"
-        )
+        if test_type == "balance_calculation":
+            # Test balance calculation methods
+            account = config.get("account", "Assets:Checking")
 
-        # Convert to serializable format for comparison
-        result = []
-        for txn in transactions:
-            txn_dict = {
-                "filename": "input.ledger",  # Use consistent name for comparison
-                "line_number": txn.line_number,
-                "date": txn.date,
-                "description": txn.description,
-                "account_postings": [],
-            }
+            # Test cleared and pending balance
+            if "cleared_and_pending_balance" in expected:
+                cleared_pending_balance = interface.get_cleared_and_pending_balance(
+                    account
+                )
+                assert (
+                    cleared_pending_balance == expected["cleared_and_pending_balance"]
+                ), (
+                    f"Test case: {name}\nExpected cleared+pending balance: {expected['cleared_and_pending_balance']}\nGot: {cleared_pending_balance}"
+                )
+        else:
+            # Default: test transaction parsing
+            # Get uncleared transactions for Assets:Checking
+            transactions = interface.get_uncleared_transactions_for_account(
+                "Assets:Checking"
+            )
 
-            for posting in txn.account_postings:
-                posting_dict = {
-                    "account": posting.account,
-                    "amount": posting.amount,
-                    "status": posting.status,
-                    "line_number": posting.line_number,
-                    "original_line": posting.original_line,
+            # Convert to serializable format for comparison
+            result = []
+            for txn in transactions:
+                txn_dict = {
+                    "filename": "input.ledger",  # Use consistent name for comparison
+                    "line_number": txn.line_number,
+                    "date": txn.date,
+                    "description": txn.description,
+                    "account_postings": [],
                 }
-                txn_dict["account_postings"].append(posting_dict)
 
-            result.append(txn_dict)
+                for posting in txn.account_postings:
+                    posting_dict = {
+                        "account": posting.account,
+                        "amount": posting.amount,
+                        "status": posting.status,
+                        "line_number": posting.line_number,
+                        "original_line": posting.original_line,
+                    }
+                    txn_dict["account_postings"].append(posting_dict)
 
-        assert result == expected, (
-            f"Test case: {name}\nExpected: {expected}\nGot: {result}"
-        )
+                result.append(txn_dict)
+
+            assert result == expected, (
+                f"Test case: {name}\nExpected: {expected}\nGot: {result}"
+            )
     finally:
         # Clean up temporary file
         ledger_path.unlink()

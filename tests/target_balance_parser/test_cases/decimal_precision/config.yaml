@@ -1,0 +1,5 @@
+description: Various decimal precision cases
+input: "$100"
+expected:
+  parsed_amount: 100.0
+  formatted_display: "$100.00"

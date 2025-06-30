@@ -233,47 +233,83 @@
             </div>
             
             <div class="expected-section">
-                <div class="section-title">Expected Parser Output</div>
-                {% if case_data.get("config.yaml") and case_data["config.yaml"].get("parsed") and case_data["config.yaml"].parsed.get("expected") %}
-                <table class="expected-table">
-                    <thead>
-                        <tr>
-                            <th>Line</th>
-                            <th>Date</th>
-                            <th>Description</th>
-                            <th>Account Postings</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for txn in case_data["config.yaml"].parsed.expected %}
-                        <tr>
-                            <td class="line-number">{{ txn.line_number }}</td>
-                            <td>{{ txn.date }}</td>
-                            <td>{{ txn.description }}</td>
-                            <td>
-                                {% if txn.account_postings %}
-                                <ul class="posting-details">
-                                {% for posting in txn.account_postings %}
-                                    <li>
-                                        <strong>{{ posting.account }}</strong>
-                                        {% if posting.amount %}
-                                        <span class="amount {{ 'positive' if not posting.amount.startswith('-') else 'negative' }}">{{ posting.amount }}</span>
-                                        {% endif %}
-                                        {% if posting.status %}
-                                        <span class="status-marker {{ 'pending' if posting.status == '!' else 'cleared' if posting.status == '*' else 'empty' }}">{{ posting.status }}</span>
-                                        {% endif %}
-                                        <span class="line-number">(line {{ posting.line_number }})</span>
-                                    </li>
-                                {% endfor %}
-                                </ul>
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                {% set test_type = case_data["config.yaml"].parsed.get("test_type", "transactions") if case_data.get("config.yaml") and case_data["config.yaml"].get("parsed") else "transactions" %}
+                
+                {% if test_type == "balance_calculation" %}
+                    <div class="section-title">Expected Balance Calculations</div>
+                    {% if case_data.get("config.yaml") and case_data["config.yaml"].get("parsed") and case_data["config.yaml"].parsed.get("expected") %}
+                    {% set expected = case_data["config.yaml"].parsed.expected %}
+                    {% set account = case_data["config.yaml"].parsed.get("account", "Assets:Checking") %}
+                    <div style="background: white; border: 1px solid #ddd; border-radius: 4px; padding: 20px;">
+                        <h4 style="margin-top: 0; color: #2c3e50;">Account: {{ account }}</h4>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            {% if expected.get("total_balance") %}
+                            <tr>
+                                <td style="padding: 8px 0; font-weight: bold;">Total Balance (all transactions):</td>
+                                <td style="padding: 8px 0; text-align: right; font-family: monospace; font-size: 16px; color: #28a745;">{{ expected.total_balance }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if expected.get("cleared_and_pending_balance") %}
+                            <tr>
+                                <td style="padding: 8px 0; font-weight: bold;">Cleared + Pending Balance:</td>
+                                <td style="padding: 8px 0; text-align: right; font-family: monospace; font-size: 16px; color: #3498db;">{{ expected.cleared_and_pending_balance }}</td>
+                            </tr>
+                            {% endif %}
+                        </table>
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
+                            <p style="color: #666; font-size: 14px; margin: 0;">
+                                <strong>Note:</strong> Cleared+Pending balance includes only transactions marked as cleared (*) or pending (!).
+                                Uncleared transactions and those without status markers are excluded.
+                            </p>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p>No expected balance data found</p>
+                    {% endif %}
+                
                 {% else %}
-                <p>No expected data found</p>
+                    <div class="section-title">Expected Parser Output</div>
+                    {% if case_data.get("config.yaml") and case_data["config.yaml"].get("parsed") and case_data["config.yaml"].parsed.get("expected") %}
+                    <table class="expected-table">
+                        <thead>
+                            <tr>
+                                <th>Line</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Account Postings</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for txn in case_data["config.yaml"].parsed.expected %}
+                            <tr>
+                                <td class="line-number">{{ txn.line_number }}</td>
+                                <td>{{ txn.date }}</td>
+                                <td>{{ txn.description }}</td>
+                                <td>
+                                    {% if txn.account_postings %}
+                                    <ul class="posting-details">
+                                    {% for posting in txn.account_postings %}
+                                        <li>
+                                            <strong>{{ posting.account }}</strong>
+                                            {% if posting.amount %}
+                                            <span class="amount {{ 'positive' if not posting.amount.startswith('-') else 'negative' }}">{{ posting.amount }}</span>
+                                            {% endif %}
+                                            {% if posting.status %}
+                                            <span class="status-marker {{ 'pending' if posting.status == '!' else 'cleared' if posting.status == '*' else 'empty' }}">{{ posting.status }}</span>
+                                            {% endif %}
+                                            <span class="line-number">(line {{ posting.line_number }})</span>
+                                        </li>
+                                    {% endfor %}
+                                    </ul>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <p>No expected data found</p>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>

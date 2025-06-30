@@ -131,10 +131,13 @@ class UITestRunner:
         await action_method(step, step_index)
 
     async def run_key(self, step: UITestStep, _step_index: int) -> None:
-        """Simulate key press."""
+        """Simulate key press(es)."""
         key = step.data["key"]
-        await self.pilot.press(key)
-        await self.pilot.pause()
+        # Handle multiple keys separated by spaces
+        keys = key.split()
+        for individual_key in keys:
+            await self.pilot.press(individual_key)
+            await self.pilot.pause()
 
     async def run_wait(self, step: UITestStep, _step_index: int) -> None:
         """Wait for specified duration or until all messages are processed."""
@@ -214,12 +217,24 @@ class UITestRunner:
             )
 
         elif assertion_type == "balance":
-            # Check displayed balance
-            balance_label = self.app.query_one("#balance-label", Label)
+            # Check displayed balance (supports cleared_pending and delta)
+            balance_type = step.data.get(
+                "balance_type", "cleared_pending"
+            )  # default to cleared+pending balance
+
+            if balance_type == "cleared_pending":
+                balance_label = self.app.query_one(
+                    "#cleared-pending-balance-label", Label
+                )
+            elif balance_type == "delta":
+                balance_label = self.app.query_one("#delta-label", Label)
+            else:
+                raise ValueError(f"Unknown balance type: {balance_type}")
+
             expected_balance = step.data["value"]
             actual_balance = str(balance_label.renderable)
             assert expected_balance in actual_balance, (
-                f"Expected balance '{expected_balance}' not found in '{actual_balance}' at step {step_index}: {step.description}"
+                f"Expected {balance_type} balance '{expected_balance}' not found in '{actual_balance}' at step {step_index}: {step.description}"
             )
 
     async def run_modify_file(self, step: UITestStep, _step_index: int) -> None:
@@ -315,7 +330,7 @@ def pytest_addoption(parser):
 
 def pytest_sessionstart(session):
     session.config.stash[_SNAPSHOT_FAILURES_STASH_KEY] = SnapshotFailuresStash(
-        report_path=session.config.getoption("--ui-snapshot-report")
+        report_path=Path(session.config.getoption("--ui-snapshot-report"))
     )
 
 

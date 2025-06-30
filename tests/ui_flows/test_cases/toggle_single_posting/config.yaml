@@ -16,10 +16,11 @@ steps:
       count: 2
 
   - action: assert_ui
-    description: "Balance should be shown correctly"
+    description: "Cleared+pending balance should be $0.00 initially (no cleared/pending transactions)"
     data:
       type: "balance"
-      value: "$965.00"
+      balance_type: "cleared_pending"
+      value: "$0.00"
 
   - action: key
     description: "Move cursor down to second transaction"

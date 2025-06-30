@@ -5,10 +5,11 @@ target_amount: "$900.00"
 
 steps:
   - action: assert_ui
-    description: "Balance should be updated from async loading (not initial $0.00)"
+    description: "Cleared+pending balance should be updated from async loading (not initial $0.00)"
     data:
       type: "balance"
-      value: "$900.00"
+      balance_type: "cleared_pending"
+      value: "$-100.00"
 
   - action: snapshot
     description: "Initial state with pending transactions"

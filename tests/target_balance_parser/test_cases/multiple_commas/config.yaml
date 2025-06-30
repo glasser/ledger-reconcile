@@ -1,0 +1,5 @@
+description: Multiple commas in odd places
+input: "$1,2,3,4.56"
+expected:
+  parsed_amount: 1234.56
+  formatted_display: "$1,234.56"

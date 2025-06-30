@@ -63,11 +63,16 @@ def main(ledger_file: Path, account: str | None, target: str | None) -> None:
         # Get target amount if not provided
         if not target:
             console.print(f"\n[bold]Step 2: Set Target Amount for {account}[/bold]")
-            current_balance = ledger_interface.get_account_balance(account)
-            console.print(f"Current balance: [cyan]{current_balance}[/cyan]")
+            cleared_pending_balance = ledger_interface.get_cleared_and_pending_balance(
+                account
+            )
+            console.print(
+                f"Cleared+pending balance: [cyan]{cleared_pending_balance}[/cyan]"
+            )
 
             target = Prompt.ask(
-                "Enter target amount for reconciliation", default=current_balance
+                "Enter target amount for reconciliation",
+                default=cleared_pending_balance,
             )
 
         # Launch reconciliation interface

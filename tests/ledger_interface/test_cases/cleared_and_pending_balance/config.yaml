@@ -1,0 +1,5 @@
+description: Test calculation of cleared and pending balance for reconciliation
+test_type: balance_calculation
+account: "Assets:Checking"
+expected:
+  cleared_and_pending_balance: "$-800.00"  # Only cleared+pending: -100 - 500 - 75 - 125 = -800 (excludes opening balance and uncleared)

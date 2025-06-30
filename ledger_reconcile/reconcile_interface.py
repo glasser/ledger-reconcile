@@ -17,6 +17,7 @@ from textual.widgets import Button, DataTable, Footer, Label
 from .file_editor import LedgerFileEditor
 from .file_watcher import LedgerFileWatcher
 from .ledger_interface import LedgerInterface, ReconciliationEntry
+from .target_balance_parser import TargetBalanceParser, calculate_delta
 
 
 class ConfirmationScreen(ModalScreen[bool]):
@@ -128,6 +129,16 @@ class ReconcileApp(App):
         width: 1fr;
     }
 
+    .info-panel-row {
+        height: 1;
+        margin-bottom: 0;
+    }
+
+    .delta-label {
+        color: $warning;
+        text-style: bold;
+    }
+
     .transactions-table {
         height: 1fr;
         border: solid $primary;
@@ -168,12 +179,20 @@ class ReconcileApp(App):
         super().__init__()
         self.ledger_file = ledger_file
         self.account = account
-        self.target_amount = target_amount
+
+        # Parse and store target amount
+        parser = TargetBalanceParser()
+        self.target_amount_parsed = parser.parse(target_amount)
+        self.target_amount = self.target_amount_parsed.formatted_display
+
         self.ledger_interface = LedgerInterface(ledger_file)
         self.file_watcher = LedgerFileWatcher(ledger_file, self._on_file_changed)
         self.file_editor = LedgerFileEditor(ledger_file, self.file_watcher)
         self.transactions: list[ReconciliationEntry] = []
-        self.current_balance = "$0.00"
+
+        # Track balance types for reconciliation
+        self.cleared_pending_balance = "$0.00"  # Only cleared + pending
+        self.delta = "$0.00"  # target - cleared_pending
 
     def compose(self) -> ComposeResult:
         """Create the UI layout."""
@@ -181,13 +200,25 @@ class ReconcileApp(App):
             Vertical(
                 HorizontalGroup(
                     Label(f"Account: {self.account}", classes="info-label"),
-                    Label(f"Target: {self.target_amount}", classes="info-label"),
                     Label(
-                        f"Balance: {self.current_balance}",
-                        id="balance-label",
+                        f"Target: {self.target_amount}",
+                        id="target-label",
                         classes="info-label",
                     ),
-                    classes="info-panel",
+                    classes="info-panel-row",
+                ),
+                HorizontalGroup(
+                    Label(
+                        f"Cleared+Pending: {self.cleared_pending_balance}",
+                        id="cleared-pending-balance-label",
+                        classes="info-label",
+                    ),
+                    Label(
+                        f"Delta: {self.delta}",
+                        id="delta-label",
+                        classes="info-label delta-label",
+                    ),
+                    classes="info-panel-row",
                 ),
                 DataTable(id="transactions-table", classes="transactions-table"),
                 classes="main-container",
@@ -218,13 +249,25 @@ class ReconcileApp(App):
                     self.account
                 )
             )
-            self.current_balance = self.ledger_interface.get_account_balance(
-                self.account
+
+            # Get balance types for reconciliation
+            self.cleared_pending_balance = (
+                self.ledger_interface.get_cleared_and_pending_balance(self.account)
+            )
+            self.delta = calculate_delta(
+                self.target_amount, self.cleared_pending_balance
             )
 
-            # Update balance label
-            balance_label = self.query_one("#balance-label", Label)
-            balance_label.update(f"Balance: {self.current_balance}")
+            # Update balance labels
+            cleared_pending_label = self.query_one(
+                "#cleared-pending-balance-label", Label
+            )
+            cleared_pending_label.update(
+                f"Cleared+Pending: {self.cleared_pending_balance}"
+            )
+
+            delta_label = self.query_one("#delta-label", Label)
+            delta_label.update(f"Delta: {self.delta}")
 
         except (OSError, ValueError, RuntimeError) as e:
             self.notify(f"Error loading transactions: {e}", severity="error")

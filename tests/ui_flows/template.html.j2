@@ -84,34 +84,46 @@
             border: 1px solid #ddd;
             border-radius: 8px;
             margin-bottom: 30px;
-            overflow: hidden;
+            overflow: visible;
         }
         
         .test-header {
-            background: #f8f9fa;
-            padding: 15px 20px;
-            border-bottom: 1px solid #ddd;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 40px;
+            border-bottom: 3px solid #5a67d8;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            margin-bottom: 0;
         }
         
         .test-header h2 {
-            margin: 0;
-            color: #2c3e50;
-            font-size: 20px;
+            margin: 0 0 10px 0;
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.2;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         
         .test-description {
-            color: #666;
-            margin-top: 5px;
-            font-size: 14px;
+            color: rgba(255,255,255,0.9);
+            margin: 0;
+            font-size: 16px;
+            line-height: 1.4;
+            font-weight: 400;
         }
         
         .test-params {
             background: #e8f4fd;
             border-left: 4px solid #3498db;
-            padding: 10px 15px;
-            margin: 15px 20px;
+            padding: 20px;
+            margin: 20px;
             font-family: monospace;
-            font-size: 13px;
+            font-size: 14px;
+            border-radius: 6px;
         }
         
         .test-params strong {
@@ -119,7 +131,7 @@
         }
         
         .test-flow {
-            padding: 20px;
+            padding: 20px 30px;
         }
         
         .step-chunk {
@@ -296,7 +308,8 @@
         }
         
         .initial-files {
-            margin: 20px 0;
+            margin: 30px 0;
+            padding: 0 30px;
         }
         
         .initial-files h3 {
@@ -340,7 +353,7 @@
     
     <div class="summary">
         {% set ui_test_count = namespace(count=0) %}
-        {% for test_case_name, test_case_data in test_cases.items() %}
+        {% for test_case_name, test_case_data in test_cases.items() | sort %}
             {% if test_case_data is mapping and "config.yaml" in test_case_data %}
                 {% set ui_test_count.count = ui_test_count.count + 1 %}
             {% endif %}
@@ -353,7 +366,7 @@
     <div class="toc">
         <h3>Test Cases</h3>
         <ul>
-        {% for test_case_name, test_case_data in test_cases.items() %}
+        {% for test_case_name, test_case_data in test_cases.items() | sort %}
         {% if test_case_data is mapping and "config.yaml" in test_case_data %}
             {% set config = test_case_data["config.yaml"].parsed %}
             <li>
@@ -367,7 +380,7 @@
         </ul>
     </div>
 
-    {% for test_case_name, test_case_data in test_cases.items() %}
+    {% for test_case_name, test_case_data in test_cases.items() | sort %}
     {% if test_case_data is mapping and "config.yaml" in test_case_data %}
     {% set config = test_case_data["config.yaml"].parsed %}
     <div class="test-case" id="{{ test_case_name }}">

@@ -1,0 +1,47 @@
+name: "Multi Balance Display Test"
+description: "Test the multi-balance display system with target, cleared+pending, and delta"
+account: "Assets:Checking"
+target_amount: "$650.00"
+steps:
+  - action: snapshot
+    description: "Initial state showing 4 balance types"
+    data:
+      name: "initial_balance_display"
+
+  - action: assert_ui
+    description: "Check cleared+pending balance (excludes uncleared)"
+    data:
+      type: "balance"
+      balance_type: "cleared_pending"
+      value: "$-400.00"  # Only cleared (-100) + pending (-300) = -400
+
+  - action: assert_ui
+    description: "Check delta (target - cleared+pending)"
+    data:
+      type: "balance"
+      balance_type: "delta"
+      value: "$1,050.00"  # 650 - (-400) = 1050
+
+  - action: key
+    description: "Toggle uncleared transaction to pending"
+    data:
+      key: "down down space"
+
+  - action: snapshot
+    description: "After toggling uncleared to pending"
+    data:
+      name: "after_toggle_to_pending"
+
+  - action: assert_ui
+    description: "Cleared+pending balance should now include the $50 transaction"
+    data:
+      type: "balance"
+      balance_type: "cleared_pending"
+      value: "$-450.00"  # -100 - 300 - 50 = -450
+
+  - action: assert_ui
+    description: "Delta should update accordingly"
+    data:
+      type: "balance"
+      balance_type: "delta"
+      value: "$1,100.00"  # 650 - (-450) = 1100

@@ -1,0 +1,5 @@
+description: Negative dollar amount
+input: "-$500.00"
+expected:
+  parsed_amount: -500.0
+  formatted_display: "-$500.00"

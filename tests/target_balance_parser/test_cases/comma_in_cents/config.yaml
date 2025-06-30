@@ -1,0 +1,5 @@
+description: Comma mistakenly placed in cents portion
+input: "$1,234.5,6"
+expected:
+  parsed_amount: 1234.56
+  formatted_display: "$1,234.56"

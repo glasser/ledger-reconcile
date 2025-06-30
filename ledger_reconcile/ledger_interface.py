@@ -97,8 +97,12 @@ class LedgerInterface:
             # For empty results or non-existent accounts, return empty list
             return []
 
-    def get_account_balance(self, account: str) -> str:
-        """Get the current balance for an account."""
+    def get_cleared_and_pending_balance(self, account: str) -> str:
+        """Get the balance for an account including only cleared and pending transactions.
+
+        This uses ledger's --limit option to filter to 'cleared or pending' status.
+        Cleared transactions have '*' status, pending have '!' status.
+        """
         try:
             result = subprocess.run(
                 [
@@ -109,6 +113,8 @@ class LedgerInterface:
                     "--no-pager",
                     "--price-db",
                     "/dev/null",
+                    "--limit",
+                    "cleared or pending",
                     "balance",
                     account,
                 ],
@@ -130,7 +136,7 @@ class LedgerInterface:
             else:
                 return "$0.00"
         except subprocess.CalledProcessError:
-            # For non-existent accounts, return $0.00
+            # For non-existent accounts or no cleared/pending transactions, return $0.00
             return "$0.00"
 
     def _parse_ledger_emacs_output(
