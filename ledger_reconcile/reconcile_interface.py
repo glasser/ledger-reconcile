@@ -232,16 +232,12 @@ class ReconcileApp(App):
         # Select full rows
         table.cursor_type = "row"
 
-        # Add columns with minimal widths - line number first, then status, date, amount, description
-        table.add_column(
-            "Line", width=4
-        )  # Line number - minimal width for line numbers
-        table.add_column("", width=1)  # Status column - no header, just the symbol
-        table.add_column("Date", width=10)  # Date column - YYYY-MM-DD
-        table.add_column("Amount", width=12)  # Amount column - minimal for currency
-        table.add_column(
-            "Description"
-        )  # Description - takes remaining space, allows horizontal scroll if needed
+        # Add columns - line number first, then status, date, amount, description
+        table.add_column("Line")
+        table.add_column("")  # Status column - no header, just the symbol
+        table.add_column("Date")
+        table.add_column("Amount")
+        table.add_column("Description")
 
         # Filter to show only unreconciled and semi-reconciled transactions (not fully reconciled *)
         # Look at the status of postings for this account
