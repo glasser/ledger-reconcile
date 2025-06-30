@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UI Flow Test Cases</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .summary {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        
+        .toc {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .toc h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        .toc ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .toc a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        
+        .test-case {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .test-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .test-header h2 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 20px;
+        }
+        
+        .test-description {
+            color: #666;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        
+        .test-params {
+            background: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 10px 15px;
+            margin: 15px 20px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        
+        .test-params strong {
+            color: #2c3e50;
+        }
+        
+        .test-flow {
+            padding: 20px;
+        }
+        
+        .step-chunk {
+            display: grid;
+            grid-template-columns: 1fr 800px;
+            gap: 20px;
+            align-items: start;
+            margin-bottom: 20px;
+        }
+        
+        .step-no-media {
+            margin-bottom: 20px;
+        }
+        
+        .step-no-media .step {
+            margin-bottom: 20px;
+        }
+        
+        .step-no-media .step:last-child {
+            margin-bottom: 0;
+        }
+        
+        .steps-group {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .step {
+            margin-bottom: 0;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            overflow: visible;
+            position: relative;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .step-media {
+            padding: 20px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .step-header {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .step-number {
+            background: #3498db;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .step-action {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .step-content {
+            padding: 15px;
+        }
+        
+        .step-description {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .step-data {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        
+        .ledger-content {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+            font-size: 13px;
+            white-space: pre;
+            background: white;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            overflow-x: auto;
+            line-height: 1.5;
+            margin: 10px 0;
+        }
+        
+        .step-media .file-diff {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .step-media .ledger-content {
+            font-size: 13px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .file-section h4 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        
+        .action-key {
+            background: #3498db;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .action-snapshot {
+            background: #9b59b6;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        
+        .action-assert {
+            background: #27ae60;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        
+        .action-wait {
+            background: #f39c12;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        
+        .yaml-content {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 13px;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        
+        .initial-files {
+            margin: 20px 0;
+        }
+        
+        .initial-files h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .snapshot-preview {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px;
+            background: white;
+            text-align: center;
+        }
+        
+        .snapshot-preview svg {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #eee;
+            border-radius: 2px;
+        }
+        
+        .snapshot-unavailable {
+            color: #666;
+            font-style: italic;
+            padding: 20px;
+            background: #f8f9fa;
+            border: 1px dashed #ddd;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>UI Flow Test Cases</h1>
+    
+    <div class="summary">
+        <strong>Total test cases:</strong> 2
+        <br>
+        <strong>Framework:</strong> Textual + pytest-textual-snapshot
+    </div>
+    
+    <div class="toc">
+        <h3>Test Cases</h3>
+        <ul>
+        
+        
+            <li>
+                <a href="#toggle_single_posting">Toggle Single Posting</a>
+                
+                - Test toggling a single posting from uncleared to pending using spacebar
+                
+            </li>
+        
+        
+        
+            <li>
+                <a href="#reconcile_all_pending">Reconcile All Pending</a>
+                
+                - Test reconciling all pending transactions using 'r' key
+                
+            </li>
+        
+        
+        </ul>
+    </div>
+
+    
+    
+    <div class="test-case" id="toggle_single_posting">
+        <div class="test-header">
+            <h2>Toggle Single Posting</h2>
+            
+            <div class="test-description">
+                Test toggling a single posting from uncleared to pending using spacebar
+            </div>
+            
+        </div>
+        
+        <div class="test-params">
+            <strong>Account:</strong> Assets:Checking
+            <br>
+            <strong>Target Amount:</strong> $1000.00
+            <br>
+            <strong>Steps:</strong> 14
+        </div>
+        
+        <div class="initial-files">
+            <h3>Initial State</h3>
+            <h4>Ledger File (initial.ledger)</h4>
+            <div class="ledger-content">2024-01-01 Opening Balance
+    Assets:Checking              $1000.00
+    Equity:Opening Balances
+
+2024-01-05 Grocery Store
+    Expenses:Food                 $35.00
+    Assets:Checking</div>
+        </div>
+        
+        <div class="test-flow">
+            <h3>Test Flow</h3>
+            
+            
+            
+            
+                
+                
+            
+                
+                
+                    
+                
+            
+                
+                
+            
+                
+                
+            
+                
+                
+            
+                
+                
+            
+                
+                
+            
+                
+                
+                    
+                
+            
+                
+                
+                    
+                
+            
+                
+                
+            
+                
+                
+            
+                
+                
+            
+                
+                
+                    
+                
+            
+                
+                
+                    
+                
+            
+            
+            
+            
+            
+            
+            
+                
+                
+                    
+                
+                
+                
+                
+                
+                
+                    
+                    
+                    
+                        
+                        
+                            
+                            
+                        
+                    
+                        
+                        
+                    
+                        
+                        
+                    
+                        
+                        
+                    
+                        
+                        
+                    
+                        
+                        
+                    
+                    
+                    <div class="step-chunk">
+                        <div class="steps-group">
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">2</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-snapshot">SNAPSHOT</span>
+                                            
+                                            Snapshot
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">Initial state with uncleared posting</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">Snapshot name: <strong>initial_state</strong></div>
+                                        
+                                    </div>
+                                </div>
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">3</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-assert">ASSERT</span>
+                                            
+                                            Assert_ui
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">Should have 2 transactions shown</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">
+                                                Type: <strong>table_rows</strong><br>
+                                                
+                                                Expected row count: <strong>2</strong>
+                                                
+                                            </div>
+                                        
+                                    </div>
+                                </div>
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">4</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-assert">ASSERT</span>
+                                            
+                                            Assert_ui
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">Balance should be shown correctly</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">
+                                                Type: <strong>balance</strong><br>
+                                                
+                                                Expected balance: <strong>$965.00</strong>
+                                                
+                                            </div>
+                                        
+                                    </div>
+                                </div>
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">5</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-key">KEY</span>
+                                            
+                                            Key
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">Move cursor down to second transaction</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">Key: <strong>down</strong></div>
+                                        
+                                    </div>
+                                </div>
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">6</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-key">KEY</span>
+                                            
+                                            Key
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">Press space to toggle second posting to pending</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">Key: <strong>space</strong></div>
+                                        
+                                    </div>
+                                </div>
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">7</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-wait">WAIT</span>
+                                            
+                                            Wait
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">Wait for update to process</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">Duration: <strong>0.2s</strong></div>
+                                        
+                                    </div>
+                                </div>
+                            
+                        </div>
+                        
+                        <div class="step-media">
+                            <h4>Step 2: Initial state with uncleared posting</h4>
+                            
+                                
+                                <div class="snapshot-unavailable">
+                                    📸 Snapshot will be generated when tests are run
+                                </div>
+                                
+                            
+                        </div>
+                    </div>
+                
+            
+                
+                
+                    
+                
+                
+                
+                
+                
+                
+                    
+                    
+                    
+                        
+                        
+                            
+                            
+                        
+                    
+                    
+                    <div class="step-chunk">
+                        <div class="steps-group">
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">8</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-snapshot">SNAPSHOT</span>
+                                            
+                                            Snapshot
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">After toggling to pending</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">Snapshot name: <strong>after_toggle</strong></div>
+                                        
+                                    </div>
+                                </div>
+                            
+                        </div>
+                        
+                        <div class="step-media">
+                            <h4>Step 8: After toggling to pending</h4>
+                            
+                                
+                                <div class="snapshot-unavailable">
+                                    📸 Snapshot will be generated when tests are run
+                                </div>
+                                
+                            
+                        </div>
+                    </div>
+                
+            
+                
+                
+                    
+                
+                
+                
+                
+                
+                
+                    
+                    
+                    
+                        
+                        
+                            
+                            
+                        
+                    
+                        
+                        
+                    
+                        
+                        
+                    
+                        
+                        
+                    
+                    
+                    <div class="step-chunk">
+                        <div class="steps-group">
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">9</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-assert">ASSERT</span>
+                                            
+                                            Assert_file
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">Ledger file should have pending marker</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">Expected file: <strong>expected_pending.ledger</strong></div>
+                                        
+                                    </div>
+                                </div>
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">10</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-wait">WAIT</span>
+                                            
+                                            Wait
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">Wait for refresh to complete before second toggle</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">Duration: <strong>0.5s</strong></div>
+                                        
+                                    </div>
+                                </div>
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">11</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-key">KEY</span>
+                                            
+                                            Key
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">Press space again to toggle back to uncleared</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">Key: <strong>space</strong></div>
+                                        
+                                    </div>
+                                </div>
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">12</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-wait">WAIT</span>
+                                            
+                                            Wait
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">Wait for update to process</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">Duration: <strong>0.2s</strong></div>
+                                        
+                                    </div>
+                                </div>
+                            
+                        </div>
+                        
+                        <div class="step-media">
+                            <h4>Step 9: Ledger file should have pending marker</h4>
+                            
+                                <div class="file-content">
+                                    <h4>Expected File Content</h4>
+                                    <div class="ledger-content">2024-01-01 Opening Balance
+    Assets:Checking              $1000.00
+    Equity:Opening Balances
+
+2024-01-05 Grocery Store
+    Expenses:Food                 $35.00
+    ! Assets:Checking</div>
+                                </div>
+                            
+                        </div>
+                    </div>
+                
+            
+                
+                
+                    
+                
+                
+                
+                
+                
+                
+                    
+                    
+                    
+                        
+                        
+                            
+                            
+                        
+                    
+                    
+                    <div class="step-chunk">
+                        <div class="steps-group">
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">13</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-snapshot">SNAPSHOT</span>
+                                            
+                                            Snapshot
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">After toggling back to uncleared</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">Snapshot name: <strong>back_to_uncleared</strong></div>
+                                        
+                                    </div>
+                                </div>
+                            
+                        </div>
+                        
+                        <div class="step-media">
+                            <h4>Step 13: After toggling back to uncleared</h4>
+                            
+                                
+                                <div class="snapshot-unavailable">
+                                    📸 Snapshot will be generated when tests are run
+                                </div>
+                                
+                            
+                        </div>
+                    </div>
+                
+            
+                
+                
+                    
+                
+                
+                
+                
+                
+                
+                    
+                    
+                    
+                        
+                        
+                            
+                            
+                        
+                    
+                    
+                    <div class="step-chunk">
+                        <div class="steps-group">
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">14</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-assert">ASSERT</span>
+                                            
+                                            Assert_file
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">Ledger file should be back to original</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">Expected file: <strong>expected_uncleared.ledger</strong></div>
+                                        
+                                    </div>
+                                </div>
+                            
+                        </div>
+                        
+                        <div class="step-media">
+                            <h4>Step 14: Ledger file should be back to original</h4>
+                            
+                                <div class="file-content">
+                                    <h4>Expected File Content</h4>
+                                    <div class="ledger-content">2024-01-01 Opening Balance
+    Assets:Checking              $1000.00
+    Equity:Opening Balances
+
+2024-01-05 Grocery Store
+    Expenses:Food                 $35.00
+    Assets:Checking</div>
+                                </div>
+                            
+                        </div>
+                    </div>
+                
+            
+        </div>
+    </div>
+    
+    
+    
+    <div class="test-case" id="reconcile_all_pending">
+        <div class="test-header">
+            <h2>Reconcile All Pending</h2>
+            
+            <div class="test-description">
+                Test reconciling all pending transactions using 'r' key
+            </div>
+            
+        </div>
+        
+        <div class="test-params">
+            <strong>Account:</strong> Assets:Checking
+            <br>
+            <strong>Target Amount:</strong> $900.00
+            <br>
+            <strong>Steps:</strong> 8
+        </div>
+        
+        <div class="initial-files">
+            <h3>Initial State</h3>
+            <h4>Ledger File (initial.ledger)</h4>
+            <div class="ledger-content">2024-01-01 Opening Balance
+    Assets:Checking              $1000.00
+    Equity:Opening Balances
+
+2024-01-05 ! Grocery Store
+    Expenses:Food                 $50.00
+    Assets:Checking
+
+2024-01-06 ! Gas Station
+    Expenses:Gas                  $50.00
+    Assets:Checking</div>
+        </div>
+        
+        <div class="test-flow">
+            <h3>Test Flow</h3>
+            
+            
+            
+            
+                
+                
+            
+                
+                
+                    
+                
+            
+                
+                
+            
+                
+                
+            
+                
+                
+            
+                
+                
+                    
+                
+            
+                
+                
+            
+                
+                
+                    
+                
+            
+            
+            
+            
+            
+            
+            
+                
+                
+                    
+                
+                
+                
+                
+                
+                
+                    
+                    
+                    
+                        
+                        
+                            
+                            
+                        
+                    
+                        
+                        
+                    
+                        
+                        
+                    
+                        
+                        
+                    
+                    
+                    <div class="step-chunk">
+                        <div class="steps-group">
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">2</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-snapshot">SNAPSHOT</span>
+                                            
+                                            Snapshot
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">Initial state with pending transactions</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">Snapshot name: <strong>initial_with_pending</strong></div>
+                                        
+                                    </div>
+                                </div>
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">3</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-assert">ASSERT</span>
+                                            
+                                            Assert_ui
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">Should have 3 transactions shown (including opening balance)</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">
+                                                Type: <strong>table_rows</strong><br>
+                                                
+                                                Expected row count: <strong>3</strong>
+                                                
+                                            </div>
+                                        
+                                    </div>
+                                </div>
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">4</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-key">KEY</span>
+                                            
+                                            Key
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">Press 'r' to reconcile all pending transactions</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">Key: <strong>r</strong></div>
+                                        
+                                    </div>
+                                </div>
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">5</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-wait">WAIT</span>
+                                            
+                                            Wait
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">Wait for reconciliation to process</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">Duration: <strong>0.3s</strong></div>
+                                        
+                                    </div>
+                                </div>
+                            
+                        </div>
+                        
+                        <div class="step-media">
+                            <h4>Step 2: Initial state with pending transactions</h4>
+                            
+                                
+                                <div class="snapshot-unavailable">
+                                    📸 Snapshot will be generated when tests are run
+                                </div>
+                                
+                            
+                        </div>
+                    </div>
+                
+            
+                
+                
+                    
+                
+                
+                
+                
+                
+                
+                    
+                    
+                    
+                        
+                        
+                            
+                            
+                        
+                    
+                        
+                        
+                    
+                    
+                    <div class="step-chunk">
+                        <div class="steps-group">
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">6</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-snapshot">SNAPSHOT</span>
+                                            
+                                            Snapshot
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">After reconciling all pending</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">Snapshot name: <strong>after_reconcile_all</strong></div>
+                                        
+                                    </div>
+                                </div>
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">7</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-assert">ASSERT</span>
+                                            
+                                            Assert_ui
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">Should have 1 transaction shown (opening balance remains)</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">
+                                                Type: <strong>table_rows</strong><br>
+                                                
+                                                Expected row count: <strong>1</strong>
+                                                
+                                            </div>
+                                        
+                                    </div>
+                                </div>
+                            
+                        </div>
+                        
+                        <div class="step-media">
+                            <h4>Step 6: After reconciling all pending</h4>
+                            
+                                
+                                <div class="snapshot-unavailable">
+                                    📸 Snapshot will be generated when tests are run
+                                </div>
+                                
+                            
+                        </div>
+                    </div>
+                
+            
+                
+                
+                    
+                
+                
+                
+                
+                
+                
+                    
+                    
+                    
+                        
+                        
+                            
+                            
+                        
+                    
+                    
+                    <div class="step-chunk">
+                        <div class="steps-group">
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">8</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-assert">ASSERT</span>
+                                            
+                                            Assert_file
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">Ledger file should have all pending transactions cleared</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">Expected file: <strong>expected_all_cleared.ledger</strong></div>
+                                        
+                                    </div>
+                                </div>
+                            
+                        </div>
+                        
+                        <div class="step-media">
+                            <h4>Step 8: Ledger file should have all pending transactions cleared</h4>
+                            
+                                <div class="file-content">
+                                    <h4>Expected File Content</h4>
+                                    <div class="ledger-content">2024-01-01 Opening Balance
+    Assets:Checking              $1000.00
+    Equity:Opening Balances
+
+2024-01-05 Grocery Store
+    ! Expenses:Food                 $50.00
+    * Assets:Checking
+
+2024-01-06 Gas Station
+    ! Expenses:Gas                  $50.00
+    * Assets:Checking</div>
+                                </div>
+                            
+                        </div>
+                    </div>
+                
+            
+        </div>
+    </div>
+    
+    
+
+</body>
+</html>

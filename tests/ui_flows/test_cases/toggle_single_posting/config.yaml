@@ -1,0 +1,77 @@
+name: "Toggle Single Posting"
+description: "Test toggling a single posting from uncleared to pending using spacebar"
+account: "Assets:Checking"
+target_amount: "$1000.00"
+
+steps:
+  - action: wait
+    description: "Wait for app to initialize"
+    data:
+      duration: 0.5
+
+  - action: snapshot
+    description: "Initial state with uncleared posting"
+    data:
+      name: "initial_state"
+
+  - action: assert_ui
+    description: "Should have 2 transactions shown"
+    data:
+      type: "table_rows"
+      count: 2
+
+  - action: assert_ui
+    description: "Balance should be shown correctly"
+    data:
+      type: "balance"
+      value: "$965.00"
+
+  - action: key
+    description: "Move cursor down to second transaction"
+    data:
+      key: "down"
+
+  - action: key
+    description: "Press space to toggle second posting to pending"
+    data:
+      key: "space"
+
+  - action: wait
+    description: "Wait for update to process"
+    data:
+      duration: 0.2
+
+  - action: snapshot
+    description: "After toggling to pending"
+    data:
+      name: "after_toggle"
+
+  - action: assert_file
+    description: "Ledger file should have pending marker"
+    data:
+      file: "expected_pending.ledger"
+
+  - action: wait
+    description: "Wait for refresh to complete before second toggle"
+    data:
+      duration: 0.5
+
+  - action: key
+    description: "Press space again to toggle back to uncleared"
+    data:
+      key: "space"
+
+  - action: wait
+    description: "Wait for update to process"
+    data:
+      duration: 0.2
+
+  - action: snapshot
+    description: "After toggling back to uncleared"
+    data:
+      name: "back_to_uncleared"
+
+  - action: assert_file
+    description: "Ledger file should be back to original"
+    data:
+      file: "expected_uncleared.ledger"

@@ -184,10 +184,11 @@ class ReconcileApp(App):
             return
 
         # Get the current row key (line number)
-        if table.cursor_row is None:
+        if table.cursor_coordinate is None:
             return
-        row_key = table.get_row_key(table.cursor_row)  # type: ignore[attr-defined]
-        if row_key is None:
+        cell_key = table.coordinate_to_cell_key(table.cursor_coordinate)
+        row_key = cell_key.row_key
+        if row_key is None or row_key.value is None:
             return
 
         line_number = int(row_key.value)
@@ -219,12 +220,18 @@ class ReconcileApp(App):
         new_status = "!" if current_posting_status == "" else ""
 
         # Update the file using new API - just update this specific posting
+        # Save current cursor position using row key for reliability
+        current_row = table.cursor_row
+        current_row_key = row_key
+
         if self.file_editor.update_postings_status(
             [posting_line_number], current_posting_status, new_status
         ):
-            # Reload data from ledger to reflect the actual state
-            self.call_after_refresh(self.load_transactions)
-            self.call_after_refresh(self.refresh_table)
+            # Use call_later for better timing control
+            self.call_later(
+                self._refresh_and_restore_cursor, current_row, current_row_key
+            )
+
             self.notify(f"Updated posting status to '{new_status}'")
         else:
             self.notify(
@@ -282,6 +289,34 @@ class ReconcileApp(App):
         table = self.query_one("#transactions-table", DataTable)
         table.clear()
         await self.setup_table()
+
+    async def _refresh_and_restore_cursor(
+        self, target_row: int, target_row_key
+    ) -> None:
+        """Refresh data and restore cursor position."""
+        await self.load_transactions()
+        await self.refresh_table()
+
+        table = self.query_one("#transactions-table", DataTable)
+
+        # Try to find the same row by key first (more reliable)
+        if target_row_key and target_row_key.value:
+            from textual.coordinate import Coordinate
+
+            for row_idx in range(table.row_count):
+                cell_key = table.coordinate_to_cell_key(Coordinate(row_idx, 0))
+                if cell_key.row_key and cell_key.row_key.value == target_row_key.value:
+                    table.move_cursor(row=row_idx, scroll=True, animate=False)
+                    # Ensure table has focus
+                    table.focus()
+                    return
+
+        # Fallback to row index, but clamp to valid range
+        max_row = table.row_count - 1
+        safe_row = min(target_row, max_row) if max_row >= 0 else 0
+        table.move_cursor(row=safe_row, scroll=True, animate=False)
+        # Ensure table has focus
+        table.focus()
 
     async def _refresh_from_file_change(self) -> None:
         """Refresh data after external file change."""

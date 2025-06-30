@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UI Flow Test Cases</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .summary {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        
+        .toc {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .toc h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        .toc ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .toc a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        
+        .test-case {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .test-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .test-header h2 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 20px;
+        }
+        
+        .test-description {
+            color: #666;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        
+        .test-params {
+            background: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 10px 15px;
+            margin: 15px 20px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        
+        .test-params strong {
+            color: #2c3e50;
+        }
+        
+        .test-flow {
+            padding: 20px;
+        }
+        
+        .step-chunk {
+            display: grid;
+            grid-template-columns: 1fr 800px;
+            gap: 20px;
+            align-items: start;
+            margin-bottom: 20px;
+        }
+        
+        .step-no-media {
+            margin-bottom: 20px;
+        }
+        
+        .step-no-media .step {
+            margin-bottom: 20px;
+        }
+        
+        .step-no-media .step:last-child {
+            margin-bottom: 0;
+        }
+        
+        .steps-group {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .step {
+            margin-bottom: 0;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            overflow: visible;
+            position: relative;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .step-media {
+            padding: 20px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .step-header {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .step-number {
+            background: #3498db;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .step-action {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .step-content {
+            padding: 15px;
+        }
+        
+        .step-description {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .step-data {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        
+        .ledger-content {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+            font-size: 13px;
+            white-space: pre;
+            background: white;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            overflow-x: auto;
+            line-height: 1.5;
+            margin: 10px 0;
+        }
+        
+        .step-media .file-diff {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .step-media .ledger-content {
+            font-size: 13px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .file-section h4 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        
+        .action-key {
+            background: #3498db;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .action-snapshot {
+            background: #9b59b6;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        
+        .action-assert {
+            background: #27ae60;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        
+        .action-wait {
+            background: #f39c12;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        
+        .yaml-content {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 13px;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        
+        .initial-files {
+            margin: 20px 0;
+        }
+        
+        .initial-files h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .snapshot-preview {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px;
+            background: white;
+            text-align: center;
+        }
+        
+        .snapshot-preview svg {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #eee;
+            border-radius: 2px;
+        }
+        
+        .snapshot-unavailable {
+            color: #666;
+            font-style: italic;
+            padding: 20px;
+            background: #f8f9fa;
+            border: 1px dashed #ddd;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>UI Flow Test Cases</h1>
+    
+    <div class="summary">
+        <strong>Total test cases:</strong> {{ test_cases.values() | selectattr('ui_config') | list | length }}
+        <br>
+        <strong>Framework:</strong> Textual + pytest-textual-snapshot
+    </div>
+    
+    <div class="toc">
+        <h3>Test Cases</h3>
+        <ul>
+        {% for test_case_name, test_case_data in test_cases.items() %}
+        {% if test_case_data.ui_config %}
+            <li>
+                <a href="#{{ test_case_name }}">{{ test_case_data.ui_config.name }}</a>
+                {% if test_case_data.ui_config.description %}
+                - {{ test_case_data.ui_config.description }}
+                {% endif %}
+            </li>
+        {% endif %}
+        {% endfor %}
+        </ul>
+    </div>
+
+    {% for test_case_name, test_case_data in test_cases.items() %}
+    {% if test_case_data.ui_config %}
+    <div class="test-case" id="{{ test_case_name }}">
+        <div class="test-header">
+            <h2>{{ test_case_data.ui_config.name }}</h2>
+            {% if test_case_data.ui_config.description %}
+            <div class="test-description">
+                {{ test_case_data.ui_config.description }}
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="test-params">
+            <strong>Account:</strong> {{ test_case_data.ui_config.account }}
+            <br>
+            <strong>Target Amount:</strong> {{ test_case_data.ui_config.target_amount }}
+            <br>
+            <strong>Steps:</strong> {{ test_case_data.steps|length }}
+        </div>
+        
+        <div class="initial-files">
+            <h3>Initial State</h3>
+            <h4>Ledger File (initial.ledger)</h4>
+            <div class="ledger-content">{{ test_case_data.initial_ledger }}</div>
+        </div>
+        
+        <div class="test-flow">
+            <h3>Test Flow</h3>
+            
+            {# Create chunks where each chunk starts when we encounter a media step #}
+            {% set chunk_starts = [] %}
+            {% for step in test_case_data.steps %}
+                {% set has_media = (step.action == "snapshot") or (step.action == "assert_file" and step.expected_content) %}
+                {% if has_media %}
+                    {% set _ = chunk_starts.append(loop.index0) %}
+                {% endif %}
+            {% endfor %}
+            
+            {# If no media steps, everything goes in one chunk #}
+            {% if not chunk_starts %}
+                {% set chunk_starts = [0] %}
+            {% endif %}
+            
+            {# Render chunks #}
+            {% for chunk_start_idx in chunk_starts %}
+                {% set chunk_start = chunk_starts[loop.index0] %}
+                {% if loop.last %}
+                    {% set chunk_end = test_case_data.steps|length %}
+                {% else %}
+                    {% set chunk_end = chunk_starts[loop.index0 + 1] %}
+                {% endif %}
+                
+                {% set chunk_steps = test_case_data.steps[chunk_start:chunk_end] %}
+                {% set chunk_has_media = chunk_steps|selectattr('action', 'equalto', 'snapshot')|list|length > 0 or chunk_steps|selectattr('action', 'equalto', 'assert_file')|selectattr('expected_content')|list|length > 0 %}
+                
+                {% if chunk_has_media %}
+                    {# Find the first media step in chunk #}
+                    {% set ns = namespace(media_step=none, media_step_index=0) %}
+                    {% for step in chunk_steps %}
+                        {% set has_media = (step.action == "snapshot") or (step.action == "assert_file" and step.get("expected_content")) %}
+                        {% if has_media and not ns.media_step %}
+                            {% set ns.media_step = step %}
+                            {% set ns.media_step_index = chunk_start + loop.index %}
+                        {% endif %}
+                    {% endfor %}
+                    
+                    <div class="step-chunk">
+                        <div class="steps-group">
+                            {% for step in chunk_steps %}
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">{{ chunk_start + loop.index }}</div>
+                                        <div class="step-action">
+                                            {% if step.action == "key" %}
+                                            <span class="action-key">KEY</span>
+                                            {% elif step.action == "snapshot" %}
+                                            <span class="action-snapshot">SNAPSHOT</span>
+                                            {% elif step.action == "assert_file" or step.action == "assert_ui" %}
+                                            <span class="action-assert">ASSERT</span>
+                                            {% elif step.action == "wait" %}
+                                            <span class="action-wait">WAIT</span>
+                                            {% endif %}
+                                            {{ step.action|title }}
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        {% if step.description %}
+                                        <div class="step-description">{{ step.description }}</div>
+                                        {% endif %}
+                                        
+                                        {% if step.action == "key" %}
+                                            <div class="step-data">Key: <strong>{{ step.data.key }}</strong></div>
+                                        {% elif step.action == "snapshot" %}
+                                            <div class="step-data">Snapshot name: <strong>{{ step.data.name }}</strong></div>
+                                        {% elif step.action == "wait" %}
+                                            <div class="step-data">Duration: <strong>{{ step.data.duration }}s</strong></div>
+                                        {% elif step.action == "assert_file" %}
+                                            <div class="step-data">Expected file: <strong>{{ step.data.file }}</strong></div>
+                                        {% elif step.action == "assert_ui" %}
+                                            <div class="step-data">
+                                                Type: <strong>{{ step.data.type }}</strong><br>
+                                                {% if step.data.type == "table_rows" %}
+                                                Expected row count: <strong>{{ step.data.count }}</strong>
+                                                {% elif step.data.type == "balance" %}
+                                                Expected balance: <strong>{{ step.data.value }}</strong>
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="step-media">
+                            <h4>Step {{ ns.media_step_index }}: {{ ns.media_step.description }}</h4>
+                            {% if ns.media_step.action == "snapshot" %}
+                                {% if ns.media_step.get("svg_content") %}
+                                <div class="snapshot-preview">
+                                    {{ ns.media_step.svg_content|safe }}
+                                </div>
+                                {% else %}
+                                <div class="snapshot-unavailable">
+                                    📸 Snapshot will be generated when tests are run
+                                </div>
+                                {% endif %}
+                            {% elif ns.media_step.action == "assert_file" and ns.media_step.get("expected_content") %}
+                                <div class="file-content">
+                                    <h4>Expected File Content</h4>
+                                    <div class="ledger-content">{{ ns.media_step.get("expected_content", "") }}</div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% else %}
+                    {# Chunk without media - just show steps vertically #}
+                    <div class="step-no-media">
+                        {% for step in chunk_steps %}
+                            <div class="step">
+                                <div class="step-header">
+                                    <div class="step-number">{{ chunk_start + loop.index }}</div>
+                                    <div class="step-action">
+                                        {% if step.action == "key" %}
+                                        <span class="action-key">KEY</span>
+                                        {% elif step.action == "snapshot" %}
+                                        <span class="action-snapshot">SNAPSHOT</span>
+                                        {% elif step.action == "assert_file" or step.action == "assert_ui" %}
+                                        <span class="action-assert">ASSERT</span>
+                                        {% elif step.action == "wait" %}
+                                        <span class="action-wait">WAIT</span>
+                                        {% endif %}
+                                        {{ step.action|title }}
+                                    </div>
+                                </div>
+                                <div class="step-content">
+                                    {% if step.description %}
+                                    <div class="step-description">{{ step.description }}</div>
+                                    {% endif %}
+                                    
+                                    {% if step.action == "key" %}
+                                        <div class="step-data">Key: <strong>{{ step.data.key }}</strong></div>
+                                    {% elif step.action == "snapshot" %}
+                                        <div class="step-data">Snapshot name: <strong>{{ step.data.name }}</strong></div>
+                                    {% elif step.action == "wait" %}
+                                        <div class="step-data">Duration: <strong>{{ step.data.duration }}s</strong></div>
+                                    {% elif step.action == "assert_file" %}
+                                        <div class="step-data">Expected file: <strong>{{ step.data.file }}</strong></div>
+                                    {% elif step.action == "assert_ui" %}
+                                        <div class="step-data">
+                                            Type: <strong>{{ step.data.type }}</strong><br>
+                                            {% if step.data.type == "table_rows" %}
+                                            Expected row count: <strong>{{ step.data.count }}</strong>
+                                            {% elif step.data.type == "balance" %}
+                                            Expected balance: <strong>{{ step.data.value }}</strong>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+
+</body>
+</html>

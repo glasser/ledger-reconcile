@@ -11,14 +11,18 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from tests.fixture_utils import load_directory_tree
 
 
-def generate_preview(fixtures_dir: Path, output_file: Path, tree: dict):
-    """Generate HTML preview of all test fixtures."""
-    test_cases = tree
+def generate_preview(test_dir: Path):
+    """Generate HTML preview using generic template and data loader."""
+    test_cases_dir = test_dir / "test_cases"
+    tree = load_directory_tree(test_cases_dir, load_snapshots=True)
 
-    # Template file should be a sibling of test_cases directory
-    template_file = fixtures_dir.parent / "template.html.j2"
+    # Look for template file
+    template_file = test_dir / "template.html.j2"
     if not template_file.exists():
-        raise FileNotFoundError(f"Template file not found at {template_file}")
+        # Use a default generic template
+        template_file = Path(__file__).parent / "generic_template.html.j2"
+        if not template_file.exists():
+            raise FileNotFoundError(f"No template found at {template_file}")
 
     # Load template
     template_content = template_file.read_text(encoding="utf-8")
@@ -26,15 +30,16 @@ def generate_preview(fixtures_dir: Path, output_file: Path, tree: dict):
 
     # Prepare template data
     template_data = {
-        "fixtures_dir": fixtures_dir,
-        "test_cases": test_cases,
-        "total_cases": len(test_cases),
+        "test_suite_name": test_dir.name.replace("_", " ").title(),
+        "test_cases": tree,
+        "total_cases": len(tree),
     }
 
     # Render template
     rendered = template.render(**template_data)
 
     # Write output
+    output_file = test_dir / "test_cases.html"
     output_file.write_text(rendered, encoding="utf-8")
     print(f"Generated preview: {output_file}")
 
@@ -62,15 +67,10 @@ def main():
     test_suites = []
     for item in sorted(tests_dir.iterdir()):
         if item.is_dir() and (item / "test_cases").exists():
-            # Load directory tree once
-            test_cases_dir = item / "test_cases"
-            tree = load_directory_tree(test_cases_dir)
-
             test_suites.append((item.name, item))
 
-            # Generate preview for this test suite using the already-loaded tree
-            output_file = item / "test_cases.html"
-            generate_preview(test_cases_dir, output_file, tree)
+            # Generate preview using generic system
+            generate_preview(item)
 
     # Generate index
     if test_suites:

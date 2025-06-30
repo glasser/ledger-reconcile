@@ -1,0 +1,47 @@
+name: "Reconcile All Pending"
+description: "Test reconciling all pending transactions using 'r' key"
+account: "Assets:Checking"
+target_amount: "$900.00"
+
+steps:
+  - action: wait
+    description: "Wait for app to initialize"
+    data:
+      duration: 0.5
+
+  - action: snapshot
+    description: "Initial state with pending transactions"
+    data:
+      name: "initial_with_pending"
+
+  - action: assert_ui
+    description: "Should have 3 transactions shown (including opening balance)"
+    data:
+      type: "table_rows"
+      count: 3
+
+  - action: key
+    description: "Press 'r' to reconcile all pending transactions"
+    data:
+      key: "r"
+
+  - action: wait
+    description: "Wait for reconciliation to process"
+    data:
+      duration: 0.3
+
+  - action: snapshot
+    description: "After reconciling all pending"
+    data:
+      name: "after_reconcile_all"
+
+  - action: assert_ui
+    description: "Should have 1 transaction shown (opening balance remains)"
+    data:
+      type: "table_rows"
+      count: 1
+
+  - action: assert_file
+    description: "Ledger file should have all pending transactions cleared"
+    data:
+      file: "expected_all_cleared.ledger"
