@@ -8,12 +8,14 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-import yaml
 from jinja2 import Template
-from syrupy.extensions.single_file import SingleFileSnapshotExtension
+from mashumaro import DataClassDictMixin
+from syrupy.extensions.image import SVGImageSnapshotExtension
 from textual.pilot import Pilot
+from textual.widgets import DataTable, Label
 
 from ledger_reconcile.reconcile_interface import ReconcileApp
+from tests.fixture_utils import load_directory_tree
 
 
 @dataclass
@@ -30,58 +32,42 @@ class UISnapshotDiff:
     docstring: str
 
 
-class SVGSnapshotExtension(SingleFileSnapshotExtension):
-    """Custom extension for SVG snapshots."""
+class CustomLocationSVGExtension(SVGImageSnapshotExtension):
+    """SVG extension with custom location for test case directories."""
 
-    _file_extension = "svg"
+    @classmethod
+    def get_location(cls, *, test_location, index) -> str:
+        """Returns full filepath where snapshot data is stored."""
+        # Extract test case name from parametrized test
+        import re
 
-    def serialize(self, data, **_kwargs):
-        """Serialize SVG content as text."""
-        if isinstance(data, str):
-            return data.encode("utf-8")
-        return str(data).encode("utf-8")
+        nodename = test_location.nodename
+        if nodename:
+            match = re.search(r"\[(.*?)\]", nodename)
+            if match and isinstance(index, str):
+                test_case_name = match.group(1)
+                test_dir = Path(test_location.filepath).parent
+                snapshot_dir = (
+                    test_dir / "test_cases" / test_case_name / "__snapshots__"
+                )
+                return str(snapshot_dir / f"{index}.{cls._file_extension}")
+        # Fallback to default behavior
+        return super().get_location(test_location=test_location, index=index)
 
 
-# Single global stash key instance
+# Global stash key instances
 _UI_SNAPSHOT_FAILURES_KEY = pytest.StashKey[list[UISnapshotDiff]]()
-
-
-def collect_snapshot_failure(
-    request,
-    test_name: str,
-    step_name: str,
-    step_description: str,
-    actual_svg: str,
-    expected_svg: str,
-    test_file_path: Path,
-    test_function_name: str,
-    docstring: str,
-):
-    """Collect a snapshot failure for later reporting."""
-    failure = UISnapshotDiff(
-        test_name=test_name,
-        step_name=step_name,
-        step_description=step_description,
-        actual_svg=actual_svg,
-        expected_svg=expected_svg,
-        test_file_path=test_file_path,
-        test_function_name=test_function_name,
-        docstring=docstring,
-    )
-
-    # Store in pytest's session stash
-    failures = request.session.stash.setdefault(_UI_SNAPSHOT_FAILURES_KEY, [])
-    failures.append(failure)
+_UI_SNAPSHOT_REPORT_PATH_KEY = pytest.StashKey[Path]()
 
 
 @pytest.fixture
 def snapshot(snapshot):
     """Configure snapshot to use SVG extension."""
-    return snapshot.with_defaults(extension_class=SVGSnapshotExtension)
+    return snapshot.with_defaults(extension_class=CustomLocationSVGExtension)
 
 
 @dataclass
-class UITestStep:
+class UITestStep(DataClassDictMixin):
     """Represents a single step in a UI test flow."""
 
     action: str  # 'key', 'snapshot', 'assert_file', 'wait'
@@ -90,293 +76,203 @@ class UITestStep:
 
 
 @dataclass
-class UITestCase:
+class UITestCase(DataClassDictMixin):
     """Represents a complete UI test case."""
 
     name: str
     description: str
-    initial_ledger: str
     account: str
     target_amount: str
     steps: list[UITestStep]
 
 
-def load_ui_test_case(test_dir: Path) -> UITestCase:
-    """Load a UI test case from a directory containing config.yaml and other files."""
-    config_path = test_dir / "config.yaml"
-    if not config_path.exists():
-        raise FileNotFoundError(f"No config.yaml found in {test_dir}")
-
-    with config_path.open() as f:
-        config = yaml.safe_load(f)
-
-    # Load initial ledger file
-    initial_ledger_path = test_dir / "initial.ledger"
-    if not initial_ledger_path.exists():
-        raise FileNotFoundError(f"No initial.ledger found in {test_dir}")
-
-    with initial_ledger_path.open() as f:
-        initial_ledger = f.read()
-
-    # Parse steps
-    steps = []
-    for step_data in config.get("steps", []):
-        step = UITestStep(
-            action=step_data["action"],
-            data=step_data.get("data", {}),
-            description=step_data.get("description", ""),
-        )
-        steps.append(step)
-
-    return UITestCase(
-        name=config["name"],
-        description=config.get("description", ""),
-        initial_ledger=initial_ledger,
-        account=config["account"],
-        target_amount=config["target_amount"],
-        steps=steps,
-    )
-
-
 class UITestRunner:
     """Runs UI test cases with event simulation and assertions."""
 
-    def __init__(self, test_case: UITestCase, test_dir: Path):
+    def __init__(
+        self,
+        test_case: UITestCase,
+        test_case_tree: dict,
+        pilot: Pilot,
+        app: ReconcileApp,
+        temp_ledger_file: Path,
+        snapshot,
+        request,
+    ):
         self.test_case = test_case
-        self.test_dir = test_dir
-        self.temp_ledger_file: Path | None = None
-        self.app: ReconcileApp | None = None
-        self.pilot: Pilot | None = None
+        self.test_case_tree = test_case_tree
+        self.pilot = pilot
+        self.app = app
+        self.temp_ledger_file = temp_ledger_file
+        self.snapshot = snapshot
+        self.request = request
 
-    async def setup(self):
-        """Set up the test environment."""
-        # Create temporary ledger file
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".ledger", delete=False) as f:
-            f.write(self.test_case.initial_ledger)
-            self.temp_ledger_file = Path(f.name)
+    def __enter__(self):
+        """Context manager entry."""
+        return self
 
-        # Create the app
-        self.app = ReconcileApp(
-            self.temp_ledger_file, self.test_case.account, self.test_case.target_amount
-        )
-
-    async def cleanup(self):
-        """Clean up test environment."""
-        if self.temp_ledger_file and self.temp_ledger_file.exists():
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Context manager exit - clean up test environment."""
+        if self.temp_ledger_file.exists():
             self.temp_ledger_file.unlink()
 
-    async def run_step(self, step: UITestStep) -> dict[str, Any]:  # noqa: PLR0912, PLR0915
-        """Run a single test step and return any results."""
-        result = {"step": step.action, "description": step.description}
+    async def run(self, step: UITestStep, step_index: int) -> None:
+        """Run a single test step."""
+        action_method = getattr(self, f"run_{step.action}", None)
+        if not action_method:
+            raise ValueError(f"Unknown action: {step.action}")
 
-        if step.action == "key":
-            # Simulate key press
-            key = step.data["key"]
-            if self.pilot:
-                await self.pilot.press(key)
-            result["key"] = key
+        await action_method(step, step_index)
 
-        elif step.action == "wait":
-            # Wait for specified duration
-            duration = step.data.get("duration", 0.1)
-            if self.pilot:
-                await self.pilot.pause(duration)
-            result["duration"] = duration
+    async def run_key(self, step: UITestStep, _step_index: int) -> None:
+        """Simulate key press."""
+        key = step.data["key"]
+        await self.pilot.press(key)
 
-        elif step.action == "snapshot":
-            # Take a screenshot snapshot
-            snapshot_name = step.data.get("name", "snapshot")
-            result["snapshot_name"] = snapshot_name
-            if self.app:
-                result["screenshot"] = self.app.export_screenshot()
-            else:
-                result["screenshot"] = ""
+    async def run_wait(self, step: UITestStep, _step_index: int) -> None:
+        """Wait for specified duration."""
+        duration = step.data.get("duration", 0.1)
+        await self.pilot.pause(duration)
 
-        elif step.action == "assert_file":
-            # Assert ledger file matches expected content
-            expected_file = step.data["file"]
-            expected_path = self.test_dir / expected_file
-
-            if not expected_path.exists():
-                raise FileNotFoundError(f"Expected file not found: {expected_path}")
-
-            with expected_path.open() as f:
-                expected_content = f.read()
-
-            if self.temp_ledger_file:
-                with self.temp_ledger_file.open() as f:
-                    actual_content = f.read()
-            else:
-                actual_content = ""
-
-            result["expected_file"] = expected_file
-            result["file_matches"] = expected_content.strip() == actual_content.strip()
-            result["actual_content"] = actual_content
-            result["expected_content"] = expected_content
-
-        elif step.action == "assert_ui":
-            # Assert UI state (e.g., specific text visible, table contents)
-            assertion_type = step.data["type"]
-
-            if assertion_type == "table_rows":
-                # Check number of rows in the table
-                if self.app:
-                    from textual.widgets import DataTable
-
-                    table = self.app.query_one("#transactions-table", DataTable)
-                    expected_rows = step.data["count"]
-                    actual_rows = table.row_count
-                    result["expected_rows"] = expected_rows  # type: ignore[assignment]
-                    result["actual_rows"] = actual_rows  # type: ignore[assignment]
-                    result["assertion_passed"] = expected_rows == actual_rows  # type: ignore[assignment]
-                else:
-                    result["assertion_passed"] = False  # type: ignore[assignment]
-
-            elif assertion_type == "balance":
-                # Check displayed balance
-                if self.app:
-                    from textual.widgets import Label
-
-                    balance_label = self.app.query_one("#balance-label", Label)
-                    expected_balance = step.data["value"]
-                    actual_balance = balance_label.renderable
-                    result["expected_balance"] = expected_balance
-                    result["actual_balance"] = str(actual_balance)
-                    result["assertion_passed"] = expected_balance in str(actual_balance)  # type: ignore[assignment]
-                else:
-                    result["assertion_passed"] = False  # type: ignore[assignment]
-
-        return result
-
-    async def run_test(self) -> dict[str, Any]:
-        """Run the complete test case."""
-        await self.setup()
+    async def run_snapshot(self, step: UITestStep, step_index: int) -> None:
+        """Take a screenshot snapshot and assert it matches."""
+        snapshot_name = step.data.get("name", f"step_{step_index}")
+        svg_content = self.app.export_screenshot()
 
         try:
-            results = {
-                "test_name": self.test_case.name,
-                "description": self.test_case.description,
-                "account": self.test_case.account,
-                "target_amount": self.test_case.target_amount,
-                "steps": [],
-            }
+            assert svg_content == self.snapshot(name=snapshot_name)
+        except AssertionError:
+            # Capture the failure details for reporting
+            expected_svg = ""
 
-            for step in self.test_case.steps:
-                step_result = await self.run_step(step)
-                results["steps"].append(step_result)
+            # Try to read the expected snapshot from tree data
+            try:
+                snapshots_dir = self.test_case_tree.get("__snapshots__", {})
+                snapshot_file_data = snapshots_dir.get(f"{snapshot_name}.svg")
+                if snapshot_file_data and "content" in snapshot_file_data:
+                    expected_svg = snapshot_file_data["content"]
+            except (KeyError, TypeError):
+                # Ignore data access errors
+                pass
 
-            return results
+            # Collect the failure for report generation
+            test_case_name = self.test_case.name
+            failure = UISnapshotDiff(
+                test_name=f"test_ui_flow[{test_case_name}]",
+                step_name=snapshot_name,
+                step_description=step.description,
+                actual_svg=svg_content,
+                expected_svg=expected_svg,
+                test_file_path=Path(__file__),
+                test_function_name="test_ui_flow",
+                docstring=test_ui_flow.__doc__ or "",
+            )
+            failures = self.request.session.stash.setdefault(
+                _UI_SNAPSHOT_FAILURES_KEY, []
+            )
+            failures.append(failure)
 
-        finally:
-            await self.cleanup()
+            raise  # Re-raise the assertion error
+
+    async def run_assert_file(self, step: UITestStep, step_index: int) -> None:
+        """Assert ledger file matches expected content."""
+        expected_file = step.data["file"]
+        expected_file_data = self.test_case_tree.get(expected_file)
+
+        if not expected_file_data or "content" not in expected_file_data:
+            raise FileNotFoundError(f"Expected file not found: {expected_file}")
+
+        expected_content = expected_file_data["content"]
+
+        with self.temp_ledger_file.open() as f:
+            actual_content = f.read()
+
+        assert expected_content == actual_content, (
+            f"File content mismatch at step {step_index}: {step.description}"
+        )
+
+    async def run_assert_ui(self, step: UITestStep, step_index: int) -> None:
+        """Assert UI state (e.g., specific text visible, table contents)."""
+        assertion_type = step.data["type"]
+
+        if assertion_type == "table_rows":
+            # Check number of rows in the table
+            table = self.app.query_one("#transactions-table", DataTable)
+            expected_rows = step.data["count"]
+            actual_rows = table.row_count
+            assert expected_rows == actual_rows, (
+                f"Expected {expected_rows} table rows, got {actual_rows} at step {step_index}: {step.description}"
+            )
+
+        elif assertion_type == "balance":
+            # Check displayed balance
+            balance_label = self.app.query_one("#balance-label", Label)
+            expected_balance = step.data["value"]
+            actual_balance = str(balance_label.renderable)
+            assert expected_balance in actual_balance, (
+                f"Expected balance '{expected_balance}' not found in '{actual_balance}' at step {step_index}: {step.description}"
+            )
 
 
 # Test discovery and execution
-def discover_ui_test_cases(base_dir: Path) -> list[Path]:
-    """Discover all UI test case directories."""
-    test_dirs = []
-    for item in base_dir.iterdir():
-        if item.is_dir() and (item / "config.yaml").exists():
-            test_dirs.append(item)
-    return sorted(test_dirs)
+def discover_ui_test_cases(base_dir: Path) -> list[tuple[str, dict]]:
+    """Discover all UI test case data using load_directory_tree."""
+    if not base_dir.exists():
+        return []
+
+    tree = load_directory_tree(base_dir)
+    test_cases = []
+
+    for name, content in tree.items():
+        if isinstance(content, dict) and "config.yaml" in content:
+            test_cases.append((name, content))
+
+    return sorted(test_cases, key=lambda x: x[0])
 
 
 def pytest_generate_tests(metafunc):
     """Generate pytest tests for each UI test case."""
-    if "test_case_dir" in metafunc.fixturenames:
+    if "test_case_data" in metafunc.fixturenames:
         test_dir = Path(__file__).parent / "test_cases"
         if test_dir.exists():
             test_cases = discover_ui_test_cases(test_dir)
             metafunc.parametrize(
-                "test_case_dir",
-                test_cases,
-                ids=[tc.name for tc in test_cases],
+                "test_case_data",
+                [content for _name, content in test_cases],
+                ids=[name for name, _content in test_cases],
             )
 
 
 @pytest.mark.asyncio
-async def test_ui_flow(test_case_dir, snapshot, request):
+async def test_ui_flow(test_case_data, snapshot, request):
     """Run a UI flow test case with snapshot testing."""
-    # Load the test case
-    test_case = load_ui_test_case(test_case_dir)
-    runner = UITestRunner(test_case, test_case_dir)
+    # Parse the test case from the injected tree data
+    config_file = test_case_data.get("config.yaml")
+    if not config_file or "parsed" not in config_file:
+        raise FileNotFoundError("No config.yaml found in test case data")
 
-    await runner.setup()
+    config = config_file["parsed"]
+    test_case = UITestCase.from_dict(config)
 
-    try:
-        # Start the app
-        if not runner.app:
-            raise RuntimeError("App not initialized")
-        async with runner.app.run_test() as pilot:
-            runner.pilot = pilot
+    # Create app for pilot
+    initial_ledger_file = test_case_data.get("initial.ledger")
+    if not initial_ledger_file or "content" not in initial_ledger_file:
+        raise FileNotFoundError("No initial.ledger found in test case data")
 
+    initial_ledger = initial_ledger_file["content"]
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".ledger", delete=False) as f:
+        f.write(initial_ledger)
+        temp_file = Path(f.name)
+
+    app = ReconcileApp(temp_file, test_case.account, test_case.target_amount)
+
+    async with app.run_test() as pilot:
+        with UITestRunner(
+            test_case, test_case_data, pilot, app, temp_file, snapshot, request
+        ) as runner:
             # Run each step
             for i, step in enumerate(test_case.steps):
-                result = await runner.run_step(step)
-
-                # If it's a snapshot step, use syrupy with SVG content
-                if step.action == "snapshot":
-                    snapshot_name = step.data.get("name", f"step_{i}")
-                    # Get SVG content from the result
-                    svg_content = result.get("screenshot", "")
-
-                    try:
-                        assert svg_content == snapshot(name=snapshot_name)
-                    except AssertionError:
-                        # Capture the failure details for reporting
-                        expected_svg = ""
-                        snapshot_file = None
-
-                        # Try to read the expected snapshot file
-                        try:
-                            snapshot_file = (
-                                Path(__file__).parent
-                                / "__snapshots__"
-                                / "__init__"
-                                / f"test_ui_flow[{test_case_dir.name}][{snapshot_name}].svg"
-                            )
-                            if snapshot_file.exists():
-                                expected_svg = snapshot_file.read_text()
-                        except OSError:
-                            # Ignore file reading errors
-                            pass
-
-                        # Collect the failure for report generation
-                        collect_snapshot_failure(
-                            request=request,
-                            test_name=f"test_ui_flow[{test_case_dir.name}]",
-                            step_name=snapshot_name,
-                            step_description=step.description,
-                            actual_svg=svg_content,
-                            expected_svg=expected_svg,
-                            test_file_path=Path(__file__),
-                            test_function_name="test_ui_flow",
-                            docstring=test_ui_flow.__doc__ or "",
-                        )
-
-                        # Generate report immediately for testing
-                        failures = request.session.stash.get(
-                            _UI_SNAPSHOT_FAILURES_KEY, []
-                        )
-                        if failures:
-                            report_path = Path("ui_snapshot_report.html")
-                            _generate_snapshot_report(failures, report_path)
-
-                        raise  # Re-raise the assertion error
-
-                # If it's an assert step, verify it passed
-                elif step.action in ["assert_file", "assert_ui"]:
-                    if step.action == "assert_file":
-                        assert result["file_matches"], (
-                            f"File content mismatch at step {i}: {step.description}"
-                        )
-                    elif step.action == "assert_ui":
-                        assert result["assertion_passed"], (
-                            f"UI assertion failed at step {i}: {step.description}"
-                        )
-
-    finally:
-        await runner.cleanup()
+                await runner.run(step, i)
 
 
 def pytest_addoption(parser):
@@ -397,25 +293,24 @@ def pytest_sessionfinish(session, exitstatus):  # noqa: ARG001
         report_path = Path(session.config.getoption("--ui-snapshot-report"))
         _generate_snapshot_report(failures, report_path)
 
-        # Store for terminal summary
-        session.config._ui_snapshot_failures = failures
-        session.config._ui_snapshot_report_path = report_path
+        # Store report path in stash for terminal summary
+        session.stash[_UI_SNAPSHOT_REPORT_PATH_KEY] = report_path
 
 
 def pytest_terminal_summary(terminalreporter, exitstatus, config):  # noqa: ARG001
     """Add UI snapshot report info to terminal summary."""
-    failures = getattr(config, "_ui_snapshot_failures", None)
+    session = config.session
+    failures = session.stash.get(_UI_SNAPSHOT_FAILURES_KEY, [])
     if failures:
-        report_path = getattr(config, "_ui_snapshot_report_path", None)
+        report_path = session.stash.get(_UI_SNAPSHOT_REPORT_PATH_KEY)
         terminalreporter.write_line("")
         terminalreporter.write_line("=" * 60, red=True)
         terminalreporter.write_line(
             f"UI SNAPSHOT FAILURES: {len(failures)} mismatched snapshots", red=True
         )
         if report_path:
-            terminalreporter.write_line(
-                f"View report: {report_path.absolute()}", yellow=True
-            )
+            file_url = f"file://{report_path.absolute()}"
+            terminalreporter.write_line(f"View report: {file_url}", yellow=True)
         terminalreporter.write_line("=" * 60, red=True)
 
 

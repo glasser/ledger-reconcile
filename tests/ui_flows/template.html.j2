@@ -301,20 +301,27 @@
     <h1>UI Flow Test Cases</h1>
     
     <div class="summary">
-        <strong>Total test cases:</strong> {{ test_cases.values() | selectattr('ui_config') | list | length }}
+        {% set ui_test_count = namespace(count=0) %}
+        {% for test_case_name, test_case_data in test_cases.items() %}
+            {% if test_case_data is mapping and "config.yaml" in test_case_data %}
+                {% set ui_test_count.count = ui_test_count.count + 1 %}
+            {% endif %}
+        {% endfor %}
+        <strong>Total test cases:</strong> {{ ui_test_count.count }}
         <br>
-        <strong>Framework:</strong> Textual + pytest-textual-snapshot
+        <strong>Framework:</strong> Textual + syrupy
     </div>
     
     <div class="toc">
         <h3>Test Cases</h3>
         <ul>
         {% for test_case_name, test_case_data in test_cases.items() %}
-        {% if test_case_data.ui_config %}
+        {% if test_case_data is mapping and "config.yaml" in test_case_data %}
+            {% set config = test_case_data["config.yaml"].parsed %}
             <li>
-                <a href="#{{ test_case_name }}">{{ test_case_data.ui_config.name }}</a>
-                {% if test_case_data.ui_config.description %}
-                - {{ test_case_data.ui_config.description }}
+                <a href="#{{ test_case_name }}">{{ config.name }}</a>
+                {% if config.description %}
+                - {{ config.description }}
                 {% endif %}
             </li>
         {% endif %}
@@ -323,65 +330,62 @@
     </div>
 
     {% for test_case_name, test_case_data in test_cases.items() %}
-    {% if test_case_data.ui_config %}
+    {% if test_case_data is mapping and "config.yaml" in test_case_data %}
+    {% set config = test_case_data["config.yaml"].parsed %}
     <div class="test-case" id="{{ test_case_name }}">
         <div class="test-header">
-            <h2>{{ test_case_data.ui_config.name }}</h2>
-            {% if test_case_data.ui_config.description %}
+            <h2>{{ config.name }}</h2>
+            {% if config.description %}
             <div class="test-description">
-                {{ test_case_data.ui_config.description }}
+                {{ config.description }}
             </div>
             {% endif %}
         </div>
         
         <div class="test-params">
-            <strong>Account:</strong> {{ test_case_data.ui_config.account }}
+            <strong>Account:</strong> {{ config.account }}
             <br>
-            <strong>Target Amount:</strong> {{ test_case_data.ui_config.target_amount }}
+            <strong>Target Amount:</strong> {{ config.target_amount }}
             <br>
-            <strong>Steps:</strong> {{ test_case_data.steps|length }}
+            <strong>Steps:</strong> {{ config.steps|length }}
         </div>
         
         <div class="initial-files">
             <h3>Initial State</h3>
             <h4>Ledger File (initial.ledger)</h4>
-            <div class="ledger-content">{{ test_case_data.initial_ledger }}</div>
+            <div class="ledger-content">{{ test_case_data["initial.ledger"].content }}</div>
         </div>
         
         <div class="test-flow">
             <h3>Test Flow</h3>
             
-            {# Create chunks where each chunk starts when we encounter a media step #}
+            {# Create chunks where each chunk starts when we encounter a media step or the first step #}
             {% set chunk_starts = [] %}
-            {% for step in test_case_data.steps %}
-                {% set has_media = (step.action == "snapshot") or (step.action == "assert_file" and step.expected_content) %}
-                {% if has_media %}
+            {% for step in config.steps %}
+                {% set has_media = (step.action == "snapshot") or (step.action == "assert_file") %}
+                {% if has_media or loop.index0 == 0 %}
                     {% set _ = chunk_starts.append(loop.index0) %}
                 {% endif %}
             {% endfor %}
             
-            {# If no media steps, everything goes in one chunk #}
-            {% if not chunk_starts %}
-                {% set chunk_starts = [0] %}
-            {% endif %}
             
             {# Render chunks #}
             {% for chunk_start_idx in chunk_starts %}
                 {% set chunk_start = chunk_starts[loop.index0] %}
                 {% if loop.last %}
-                    {% set chunk_end = test_case_data.steps|length %}
+                    {% set chunk_end = config.steps|length %}
                 {% else %}
                     {% set chunk_end = chunk_starts[loop.index0 + 1] %}
                 {% endif %}
                 
-                {% set chunk_steps = test_case_data.steps[chunk_start:chunk_end] %}
-                {% set chunk_has_media = chunk_steps|selectattr('action', 'equalto', 'snapshot')|list|length > 0 or chunk_steps|selectattr('action', 'equalto', 'assert_file')|selectattr('expected_content')|list|length > 0 %}
+                {% set chunk_steps = config.steps[chunk_start:chunk_end] %}
+                {% set chunk_has_media = chunk_steps|selectattr('action', 'equalto', 'snapshot')|list|length > 0 or chunk_steps|selectattr('action', 'equalto', 'assert_file')|list|length > 0 %}
                 
                 {% if chunk_has_media %}
                     {# Find the first media step in chunk #}
                     {% set ns = namespace(media_step=none, media_step_index=0) %}
                     {% for step in chunk_steps %}
-                        {% set has_media = (step.action == "snapshot") or (step.action == "assert_file" and step.get("expected_content")) %}
+                        {% set has_media = (step.action == "snapshot") or (step.action == "assert_file") %}
                         {% if has_media and not ns.media_step %}
                             {% set ns.media_step = step %}
                             {% set ns.media_step_index = chunk_start + loop.index %}
@@ -438,20 +442,26 @@
                         <div class="step-media">
                             <h4>Step {{ ns.media_step_index }}: {{ ns.media_step.description }}</h4>
                             {% if ns.media_step.action == "snapshot" %}
-                                {% if ns.media_step.get("svg_content") %}
+                                {% set snapshot_name = ns.media_step.data.name %}
+                                {% set snapshots_dir = test_case_data.get("__snapshots__", {}) %}
+                                {% set svg_filename = snapshot_name + ".svg" %}
+                                {% if svg_filename in snapshots_dir %}
                                 <div class="snapshot-preview">
-                                    {{ ns.media_step.svg_content|safe }}
+                                    {{ snapshots_dir[svg_filename].content|safe }}
                                 </div>
                                 {% else %}
                                 <div class="snapshot-unavailable">
                                     📸 Snapshot will be generated when tests are run
                                 </div>
                                 {% endif %}
-                            {% elif ns.media_step.action == "assert_file" and ns.media_step.get("expected_content") %}
+                            {% elif ns.media_step.action == "assert_file" %}
+                                {% set expected_file = ns.media_step.data.file %}
+                                {% if expected_file in test_case_data %}
                                 <div class="file-content">
                                     <h4>Expected File Content</h4>
-                                    <div class="ledger-content">{{ ns.media_step.get("expected_content", "") }}</div>
+                                    <div class="ledger-content">{{ test_case_data[expected_file].content }}</div>
                                 </div>
+                                {% endif %}
                             {% endif %}
                         </div>
                     </div>

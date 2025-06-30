@@ -14,7 +14,7 @@ from tests.fixture_utils import load_directory_tree
 def generate_preview(test_dir: Path):
     """Generate HTML preview using generic template and data loader."""
     test_cases_dir = test_dir / "test_cases"
-    tree = load_directory_tree(test_cases_dir, load_snapshots=True)
+    tree = load_directory_tree(test_cases_dir)
 
     # Look for template file
     template_file = test_dir / "template.html.j2"
