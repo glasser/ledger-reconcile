@@ -1,0 +1,40 @@
+TargetBalanceScreen {
+    align: center middle;
+}
+
+.target-dialog {
+    background: $surface;
+    border: thick $primary;
+    width: 60;
+    height: auto;
+    padding: 1 2;
+}
+
+.dialog-title {
+    text-align: center;
+    text-style: bold;
+    margin-bottom: 0;
+}
+
+.input-container {
+    margin: 0;
+    height: auto;
+}
+
+.input-label {
+    margin-bottom: 0;
+}
+
+.dialog-buttons {
+    align: center middle;
+    margin-top: 0;
+}
+
+.dialog-buttons Button {
+    margin: 0 1;
+}
+
+Input {
+    width: 100%;
+    margin: 1 0;
+}

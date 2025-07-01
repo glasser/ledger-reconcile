@@ -32,36 +32,11 @@ class ConfirmationScreen(ModalScreen[bool]):
         ("escape", "cancel", "Cancel"),
     ]
 
-    DEFAULT_CSS = """
-    ConfirmationScreen {
-        align: center middle;
-    }
-
-    .confirmation-dialog {
-        background: $surface;
-        border: thick $primary;
-        width: 70;
-        height: auto;
-        padding: 0 2;
-    }
-
-    .confirmation-message {
-        margin: 1 0;
-    }
-
-    .confirmation-buttons {
-        align: center middle;
-        margin-top: 1;
-    }
-
-    .confirmation-buttons Button {
-        margin: 0 1;
-    }
-
-    Footer {
-        margin-top: 1;
-    }
-    """
+    @property
+    def CSS(self) -> str:  # noqa: N802
+        """Load CSS from file."""
+        css_path = Path(__file__).parent / "css" / "confirmation_screen.css"
+        return css_path.read_text()
 
     def __init__(self, message: str, count: int) -> None:
         super().__init__()
@@ -108,48 +83,11 @@ class TargetBalanceScreen(ModalScreen[Decimal | None]):
         ("escape", "cancel", "Cancel"),
     ]
 
-    DEFAULT_CSS = """
-    TargetBalanceScreen {
-        align: center middle;
-    }
-
-    .target-dialog {
-        background: $surface;
-        border: thick $primary;
-        width: 60;
-        height: auto;
-        padding: 1 2;
-    }
-
-    .dialog-title {
-        text-align: center;
-        text-style: bold;
-        margin-bottom: 0;
-    }
-
-    .input-container {
-        margin: 0;
-        height: auto;
-    }
-
-    .input-label {
-        margin-bottom: 0;
-    }
-
-    .dialog-buttons {
-        align: center middle;
-        margin-top: 0;
-    }
-
-    .dialog-buttons Button {
-        margin: 0 1;
-    }
-
-    Input {
-        width: 100%;
-        margin: 1 0;
-    }
-    """
+    @property
+    def CSS(self) -> str:  # noqa: N802
+        """Load CSS from file."""
+        css_path = Path(__file__).parent / "css" / "target_balance_screen.css"
+        return css_path.read_text()
 
     def __init__(self, current_target: str) -> None:
         super().__init__()
@@ -205,72 +143,11 @@ class TargetBalanceScreen(ModalScreen[Decimal | None]):
 class ReconcileApp(App):
     """Main reconciliation application using Textual."""
 
-    CSS = """
-    Screen {
-        layers: base overlay;
-    }
-
-    .header {
-        dock: top;
-        height: 3;
-        background: $primary;
-        color: $text;
-    }
-
-    .footer {
-        dock: bottom;
-        height: 3;
-        background: $primary;
-        color: $text;
-    }
-
-    .main-container {
-        height: 1fr;
-    }
-
-    .info-label {
-        text-align: center;
-        width: 1fr;
-    }
-
-    .info-panel-row {
-        height: 1;
-        margin-bottom: 0;
-    }
-
-    .delta-label {
-        color: $warning;
-        text-style: bold;
-    }
-
-    .transactions-table {
-        height: 1fr;
-        border: solid $primary;
-        overflow-x: hidden;
-    }
-
-    DataTable > .datatable--cursor {
-        background: $secondary;
-    }
-
-    DataTable > .datatable--header {
-        background: $primary;
-        color: $text;
-    }
-
-    /* Zebra striping for columns */
-    DataTable .datatable--cursor-cell-column-0,
-    DataTable .datatable--cursor-cell-column-2,
-    DataTable .datatable--cursor-cell-column-4 {
-        background: $surface-lighten-1;
-    }
-
-    DataTable .datatable--cell-column-0,
-    DataTable .datatable--cell-column-2,
-    DataTable .datatable--cell-column-4 {
-        background: $surface-lighten-1;
-    }
-    """
+    @property
+    def CSS(self) -> str:  # noqa: N802
+        """Load CSS from file."""
+        css_path = Path(__file__).parent / "css" / "reconcile_app.css"
+        return css_path.read_text()
 
     BINDINGS: ClassVar = [
         ("q", "quit", "Quit"),

@@ -1,0 +1,64 @@
+Screen {
+    layers: base overlay;
+}
+
+.header {
+    dock: top;
+    height: 3;
+    background: $primary;
+    color: $text;
+}
+
+.footer {
+    dock: bottom;
+    height: 3;
+    background: $primary;
+    color: $text;
+}
+
+.main-container {
+    height: 1fr;
+}
+
+.info-label {
+    text-align: center;
+    width: 1fr;
+}
+
+.info-panel-row {
+    height: 1;
+    margin-bottom: 0;
+}
+
+.delta-label {
+    color: $warning;
+    text-style: bold;
+}
+
+.transactions-table {
+    height: 1fr;
+    border: solid $primary;
+    overflow-x: hidden;
+}
+
+DataTable > .datatable--cursor {
+    background: $secondary;
+}
+
+DataTable > .datatable--header {
+    background: $primary;
+    color: $text;
+}
+
+/* Zebra striping for columns */
+DataTable .datatable--cursor-cell-column-0,
+DataTable .datatable--cursor-cell-column-2,
+DataTable .datatable--cursor-cell-column-4 {
+    background: $surface-lighten-1;
+}
+
+DataTable .datatable--cell-column-0,
+DataTable .datatable--cell-column-2,
+DataTable .datatable--cell-column-4 {
+    background: $surface-lighten-1;
+}

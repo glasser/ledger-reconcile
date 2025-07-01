@@ -1,0 +1,28 @@
+ConfirmationScreen {
+    align: center middle;
+}
+
+.confirmation-dialog {
+    background: $surface;
+    border: thick $primary;
+    width: 70;
+    height: auto;
+    padding: 0 2;
+}
+
+.confirmation-message {
+    margin: 1 0;
+}
+
+.confirmation-buttons {
+    align: center middle;
+    margin-top: 1;
+}
+
+.confirmation-buttons Button {
+    margin: 0 1;
+}
+
+Footer {
+    margin-top: 1;
+}
