@@ -276,6 +276,7 @@ class ReconcileApp(App):
         ("space", "toggle_status", "Toggle Status"),
         ("r", "reconcile_all", "Reconcile All !"),
         ("t", "adjust_target", "Adjust Target"),
+        ("s", "toggle_sort", "Reverse Sort"),
     ]
 
     def __init__(self, ledger_file: Path, account: str, target_amount: str):
@@ -296,6 +297,9 @@ class ReconcileApp(App):
         # Track balance types for reconciliation
         self.cleared_pending_balance = "$0.00"  # Only cleared + pending
         self.delta = "$0.00"  # target - cleared_pending
+
+        # Track sort order
+        self.reverse_sort = False  # False = oldest first, True = newest first
 
     def compose(self) -> ComposeResult:
         """Create the UI layout."""
@@ -398,8 +402,12 @@ class ReconcileApp(App):
                     filtered_transactions.append(t)
                     break
 
+        # Sort transactions based on current sort order
+        sorted_transactions = sorted(
+            filtered_transactions, key=lambda t: t.date, reverse=self.reverse_sort
+        )
         # Add rows
-        for transaction in filtered_transactions:
+        for transaction in sorted_transactions:
             # Find posting for this account to get the amount and status
             amount = ""
             posting_status = ""
@@ -546,6 +554,12 @@ class ReconcileApp(App):
         """Show modal to adjust the target balance."""
         # Use run_worker to handle the async operation
         self.run_worker(self._adjust_target_worker(), exclusive=True)
+
+    def action_toggle_sort(self) -> None:
+        """Toggle the sort order of transactions."""
+        self.reverse_sort = not self.reverse_sort
+        # Refresh the table to apply new sort order
+        self.call_after_refresh(self.refresh_table)
 
     async def _adjust_target_worker(self) -> None:
         """Worker method to handle target balance adjustment."""

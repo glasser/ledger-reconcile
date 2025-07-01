@@ -1,0 +1,54 @@
+name: "Reverse Sort Order"
+description: "Test the ability to reverse the sort order of transactions"
+account: "Assets:Checking"
+target_amount: "$1000.00"
+
+steps:
+  - action: snapshot
+    description: "Initial state with default sort order (oldest first)"
+    data:
+      name: "default_sort_order"
+
+  - action: assert_ui
+    description: "First row should be from 2024-01-01"
+    data:
+      type: "table_cell"
+      row: 0
+      column: 2  # Date column
+      value: "2024/01/01"
+
+  - action: key
+    description: "Press 's' to reverse sort order"
+    data:
+      key: "s"
+
+  - action: snapshot
+    description: "After reversing sort order (newest first)"
+    data:
+      name: "reversed_sort_order"
+
+  - action: assert_ui
+    description: "First row should now be from 2024-01-15"
+    data:
+      type: "table_cell"
+      row: 0
+      column: 2  # Date column
+      value: "2024/01/15"
+
+  - action: key
+    description: "Press 's' again to toggle back"
+    data:
+      key: "s"
+
+  - action: snapshot
+    description: "Back to default sort order"
+    data:
+      name: "back_to_default_sort"
+
+  - action: assert_ui
+    description: "First row should be from 2024-01-01 again"
+    data:
+      type: "table_cell"
+      row: 0
+      column: 2  # Date column
+      value: "2024/01/01"
