@@ -11,6 +11,7 @@ from textual import on
 from textual.app import App, ComposeResult
 from textual.containers import Container, HorizontalGroup, Vertical
 from textual.coordinate import Coordinate
+from textual.reactive import reactive
 from textual.screen import ModalScreen
 from textual.widgets import Button, DataTable, Footer, Input, Label
 
@@ -280,6 +281,11 @@ class ReconcileApp(App):
         ("r", "refresh", "Refresh"),
     ]
 
+    # Reactive variables that automatically update UI labels
+    target_amount: reactive[str] = reactive("$0.00", init=False)
+    cleared_pending_balance: reactive[str] = reactive("$0.00", init=False)
+    delta: reactive[str] = reactive("$0.00", init=False)
+
     def __init__(self, ledger_file: Path, account: str, target_amount: str):
         super().__init__()
         self.ledger_file = ledger_file
@@ -294,10 +300,6 @@ class ReconcileApp(App):
         self.file_watcher = LedgerFileWatcher(ledger_file, self._on_file_changed)
         self.file_editor = LedgerFileEditor(ledger_file, self.file_watcher)
         self.transactions: list[ReconciliationEntry] = []
-
-        # Track balance types for reconciliation
-        self.cleared_pending_balance = "$0.00"  # Only cleared + pending
-        self.delta = "$0.00"  # target - cleared_pending
 
         # Track sort order
         self.reverse_sort = False  # False = oldest first, True = newest first
@@ -334,8 +336,41 @@ class ReconcileApp(App):
         )
         yield Footer()
 
+    def watch_target_amount(self, target_amount: str) -> None:
+        """Update target label when target_amount changes."""
+        try:
+            if hasattr(self, "_target_label"):
+                self._target_label.update(f"Target: {target_amount}")
+        except AttributeError:
+            pass
+
+    def watch_cleared_pending_balance(self, cleared_pending_balance: str) -> None:
+        """Update cleared+pending balance label when it changes."""
+        try:
+            if hasattr(self, "_cleared_pending_label"):
+                self._cleared_pending_label.update(
+                    f"Cleared+Pending: {cleared_pending_balance}"
+                )
+        except AttributeError:
+            pass
+
+    def watch_delta(self, delta: str) -> None:
+        """Update delta label when delta changes."""
+        try:
+            if hasattr(self, "_delta_label"):
+                self._delta_label.update(f"Delta: {delta}")
+        except AttributeError:
+            pass
+
     async def on_mount(self) -> None:
         """Initialize the app when mounted."""
+        # Cache label references for reactive watchers
+        self._target_label = self.query_one("#target-label", Label)
+        self._cleared_pending_label = self.query_one(
+            "#cleared-pending-balance-label", Label
+        )
+        self._delta_label = self.query_one("#delta-label", Label)
+
         self.file_watcher.start()
         await self.load_transactions()
         await self.setup_table()
@@ -358,24 +393,13 @@ class ReconcileApp(App):
                 )
             )
 
-            # Get balance types for reconciliation
+            # Get balance types for reconciliation - reactive variables will automatically update UI
             self.cleared_pending_balance = (
                 self.ledger_interface.get_cleared_and_pending_balance(self.account)
             )
             self.delta = calculate_delta(
                 self.target_amount, self.cleared_pending_balance
             )
-
-            # Update balance labels
-            cleared_pending_label = self.query_one(
-                "#cleared-pending-balance-label", Label
-            )
-            cleared_pending_label.update(
-                f"Cleared+Pending: {self.cleared_pending_balance}"
-            )
-
-            delta_label = self.query_one("#delta-label", Label)
-            delta_label.update(f"Delta: {self.delta}")
 
         except (OSError, ValueError, RuntimeError) as e:
             self.notify(f"Error loading transactions: {e}", severity="error")
@@ -583,16 +607,10 @@ class ReconcileApp(App):
                 self.target_amount_parsed = parser.parse(new_target)
                 self.target_amount = self.target_amount_parsed.formatted_display
 
-                # Update the target label
-                target_label = self.query_one("#target-label", Label)
-                target_label.update(f"Target: {self.target_amount}")
-
-                # Recalculate and update delta
+                # Recalculate delta - reactive variables will automatically update UI
                 self.delta = calculate_delta(
                     self.target_amount, self.cleared_pending_balance
                 )
-                delta_label = self.query_one("#delta-label", Label)
-                delta_label.update(f"Delta: {self.delta}")
 
                 self.notify(f"Target balance updated to {self.target_amount}")
             except ValueError as e:

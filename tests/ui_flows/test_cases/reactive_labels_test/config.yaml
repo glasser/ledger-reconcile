@@ -1,0 +1,28 @@
+name: reactive_labels_test
+description: Test that labels update reactively when values change
+account: "Assets:Checking"
+target_amount: "$500.00"
+initial_file: initial.ledger
+steps:
+  - action: key
+    data:
+      key: "t"  # Open target balance dialog
+  - action: snapshot
+    data:
+      name: target_dialog_open
+  - action: key
+    data:
+      key: "ctrl+a"  # Select all in input
+  - action: key
+    data:
+      key: "shift+4 7 5 0 full_stop 0 0"  # Type $750.00
+  - action: key
+    data:
+      key: "enter"  # Submit
+  - action: snapshot
+    data:
+      name: after_target_change
+assertions:
+  - type: table_columns
+    data:
+      count: 6

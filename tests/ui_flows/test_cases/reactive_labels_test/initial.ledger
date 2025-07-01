@@ -1,0 +1,11 @@
+2024-01-01 Opening Balance
+    Assets:Checking              $1000.00
+    Equity:Opening Balances
+
+2024-01-02 ! Pending Transaction
+    Expenses:Food                 $50.00
+    Assets:Checking              $-50.00
+
+2024-01-03 Uncleared Transaction  
+    Expenses:Gas                  $30.00
+    Assets:Checking              $-30.00
