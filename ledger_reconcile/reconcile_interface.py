@@ -35,7 +35,7 @@ class ConfirmationScreen(ModalScreen[bool]):
     @property
     def CSS(self) -> str:  # noqa: N802
         """Load CSS from file."""
-        css_path = Path(__file__).parent / "css" / "confirmation_screen.css"
+        css_path = Path(__file__).parent / "css" / "confirmation_screen.tcss"
         return css_path.read_text()
 
     def __init__(self, message: str, count: int) -> None:
@@ -86,7 +86,7 @@ class TargetBalanceScreen(ModalScreen[Decimal | None]):
     @property
     def CSS(self) -> str:  # noqa: N802
         """Load CSS from file."""
-        css_path = Path(__file__).parent / "css" / "target_balance_screen.css"
+        css_path = Path(__file__).parent / "css" / "target_balance_screen.tcss"
         return css_path.read_text()
 
     def __init__(self, current_target: str) -> None:
@@ -146,7 +146,7 @@ class ReconcileApp(App):
     @property
     def CSS(self) -> str:  # noqa: N802
         """Load CSS from file."""
-        css_path = Path(__file__).parent / "css" / "reconcile_app.css"
+        css_path = Path(__file__).parent / "css" / "reconcile_app.tcss"
         return css_path.read_text()
 
     BINDINGS: ClassVar = [
