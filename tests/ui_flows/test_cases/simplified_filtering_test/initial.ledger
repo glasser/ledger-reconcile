@@ -1,0 +1,23 @@
+2024-01-01 Opening Balance
+    Assets:Checking              $1000.00
+    Equity:Opening Balances
+
+2024-01-02 * Fully Reconciled Transaction
+    Expenses:Food                 $30.00
+    Assets:Checking              $-30.00
+
+2024-01-03 ! Pending Transaction  
+    Expenses:Gas                  $40.00
+    Assets:Checking              $-40.00
+
+2024-01-04 Uncleared Transaction
+    Expenses:Utilities            $50.00
+    Assets:Checking              $-50.00
+
+2024-01-05 Mixed Status Transaction
+    * Expenses:Office             $25.00
+    ! Assets:Checking            $-25.00
+
+2024-01-06 Different Account Transaction
+    Expenses:Travel               $100.00
+    Assets:Savings               $-100.00

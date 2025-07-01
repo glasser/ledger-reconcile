@@ -419,18 +419,9 @@ class ReconcileApp(App):
         table.add_column("Amount")
         table.add_column("Description")
 
-        # Filter to show only unreconciled and semi-reconciled transactions (not fully reconciled *)
-        # Look at the status of postings for this account
-        filtered_transactions = []
-        for t in self.transactions:
-            for posting in t.account_postings:
-                if posting.account == self.account and posting.status in ("", "!"):
-                    filtered_transactions.append(t)
-                    break
-
-        # Sort transactions based on current sort order
+        # The API already filters transactions appropriately, so we just need to sort them
         sorted_transactions = sorted(
-            filtered_transactions, key=lambda t: t.date, reverse=self.reverse_sort
+            self.transactions, key=lambda t: t.date, reverse=self.reverse_sort
         )
         # Add rows
         for transaction in sorted_transactions:

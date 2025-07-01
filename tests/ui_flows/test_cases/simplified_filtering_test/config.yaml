@@ -1,0 +1,13 @@
+name: simplified_filtering_test
+description: Test that simplified filtering works correctly 
+account: "Assets:Checking"
+target_amount: "$500.00"
+initial_file: initial.ledger
+steps:
+  - action: snapshot
+    data:
+      name: initial_state
+assertions:
+  - type: table_columns
+    data:
+      count: 6
