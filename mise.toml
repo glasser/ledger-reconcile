@@ -1,6 +1,8 @@
 [tools]
 python = "3.13.5"
-uv = "latest"
+uv = "0.7.12"
+node = "24.3.0"          # for gh-pages
+"npm:gh-pages" = "6.3.0"
 
 [settings]
 python.uv_venv_auto = true
@@ -32,6 +34,12 @@ description = "Check for unused dependencies"
 [tasks.generate-test-previews]
 run = "uv run python tests/generate_all_previews.py"
 description = "Generate HTML previews for all test cases"
+
+[tasks.publish-test-previews]
+env = { "CACHE_DIR" = "{{ xdg_cache_home }}" }
+run = "gh-pages -d tests/preview"
+depends = ["generate-test-previews"]
+description = "Publish test previews to GH Pages"
 
 [tasks.check]
 depends = [
