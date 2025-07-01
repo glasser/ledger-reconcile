@@ -101,7 +101,7 @@ class ConfirmationScreen(ModalScreen[bool]):
         self.dismiss(False)
 
 
-class TargetBalanceScreen(ModalScreen[str | None]):
+class TargetBalanceScreen(ModalScreen[Decimal | None]):
     """Modal dialog for adjusting the target balance."""
 
     BINDINGS: ClassVar = [
@@ -191,8 +191,8 @@ class TargetBalanceScreen(ModalScreen[str | None]):
 
         # Try to parse the new target to validate it
         try:
-            parse_balance(new_target)
-            self.dismiss(new_target)
+            parsed_amount = parse_balance(new_target)
+            self.dismiss(parsed_amount)
         except ValueError as e:
             self.notify(f"Invalid target balance: {e}", severity="error")
 
@@ -578,14 +578,11 @@ class ReconcileApp(App):
         new_target = await self.push_screen_wait(target_screen)
 
         if new_target is not None:
-            # Parse and update the target amount
-            try:
-                self.target_amount = parse_balance(new_target)
-                self.notify(
-                    f"Target balance updated to {format_balance(self.target_amount)}"
-                )
-            except ValueError as e:
-                self.notify(f"Error updating target: {e}", severity="error")
+            # Update the target amount directly
+            self.target_amount = new_target
+            self.notify(
+                f"Target balance updated to {format_balance(self.target_amount)}"
+            )
 
     async def refresh_table(self) -> None:
         """Refresh the transactions table."""
