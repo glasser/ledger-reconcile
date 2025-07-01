@@ -1,0 +1,1721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ledger Interface Test Fixtures</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .navigation {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .navigation a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .navigation a:hover {
+            text-decoration: underline;
+        }
+        
+        .back-arrow {
+            font-size: 16px;
+        }
+        
+        .summary {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        
+        .toc {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .toc h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        .toc ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .toc a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        
+        
+        .test-case {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .test-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .test-header h2 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 20px;
+        }
+        
+        .test-description {
+            color: #666;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        
+        .test-content {
+            display: flex;
+            min-height: 400px;
+        }
+        
+        .input-section {
+            flex: 1;
+            padding: 20px;
+            border-right: 2px solid #e0e0e0;
+        }
+        
+        .expected-section {
+            flex: 1;
+            padding: 20px;
+            background: #fafafa;
+        }
+        
+        .section-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .ledger-content {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 0;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+        }
+        
+        .ledger-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+        
+        .ledger-content .line-num {
+            background: #e9ecef;
+            border-right: 1px solid #ddd;
+            padding: 4px 8px;
+            text-align: right;
+            color: #6c757d;
+            font-size: 11px;
+            width: 40px;
+        }
+        
+        .ledger-content .line-content {
+            padding: 4px 12px;
+            white-space: pre;
+        }
+        
+        .expected-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .expected-table th {
+            background: #f8f9fa;
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .expected-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: top;
+        }
+        
+        .expected-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .line-number {
+            font-family: monospace;
+            font-weight: bold;
+            color: #6c757d;
+        }
+        
+        .amount {
+            font-family: monospace;
+            font-weight: bold;
+        }
+        
+        .amount.positive {
+            color: #28a745;
+        }
+        
+        .amount.negative {
+            color: #dc3545;
+        }
+        
+        .posting-details {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        
+        .posting-details li {
+            padding: 4px 0;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+        
+        .posting-details li:last-child {
+            border-bottom: none;
+        }
+        
+        .status-marker {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+        
+        .status-marker.pending {
+            background-color: #ffc107;
+            color: white;
+        }
+        
+        .status-marker.cleared {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .status-marker.empty {
+            background-color: #e0e0e0;
+            color: #999;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 1200px) {
+            .test-content {
+                flex-direction: column;
+            }
+            
+            .input-section {
+                border-right: none;
+                border-bottom: 2px solid #e0e0e0;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="navigation">
+        <span class="back-arrow">←</span>
+        <a href="index.html">Back to Test Cases Index</a>
+    </div>
+    
+    <h1>Ledger Interface Test Fixtures</h1>
+    
+    <div class="summary">
+        <strong>Total test cases:</strong> 8
+    </div>
+    
+    
+    <div class="toc">
+        <h3>Test Cases</h3>
+        <ul>
+        
+            <li>
+                <a href="#basic_transactions">Basic Transactions</a>
+                
+                - Basic transaction types with different statuses
+                
+            </li>
+        
+            <li>
+                <a href="#cleared_and_pending_balance">Cleared And Pending Balance</a>
+                
+                - Test calculation of cleared and pending balance for reconciliation
+                
+            </li>
+        
+            <li>
+                <a href="#fake_status_in_description">Fake Status In Description</a>
+                
+                - Ensure status markers in descriptions are not treated as actual status
+                
+            </li>
+        
+            <li>
+                <a href="#get_accounts_test">Get Accounts Test</a>
+                
+                - Test get_accounts method including accounts with posting-level status markers
+                
+            </li>
+        
+            <li>
+                <a href="#line_numbers_with_comments_and_blanks">Line Numbers With Comments And Blanks</a>
+                
+                - Test that line numbers correctly map to the original file with comments and blank lines
+                
+            </li>
+        
+            <li>
+                <a href="#mixed_status_filtering">Mixed Status Filtering</a>
+                
+                - Test filtering by account AND only returning uncleared transactions
+                
+            </li>
+        
+            <li>
+                <a href="#multiple_transaction_line_numbers">Multiple Transaction Line Numbers</a>
+                
+                - Test line numbers for multiple transactions in sequence
+                
+            </li>
+        
+            <li>
+                <a href="#posting_status">Posting Status</a>
+                
+                - Transactions with posting-level status markers
+                
+            </li>
+        
+        </ul>
+    </div>
+
+    
+    <div class="test-case" id="basic_transactions">
+        <div class="test-header">
+            <h2>Basic Transactions</h2>
+            
+            <div class="test-description">
+                Basic transaction types with different statuses
+            </div>
+            
+        </div>
+        
+        <div class="test-content">
+            <div class="input-section">
+                <div class="section-title">Input Ledger File</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content">2024-01-01 Opening Balance</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content">    Assets:Checking              $1000.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content">    Equity:Opening Balances</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">5</td>
+                            <td class="line-content">2024-01-02 * Cleared Transaction</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">6</td>
+                            <td class="line-content">    Expenses:Food                 $45.67</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">7</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">8</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">9</td>
+                            <td class="line-content">2024-01-03 ! Pending Transaction</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">10</td>
+                            <td class="line-content">    Expenses:Rent                $500.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">11</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">12</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">13</td>
+                            <td class="line-content">2024-01-04 Uncleared Transaction</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">14</td>
+                            <td class="line-content">    Expenses:Gas                  $35.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">15</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+            
+            <div class="expected-section">
+                
+                
+                
+                    <div class="section-title">Expected Parser Output</div>
+                    
+                    <table class="expected-table">
+                        <thead>
+                            <tr>
+                                <th>Line</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Account Postings</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        
+                            <tr>
+                                <td class="line-number">1</td>
+                                <td>2024/01/01</td>
+                                <td>Opening Balance</td>
+                                <td>
+                                    
+                                    <ul class="posting-details">
+                                    
+                                        <li>
+                                            <strong>Assets:Checking</strong>
+                                            
+                                            <span class="amount positive">$1000.00</span>
+                                            
+                                            
+                                            <span class="line-number">(line 2)</span>
+                                        </li>
+                                    
+                                    </ul>
+                                    
+                                </td>
+                            </tr>
+                        
+                            <tr>
+                                <td class="line-number">9</td>
+                                <td>2024/01/03</td>
+                                <td>Pending Transaction</td>
+                                <td>
+                                    
+                                    <ul class="posting-details">
+                                    
+                                        <li>
+                                            <strong>Assets:Checking</strong>
+                                            
+                                            <span class="amount positive">$-500.00</span>
+                                            
+                                            
+                                            <span class="status-marker pending">!</span>
+                                            
+                                            <span class="line-number">(line 11)</span>
+                                        </li>
+                                    
+                                    </ul>
+                                    
+                                </td>
+                            </tr>
+                        
+                            <tr>
+                                <td class="line-number">13</td>
+                                <td>2024/01/04</td>
+                                <td>Uncleared Transaction</td>
+                                <td>
+                                    
+                                    <ul class="posting-details">
+                                    
+                                        <li>
+                                            <strong>Assets:Checking</strong>
+                                            
+                                            <span class="amount positive">$-35.00</span>
+                                            
+                                            
+                                            <span class="line-number">(line 15)</span>
+                                        </li>
+                                    
+                                    </ul>
+                                    
+                                </td>
+                            </tr>
+                        
+                        </tbody>
+                    </table>
+                    
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-case" id="cleared_and_pending_balance">
+        <div class="test-header">
+            <h2>Cleared And Pending Balance</h2>
+            
+            <div class="test-description">
+                Test calculation of cleared and pending balance for reconciliation
+            </div>
+            
+        </div>
+        
+        <div class="test-content">
+            <div class="input-section">
+                <div class="section-title">Input Ledger File</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content">2024-01-01 Opening Balance</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content">    Assets:Checking              $2000.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content">    Equity:Opening Balances</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">5</td>
+                            <td class="line-content">2024-01-02 * Cleared Transaction</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">6</td>
+                            <td class="line-content">    Expenses:Food                 $100.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">7</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">8</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">9</td>
+                            <td class="line-content">2024-01-03 ! Pending Transaction</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">10</td>
+                            <td class="line-content">    Expenses:Rent                $500.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">11</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">12</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">13</td>
+                            <td class="line-content">2024-01-04 Uncleared Transaction</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">14</td>
+                            <td class="line-content">    Expenses:Gas                  $50.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">15</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">16</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">17</td>
+                            <td class="line-content">2024-01-05 * Another Cleared Transaction</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">18</td>
+                            <td class="line-content">    Expenses:Utilities            $75.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">19</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">20</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">21</td>
+                            <td class="line-content">2024-01-06 ! Another Pending Transaction</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">22</td>
+                            <td class="line-content">    Expenses:Groceries           $125.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">23</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+            
+            <div class="expected-section">
+                
+                
+                
+                    <div class="section-title">Expected Balance Calculations</div>
+                    
+                    
+                    
+                    <div style="background: white; border: 1px solid #ddd; border-radius: 4px; padding: 20px;">
+                        <h4 style="margin-top: 0; color: #2c3e50;">Account: Assets:Checking</h4>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            
+                            
+                            <tr>
+                                <td style="padding: 8px 0; font-weight: bold;">Cleared + Pending Balance:</td>
+                                <td style="padding: 8px 0; text-align: right; font-family: monospace; font-size: 16px; color: #3498db;">$-800.00</td>
+                            </tr>
+                            
+                        </table>
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
+                            <p style="color: #666; font-size: 14px; margin: 0;">
+                                <strong>Note:</strong> Cleared+Pending balance includes only transactions marked as cleared (*) or pending (!).
+                                Uncleared transactions and those without status markers are excluded.
+                            </p>
+                        </div>
+                    </div>
+                    
+                
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-case" id="fake_status_in_description">
+        <div class="test-header">
+            <h2>Fake Status In Description</h2>
+            
+            <div class="test-description">
+                Ensure status markers in descriptions are not treated as actual status
+            </div>
+            
+        </div>
+        
+        <div class="test-content">
+            <div class="input-section">
+                <div class="section-title">Input Ledger File</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content">2024-01-07 \! This is not a status marker</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content">    Expenses:Food                 $25.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">5</td>
+                            <td class="line-content">2024-01-08 \* This is also not a status marker</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">6</td>
+                            <td class="line-content">    Expenses:Gas                  $40.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">7</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">8</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">9</td>
+                            <td class="line-content">2024-01-09 ! Real pending transaction</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">10</td>
+                            <td class="line-content">    Expenses:Rent                $100.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">11</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+            
+            <div class="expected-section">
+                
+                
+                
+                    <div class="section-title">Expected Parser Output</div>
+                    
+                    <table class="expected-table">
+                        <thead>
+                            <tr>
+                                <th>Line</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Account Postings</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        
+                            <tr>
+                                <td class="line-number">1</td>
+                                <td>2024/01/07</td>
+                                <td>\! This is not a status marker</td>
+                                <td>
+                                    
+                                    <ul class="posting-details">
+                                    
+                                        <li>
+                                            <strong>Assets:Checking</strong>
+                                            
+                                            <span class="amount positive">$-25.00</span>
+                                            
+                                            
+                                            <span class="line-number">(line 3)</span>
+                                        </li>
+                                    
+                                    </ul>
+                                    
+                                </td>
+                            </tr>
+                        
+                            <tr>
+                                <td class="line-number">5</td>
+                                <td>2024/01/08</td>
+                                <td>\* This is also not a status marker</td>
+                                <td>
+                                    
+                                    <ul class="posting-details">
+                                    
+                                        <li>
+                                            <strong>Assets:Checking</strong>
+                                            
+                                            <span class="amount positive">$-40.00</span>
+                                            
+                                            
+                                            <span class="line-number">(line 7)</span>
+                                        </li>
+                                    
+                                    </ul>
+                                    
+                                </td>
+                            </tr>
+                        
+                            <tr>
+                                <td class="line-number">9</td>
+                                <td>2024/01/09</td>
+                                <td>Real pending transaction</td>
+                                <td>
+                                    
+                                    <ul class="posting-details">
+                                    
+                                        <li>
+                                            <strong>Assets:Checking</strong>
+                                            
+                                            <span class="amount positive">$-100.00</span>
+                                            
+                                            
+                                            <span class="status-marker pending">!</span>
+                                            
+                                            <span class="line-number">(line 11)</span>
+                                        </li>
+                                    
+                                    </ul>
+                                    
+                                </td>
+                            </tr>
+                        
+                        </tbody>
+                    </table>
+                    
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-case" id="get_accounts_test">
+        <div class="test-header">
+            <h2>Get Accounts Test</h2>
+            
+            <div class="test-description">
+                Test get_accounts method including accounts with posting-level status markers
+            </div>
+            
+        </div>
+        
+        <div class="test-content">
+            <div class="input-section">
+                <div class="section-title">Input Ledger File</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content">2024/01/01 Opening Balance</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content">    Assets:Checking                 $1000.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content">    Assets:Savings                   $500.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content">    Income:Salary</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">5</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">6</td>
+                            <td class="line-content">2024/01/02 Grocery Shopping</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">7</td>
+                            <td class="line-content">    Expenses:Food                     $75.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">8</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">9</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">10</td>
+                            <td class="line-content">2024/01/03 Gas</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">11</td>
+                            <td class="line-content">    Expenses:Transportation           $40.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">12</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">13</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">14</td>
+                            <td class="line-content">2024/01/04 * Cleared Transaction</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">15</td>
+                            <td class="line-content">    Expenses:ClearedOnly              $25.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">16</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">17</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">18</td>
+                            <td class="line-content">2024/01/05 ! Pending Transaction  </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">19</td>
+                            <td class="line-content">    Expenses:PendingOnly              $30.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">20</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">21</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">22</td>
+                            <td class="line-content">2024/01/06 Transfer</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">23</td>
+                            <td class="line-content">    Assets:Savings                   $200.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">24</td>
+                            <td class="line-content">    Assets:Checking                 $-200.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">25</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">26</td>
+                            <td class="line-content">2024/01/07 Mixed Posting Status Transaction</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">27</td>
+                            <td class="line-content">    * Expenses:ClearedPostingOnly     $15.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">28</td>
+                            <td class="line-content">    ! Expenses:PendingPostingOnly     $10.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">29</td>
+                            <td class="line-content">    Assets:Checking                  $-25.00</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+            
+            <div class="expected-section">
+                
+                
+                
+                    <div class="section-title">Expected Account List</div>
+                    
+                    
+                    <div style="background: white; border: 1px solid #ddd; border-radius: 4px; padding: 20px;">
+                        <h4 style="margin-top: 0; color: #2c3e50;">Accounts (9)</h4>
+                        <ul style="margin: 0; padding-left: 20px; color: #333;">
+                        
+                            <li style="padding: 4px 0; font-family: monospace; font-size: 14px;">Assets:Checking</li>
+                        
+                            <li style="padding: 4px 0; font-family: monospace; font-size: 14px;">Assets:Savings</li>
+                        
+                            <li style="padding: 4px 0; font-family: monospace; font-size: 14px;">Expenses:ClearedOnly</li>
+                        
+                            <li style="padding: 4px 0; font-family: monospace; font-size: 14px;">Expenses:ClearedPostingOnly</li>
+                        
+                            <li style="padding: 4px 0; font-family: monospace; font-size: 14px;">Expenses:Food</li>
+                        
+                            <li style="padding: 4px 0; font-family: monospace; font-size: 14px;">Expenses:PendingOnly</li>
+                        
+                            <li style="padding: 4px 0; font-family: monospace; font-size: 14px;">Expenses:PendingPostingOnly</li>
+                        
+                            <li style="padding: 4px 0; font-family: monospace; font-size: 14px;">Expenses:Transportation</li>
+                        
+                            <li style="padding: 4px 0; font-family: monospace; font-size: 14px;">Income:Salary</li>
+                        
+                        </ul>
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
+                            <p style="color: #666; font-size: 14px; margin: 0;">
+                                <strong>Note:</strong> Accounts are returned in sorted order by the ledger CLI.
+                            </p>
+                        </div>
+                    </div>
+                    
+                
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-case" id="line_numbers_with_comments_and_blanks">
+        <div class="test-header">
+            <h2>Line Numbers With Comments And Blanks</h2>
+            
+            <div class="test-description">
+                Test that line numbers correctly map to the original file with comments and blank lines
+            </div>
+            
+        </div>
+        
+        <div class="test-content">
+            <div class="input-section">
+                <div class="section-title">Input Ledger File</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content"># This is a comment on line 1</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content"># Another comment on line 2</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content">2024-01-01 Opening Balance</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">5</td>
+                            <td class="line-content">    Assets:Checking              $1000.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">6</td>
+                            <td class="line-content">    Equity:Opening Balances</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">7</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">8</td>
+                            <td class="line-content"># Comment before second transaction</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">9</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">10</td>
+                            <td class="line-content">2024-01-02 ! Grocery Store</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">11</td>
+                            <td class="line-content">    Expenses:Food                 $45.67</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">12</td>
+                            <td class="line-content">    CC:Visa                      -$45.67</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+            
+            <div class="expected-section">
+                
+                
+                
+                    <div class="section-title">Expected Parser Output</div>
+                    
+                    <table class="expected-table">
+                        <thead>
+                            <tr>
+                                <th>Line</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Account Postings</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        
+                            <tr>
+                                <td class="line-number">4</td>
+                                <td>2024/01/01</td>
+                                <td>Opening Balance</td>
+                                <td>
+                                    
+                                    <ul class="posting-details">
+                                    
+                                        <li>
+                                            <strong>Assets:Checking</strong>
+                                            
+                                            <span class="amount positive">$1000.00</span>
+                                            
+                                            
+                                            <span class="line-number">(line 5)</span>
+                                        </li>
+                                    
+                                    </ul>
+                                    
+                                </td>
+                            </tr>
+                        
+                        </tbody>
+                    </table>
+                    
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-case" id="mixed_status_filtering">
+        <div class="test-header">
+            <h2>Mixed Status Filtering</h2>
+            
+            <div class="test-description">
+                Test filtering by account AND only returning uncleared transactions
+            </div>
+            
+        </div>
+        
+        <div class="test-content">
+            <div class="input-section">
+                <div class="section-title">Input Ledger File</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content">2024-01-01 Opening Balance</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content">    Assets:Checking              $1000.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content">    Equity:Opening Balances</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">5</td>
+                            <td class="line-content">2024-01-02 ! Pending Transaction</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">6</td>
+                            <td class="line-content">    Assets:Checking               $100.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">7</td>
+                            <td class="line-content">    Expenses:Food</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">8</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">9</td>
+                            <td class="line-content">2024-01-03 * Fully Reconciled Transaction</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">10</td>
+                            <td class="line-content">    Assets:Checking               $200.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">11</td>
+                            <td class="line-content">    Expenses:Food</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">12</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">13</td>
+                            <td class="line-content">2024-01-04 Transaction for Different Account</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">14</td>
+                            <td class="line-content">    Assets:Savings                $300.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">15</td>
+                            <td class="line-content">    Expenses:Food</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">16</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">17</td>
+                            <td class="line-content">2024-01-05 Uncleared Transaction</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">18</td>
+                            <td class="line-content">    Assets:Checking               $400.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">19</td>
+                            <td class="line-content">    Expenses:Food</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+            
+            <div class="expected-section">
+                
+                
+                
+                    <div class="section-title">Expected Parser Output</div>
+                    
+                    <table class="expected-table">
+                        <thead>
+                            <tr>
+                                <th>Line</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Account Postings</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        
+                            <tr>
+                                <td class="line-number">1</td>
+                                <td>2024/01/01</td>
+                                <td>Opening Balance</td>
+                                <td>
+                                    
+                                    <ul class="posting-details">
+                                    
+                                        <li>
+                                            <strong>Assets:Checking</strong>
+                                            
+                                            <span class="amount positive">$1000.00</span>
+                                            
+                                            
+                                            <span class="line-number">(line 2)</span>
+                                        </li>
+                                    
+                                    </ul>
+                                    
+                                </td>
+                            </tr>
+                        
+                            <tr>
+                                <td class="line-number">5</td>
+                                <td>2024/01/02</td>
+                                <td>Pending Transaction</td>
+                                <td>
+                                    
+                                    <ul class="posting-details">
+                                    
+                                        <li>
+                                            <strong>Assets:Checking</strong>
+                                            
+                                            <span class="amount positive">$100.00</span>
+                                            
+                                            
+                                            <span class="status-marker pending">!</span>
+                                            
+                                            <span class="line-number">(line 6)</span>
+                                        </li>
+                                    
+                                    </ul>
+                                    
+                                </td>
+                            </tr>
+                        
+                            <tr>
+                                <td class="line-number">17</td>
+                                <td>2024/01/05</td>
+                                <td>Uncleared Transaction</td>
+                                <td>
+                                    
+                                    <ul class="posting-details">
+                                    
+                                        <li>
+                                            <strong>Assets:Checking</strong>
+                                            
+                                            <span class="amount positive">$400.00</span>
+                                            
+                                            
+                                            <span class="line-number">(line 18)</span>
+                                        </li>
+                                    
+                                    </ul>
+                                    
+                                </td>
+                            </tr>
+                        
+                        </tbody>
+                    </table>
+                    
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-case" id="multiple_transaction_line_numbers">
+        <div class="test-header">
+            <h2>Multiple Transaction Line Numbers</h2>
+            
+            <div class="test-description">
+                Test line numbers for multiple transactions in sequence
+            </div>
+            
+        </div>
+        
+        <div class="test-content">
+            <div class="input-section">
+                <div class="section-title">Input Ledger File</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content">2024-01-01 Transaction One</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content">    Assets:Checking               $100.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content">    Expenses:Test</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">5</td>
+                            <td class="line-content">2024-01-02 Transaction Two</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">6</td>
+                            <td class="line-content">    Assets:Checking               $200.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">7</td>
+                            <td class="line-content">    Expenses:Other</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">8</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">9</td>
+                            <td class="line-content">2024-01-03 Transaction Three</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">10</td>
+                            <td class="line-content">    Assets:Checking               $300.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">11</td>
+                            <td class="line-content">    Expenses:More</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+            
+            <div class="expected-section">
+                
+                
+                
+                    <div class="section-title">Expected Parser Output</div>
+                    
+                    <table class="expected-table">
+                        <thead>
+                            <tr>
+                                <th>Line</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Account Postings</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        
+                            <tr>
+                                <td class="line-number">1</td>
+                                <td>2024/01/01</td>
+                                <td>Transaction One</td>
+                                <td>
+                                    
+                                    <ul class="posting-details">
+                                    
+                                        <li>
+                                            <strong>Assets:Checking</strong>
+                                            
+                                            <span class="amount positive">$100.00</span>
+                                            
+                                            
+                                            <span class="line-number">(line 2)</span>
+                                        </li>
+                                    
+                                    </ul>
+                                    
+                                </td>
+                            </tr>
+                        
+                            <tr>
+                                <td class="line-number">5</td>
+                                <td>2024/01/02</td>
+                                <td>Transaction Two</td>
+                                <td>
+                                    
+                                    <ul class="posting-details">
+                                    
+                                        <li>
+                                            <strong>Assets:Checking</strong>
+                                            
+                                            <span class="amount positive">$200.00</span>
+                                            
+                                            
+                                            <span class="line-number">(line 6)</span>
+                                        </li>
+                                    
+                                    </ul>
+                                    
+                                </td>
+                            </tr>
+                        
+                            <tr>
+                                <td class="line-number">9</td>
+                                <td>2024/01/03</td>
+                                <td>Transaction Three</td>
+                                <td>
+                                    
+                                    <ul class="posting-details">
+                                    
+                                        <li>
+                                            <strong>Assets:Checking</strong>
+                                            
+                                            <span class="amount positive">$300.00</span>
+                                            
+                                            
+                                            <span class="line-number">(line 10)</span>
+                                        </li>
+                                    
+                                    </ul>
+                                    
+                                </td>
+                            </tr>
+                        
+                        </tbody>
+                    </table>
+                    
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-case" id="posting_status">
+        <div class="test-header">
+            <h2>Posting Status</h2>
+            
+            <div class="test-description">
+                Transactions with posting-level status markers
+            </div>
+            
+        </div>
+        
+        <div class="test-content">
+            <div class="input-section">
+                <div class="section-title">Input Ledger File</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content">2024-01-05 Transaction with posting status</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content">    * Expenses:Utilities          $75.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content">    ! Assets:Checking</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">5</td>
+                            <td class="line-content">2024-01-06 Mixed posting status</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">6</td>
+                            <td class="line-content">    * Expenses:Coffee             $5.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">7</td>
+                            <td class="line-content">    Assets:Checking               $-5.00</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+            
+            <div class="expected-section">
+                
+                
+                
+                    <div class="section-title">Expected Parser Output</div>
+                    
+                    <table class="expected-table">
+                        <thead>
+                            <tr>
+                                <th>Line</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Account Postings</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        
+                            <tr>
+                                <td class="line-number">1</td>
+                                <td>2024/01/05</td>
+                                <td>Transaction with posting status</td>
+                                <td>
+                                    
+                                    <ul class="posting-details">
+                                    
+                                        <li>
+                                            <strong>Assets:Checking</strong>
+                                            
+                                            <span class="amount positive">$-75.00</span>
+                                            
+                                            
+                                            <span class="status-marker pending">!</span>
+                                            
+                                            <span class="line-number">(line 3)</span>
+                                        </li>
+                                    
+                                    </ul>
+                                    
+                                </td>
+                            </tr>
+                        
+                            <tr>
+                                <td class="line-number">5</td>
+                                <td>2024/01/06</td>
+                                <td>Mixed posting status</td>
+                                <td>
+                                    
+                                    <ul class="posting-details">
+                                    
+                                        <li>
+                                            <strong>Assets:Checking</strong>
+                                            
+                                            <span class="amount positive">$-5.00</span>
+                                            
+                                            
+                                            <span class="line-number">(line 7)</span>
+                                        </li>
+                                    
+                                    </ul>
+                                    
+                                </td>
+                            </tr>
+                        
+                        </tbody>
+                    </table>
+                    
+                
+            </div>
+        </div>
+    </div>
+    
+
+</body>
+</html>

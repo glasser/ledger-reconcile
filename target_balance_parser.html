@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Target Balance Parser Test Fixtures</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .summary {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .navigation {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navigation a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .navigation a:hover {
+            text-decoration: underline;
+        }
+
+        .back-arrow {
+            font-size: 16px;
+        }
+
+        .test-case {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .test-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .test-header h2 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 20px;
+        }
+
+        .test-description {
+            color: #666;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .test-content {
+            padding: 20px;
+        }
+
+        .test-input {
+            background: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            font-family: monospace;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .test-output {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 10px 15px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .output-field {
+            margin-bottom: 5px;
+        }
+
+        .output-field strong {
+            color: #2c3e50;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navigation">
+        <span class="back-arrow">←</span>
+        <a href="index.html">Back to Test Cases Index</a>
+    </div>
+
+    <h1>Target Balance Parser Test Fixtures</h1>
+
+    <div class="summary">
+        <strong>Total test cases:</strong> 14
+        <br>
+        <strong>API:</strong> TargetBalanceParser.parse()
+    </div>
+
+    
+    
+
+    <div class="test-case" id="comma_at_end">
+        <div class="test-header">
+            <h2>Comma At End</h2>
+            
+            <div class="test-description">
+                Trailing comma after the number
+            </div>
+            
+        </div>
+
+        <div class="test-content">
+            <h3>Input</h3>
+            <div class="test-input">$1,234.56,</div>
+
+            <h3>Expected Output</h3>
+            <div class="test-output">
+                <div class="output-field"><strong>Parsed Amount:</strong> 1234.56</div>
+                <div class="output-field"><strong>Formatted Display:</strong> $1,234.56
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <div class="test-case" id="comma_at_start">
+        <div class="test-header">
+            <h2>Comma At Start</h2>
+            
+            <div class="test-description">
+                Leading comma before the number
+            </div>
+            
+        </div>
+
+        <div class="test-content">
+            <h3>Input</h3>
+            <div class="test-input">$,1234.56</div>
+
+            <h3>Expected Output</h3>
+            <div class="test-output">
+                <div class="output-field"><strong>Parsed Amount:</strong> 1234.56</div>
+                <div class="output-field"><strong>Formatted Display:</strong> $1,234.56
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <div class="test-case" id="comma_in_cents">
+        <div class="test-header">
+            <h2>Comma In Cents</h2>
+            
+            <div class="test-description">
+                Comma mistakenly placed in cents portion
+            </div>
+            
+        </div>
+
+        <div class="test-content">
+            <h3>Input</h3>
+            <div class="test-input">$1,234.5,6</div>
+
+            <h3>Expected Output</h3>
+            <div class="test-output">
+                <div class="output-field"><strong>Parsed Amount:</strong> 1234.56</div>
+                <div class="output-field"><strong>Formatted Display:</strong> $1,234.56
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <div class="test-case" id="decimal_precision">
+        <div class="test-header">
+            <h2>Decimal Precision</h2>
+            
+            <div class="test-description">
+                Various decimal precision cases
+            </div>
+            
+        </div>
+
+        <div class="test-content">
+            <h3>Input</h3>
+            <div class="test-input">$100</div>
+
+            <h3>Expected Output</h3>
+            <div class="test-output">
+                <div class="output-field"><strong>Parsed Amount:</strong> 100.0</div>
+                <div class="output-field"><strong>Formatted Display:</strong> $100.00
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <div class="test-case" id="excessive_commas">
+        <div class="test-header">
+            <h2>Excessive Commas</h2>
+            
+            <div class="test-description">
+                Way too many commas everywhere
+            </div>
+            
+        </div>
+
+        <div class="test-content">
+            <h3>Input</h3>
+            <div class="test-input">$,1,2,3,4,5,6.7,8</div>
+
+            <h3>Expected Output</h3>
+            <div class="test-output">
+                <div class="output-field"><strong>Parsed Amount:</strong> 123456.78</div>
+                <div class="output-field"><strong>Formatted Display:</strong> $123,456.78
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <div class="test-case" id="mixed_separators">
+        <div class="test-header">
+            <h2>Mixed Separators</h2>
+            
+            <div class="test-description">
+                Spaces mixed with commas (common copy-paste from PDFs)
+            </div>
+            
+        </div>
+
+        <div class="test-content">
+            <h3>Input</h3>
+            <div class="test-input">$1, 234, 56.78</div>
+
+            <h3>Expected Output</h3>
+            <div class="test-output">
+                <div class="output-field"><strong>Parsed Amount:</strong> 123456.78</div>
+                <div class="output-field"><strong>Formatted Display:</strong> $123,456.78
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <div class="test-case" id="multiple_commas">
+        <div class="test-header">
+            <h2>Multiple Commas</h2>
+            
+            <div class="test-description">
+                Multiple commas in odd places
+            </div>
+            
+        </div>
+
+        <div class="test-content">
+            <h3>Input</h3>
+            <div class="test-input">$1,2,3,4.56</div>
+
+            <h3>Expected Output</h3>
+            <div class="test-output">
+                <div class="output-field"><strong>Parsed Amount:</strong> 1234.56</div>
+                <div class="output-field"><strong>Formatted Display:</strong> $1,234.56
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <div class="test-case" id="multiple_consecutive_commas">
+        <div class="test-header">
+            <h2>Multiple Consecutive Commas</h2>
+            
+            <div class="test-description">
+                Multiple consecutive commas
+            </div>
+            
+        </div>
+
+        <div class="test-content">
+            <h3>Input</h3>
+            <div class="test-input">$1,,,234.56</div>
+
+            <h3>Expected Output</h3>
+            <div class="test-output">
+                <div class="output-field"><strong>Parsed Amount:</strong> 1234.56</div>
+                <div class="output-field"><strong>Formatted Display:</strong> $1,234.56
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <div class="test-case" id="negative_amount">
+        <div class="test-header">
+            <h2>Negative Amount</h2>
+            
+            <div class="test-description">
+                Negative dollar amount
+            </div>
+            
+        </div>
+
+        <div class="test-content">
+            <h3>Input</h3>
+            <div class="test-input">-$500.00</div>
+
+            <h3>Expected Output</h3>
+            <div class="test-output">
+                <div class="output-field"><strong>Parsed Amount:</strong> -500.0</div>
+                <div class="output-field"><strong>Formatted Display:</strong> -$500.00
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <div class="test-case" id="no_dollar_sign">
+        <div class="test-header">
+            <h2>No Dollar Sign</h2>
+            
+            <div class="test-description">
+                Number without dollar sign
+            </div>
+            
+        </div>
+
+        <div class="test-content">
+            <h3>Input</h3>
+            <div class="test-input">1234.56</div>
+
+            <h3>Expected Output</h3>
+            <div class="test-output">
+                <div class="output-field"><strong>Parsed Amount:</strong> 1234.56</div>
+                <div class="output-field"><strong>Formatted Display:</strong> $1,234.56
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <div class="test-case" id="simple_dollar_amount">
+        <div class="test-header">
+            <h2>Simple Dollar Amount</h2>
+            
+            <div class="test-description">
+                Simple dollar amount parsing
+            </div>
+            
+        </div>
+
+        <div class="test-content">
+            <h3>Input</h3>
+            <div class="test-input">$1234.56</div>
+
+            <h3>Expected Output</h3>
+            <div class="test-output">
+                <div class="output-field"><strong>Parsed Amount:</strong> 1234.56</div>
+                <div class="output-field"><strong>Formatted Display:</strong> $1,234.56
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <div class="test-case" id="spaces_and_commas">
+        <div class="test-header">
+            <h2>Spaces And Commas</h2>
+            
+            <div class="test-description">
+                Spaces where they shouldn&#39;t be (bad OCR or copy-paste)
+            </div>
+            
+        </div>
+
+        <div class="test-content">
+            <h3>Input</h3>
+            <div class="test-input">$ 1 , 2 3 4 . 5 6</div>
+
+            <h3>Expected Output</h3>
+            <div class="test-output">
+                <div class="output-field"><strong>Parsed Amount:</strong> 1234.56</div>
+                <div class="output-field"><strong>Formatted Display:</strong> $1,234.56
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <div class="test-case" id="whitespace_variations">
+        <div class="test-header">
+            <h2>Whitespace Variations</h2>
+            
+            <div class="test-description">
+                Amount with surrounding whitespace
+            </div>
+            
+        </div>
+
+        <div class="test-content">
+            <h3>Input</h3>
+            <div class="test-input">  $1,234.56  </div>
+
+            <h3>Expected Output</h3>
+            <div class="test-output">
+                <div class="output-field"><strong>Parsed Amount:</strong> 1234.56</div>
+                <div class="output-field"><strong>Formatted Display:</strong> $1,234.56
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+
+    <div class="test-case" id="with_commas">
+        <div class="test-header">
+            <h2>With Commas</h2>
+            
+            <div class="test-description">
+                Dollar amount with commas (copy-pasted from bank statements)
+            </div>
+            
+        </div>
+
+        <div class="test-content">
+            <h3>Input</h3>
+            <div class="test-input">$1,234.56</div>
+
+            <h3>Expected Output</h3>
+            <div class="test-output">
+                <div class="output-field"><strong>Parsed Amount:</strong> 1234.56</div>
+                <div class="output-field"><strong>Formatted Display:</strong> $1,234.56
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</body>
+
+</html>
