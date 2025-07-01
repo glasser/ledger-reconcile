@@ -7,13 +7,14 @@ steps:
   - action: snapshot
     data:
       name: initial_state
-  - action: atomic_rewrite
+  - action: modify_file
     data:
       content_file: after_external_edit.ledger
+      atomic_replace: true
     description: "Simulate VSCode atomic rewrite by writing to temp file and replacing"
-  - action: pause
+  - action: wait
     data:
-      milliseconds: 200
+      seconds: 0.2
     description: "Wait for file watcher to detect the change"
   - action: snapshot
     data:

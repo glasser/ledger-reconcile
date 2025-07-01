@@ -15,15 +15,16 @@ steps:
       type: "table_rows"
       count: 2
 
-  - action: external_file_change
+  - action: modify_file
     description: "Simulate external file modification (add a new transaction)"
     data:
-      file: "modified.ledger"
+      content_file: "modified.ledger"
+      sync: false
 
-  - action: pause
+  - action: wait
     description: "Wait for file watcher to detect change"
     data:
-      milliseconds: 200
+      seconds: 0.2
 
   - action: snapshot
     description: "State after automatic file watcher refresh (should show 3 transactions)"
@@ -41,10 +42,10 @@ steps:
     data:
       key: "r"
 
-  - action: pause
+  - action: wait
     description: "Wait for refresh to complete"
     data:
-      milliseconds: 100
+      seconds: 0.1
 
   - action: snapshot
     description: "After manual refresh (should still show 3 transactions with notification)"

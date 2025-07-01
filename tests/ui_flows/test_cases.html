@@ -1313,7 +1313,11 @@
                                         
                                         
                                         
-                                            <div class="step-data">Content file: <strong>modified.ledger</strong></div>
+                                            <div class="step-data">
+                                                Content file: <strong>modified.ledger</strong><br>
+                                                
+                                                
+                                            </div>
                                         
                                     </div>
                                 </div>
@@ -1896,7 +1900,11 @@
                                         
                                         
                                         
-                                            <div class="step-data">Content file: <strong>reduced.ledger</strong></div>
+                                            <div class="step-data">
+                                                Content file: <strong>reduced.ledger</strong><br>
+                                                
+                                                
+                                            </div>
                                         
                                     </div>
                                 </div>
@@ -6124,6 +6132,8 @@
             
                 
                 
+                    
+                
             
                 
                 
@@ -6170,12 +6180,6 @@
                         
                             
                             
-                        
-                    
-                        
-                        
-                    
-                        
                         
                     
                         
@@ -6228,40 +6232,6 @@
                                                 Expected row count: <strong>2</strong>
                                                 
                                             </div>
-                                        
-                                    </div>
-                                </div>
-                            
-                                <div class="step">
-                                    <div class="step-header">
-                                        <div class="step-number">3</div>
-                                        <div class="step-action">
-                                            
-                                            External_file_change
-                                        </div>
-                                    </div>
-                                    <div class="step-content">
-                                        
-                                        <div class="step-description">Simulate external file modification (add a new transaction)</div>
-                                        
-                                        
-                                        
-                                    </div>
-                                </div>
-                            
-                                <div class="step">
-                                    <div class="step-header">
-                                        <div class="step-number">4</div>
-                                        <div class="step-action">
-                                            
-                                            Pause
-                                        </div>
-                                    </div>
-                                    <div class="step-content">
-                                        
-                                        <div class="step-description">Wait for file watcher to detect change</div>
-                                        
-                                        
                                         
                                     </div>
                                 </div>
@@ -6462,6 +6432,104 @@
                         
                         
                     
+                    
+                    <div class="step-chunk">
+                        <div class="steps-group">
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">3</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-modify">MODIFY</span>
+                                            
+                                            Modify_file
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">Simulate external file modification (add a new transaction)</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">
+                                                Content file: <strong>modified.ledger</strong><br>
+                                                
+                                                Sync: <strong>False</strong>
+                                            </div>
+                                        
+                                    </div>
+                                </div>
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">4</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-wait">WAIT</span>
+                                            
+                                            Wait
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">Wait for file watcher to detect change</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">Duration: <strong>0.2s</strong></div>
+                                        
+                                    </div>
+                                </div>
+                            
+                        </div>
+                        
+                        <div class="step-media">
+                            <h4>Step 3: Simulate external file modification (add a new transaction)</h4>
+                            
+                                
+                                
+                                <div class="file-content">
+                                    <h4>New File Content</h4>
+                                    <div class="ledger-content">2024-01-01 Opening Balance
+    Assets:Checking              $1000.00
+    Equity:Opening Balances
+
+2024-01-05 Grocery Store
+    Expenses:Food                 $35.00
+    Assets:Checking
+
+2024-01-10 Gas Station
+    Expenses:Transportation       $45.00
+    Assets:Checking</div>
+                                </div>
+                                
+                            
+                        </div>
+                    </div>
+                
+            
+                
+                
+                    
+                
+                
+                
+                
+                
+                
+                    
+                    
+                    
+                        
+                        
+                            
+                            
+                        
+                    
+                        
+                        
+                    
                         
                         
                     
@@ -6545,7 +6613,9 @@
                                         <div class="step-number">8</div>
                                         <div class="step-action">
                                             
-                                            Pause
+                                            <span class="action-wait">WAIT</span>
+                                            
+                                            Wait
                                         </div>
                                     </div>
                                     <div class="step-content">
@@ -6553,6 +6623,8 @@
                                         <div class="step-description">Wait for refresh to complete</div>
                                         
                                         
+                                        
+                                            <div class="step-data">Duration: <strong>0.1s</strong></div>
                                         
                                     </div>
                                 </div>
@@ -11443,6 +11515,8 @@
             
                 
                 
+                    
+                
             
                 
                 
@@ -11475,12 +11549,6 @@
                         
                             
                             
-                        
-                    
-                        
-                        
-                    
-                        
                         
                     
                     
@@ -11502,40 +11570,6 @@
                                         
                                         
                                             <div class="step-data">Snapshot name: <strong>initial_state</strong></div>
-                                        
-                                    </div>
-                                </div>
-                            
-                                <div class="step">
-                                    <div class="step-header">
-                                        <div class="step-number">2</div>
-                                        <div class="step-action">
-                                            
-                                            Atomic_rewrite
-                                        </div>
-                                    </div>
-                                    <div class="step-content">
-                                        
-                                        <div class="step-description">Simulate VSCode atomic rewrite by writing to temp file and replacing</div>
-                                        
-                                        
-                                        
-                                    </div>
-                                </div>
-                            
-                                <div class="step">
-                                    <div class="step-header">
-                                        <div class="step-number">3</div>
-                                        <div class="step-action">
-                                            
-                                            Pause
-                                        </div>
-                                    </div>
-                                    <div class="step-content">
-                                        
-                                        <div class="step-description">Wait for file watcher to detect the change</div>
-                                        
-                                        
                                         
                                     </div>
                                 </div>
@@ -11708,6 +11742,108 @@
     </g>
 </svg>
 
+                                </div>
+                                
+                            
+                        </div>
+                    </div>
+                
+            
+                
+                
+                    
+                
+                
+                
+                
+                
+                
+                    
+                    
+                    
+                        
+                        
+                            
+                            
+                        
+                    
+                        
+                        
+                    
+                    
+                    <div class="step-chunk">
+                        <div class="steps-group">
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">2</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-modify">MODIFY</span>
+                                            
+                                            Modify_file
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">Simulate VSCode atomic rewrite by writing to temp file and replacing</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">
+                                                Content file: <strong>after_external_edit.ledger</strong><br>
+                                                Atomic replace: <strong>True</strong><br>
+                                                
+                                            </div>
+                                        
+                                    </div>
+                                </div>
+                            
+                                <div class="step">
+                                    <div class="step-header">
+                                        <div class="step-number">3</div>
+                                        <div class="step-action">
+                                            
+                                            <span class="action-wait">WAIT</span>
+                                            
+                                            Wait
+                                        </div>
+                                    </div>
+                                    <div class="step-content">
+                                        
+                                        <div class="step-description">Wait for file watcher to detect the change</div>
+                                        
+                                        
+                                        
+                                            <div class="step-data">Duration: <strong>0.2s</strong></div>
+                                        
+                                    </div>
+                                </div>
+                            
+                        </div>
+                        
+                        <div class="step-media">
+                            <h4>Step 2: Simulate VSCode atomic rewrite by writing to temp file and replacing</h4>
+                            
+                                
+                                
+                                <div class="file-content">
+                                    <h4>New File Content</h4>
+                                    <div class="ledger-content">2024-01-01 Opening Balance
+    Assets:Checking              $1000.00
+    Equity:Opening Balances
+
+2024-01-02 First Transaction
+    Expenses:Food                 $30.00
+    Assets:Checking              $-30.00
+
+2024-01-03 ! Second Transaction (Modified Externally)
+    Expenses:Gas                  $40.00
+    Assets:Checking              $-40.00
+
+2024-01-04 Third Transaction (Added Externally)
+    Expenses:Coffee               $5.00
+    Assets:Checking              $-5.00</div>
                                 </div>
                                 
                             

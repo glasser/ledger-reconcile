@@ -208,10 +208,15 @@ class UITestRunner:
             await self.pilot.pause()
 
     async def run_wait(self, step: UITestStep, _step_index: int) -> None:
-        """Wait for specified duration or until all messages are processed."""
-        duration = step.data.get("duration")
-        if duration is not None:
-            await self.pilot.pause(duration)
+        """Wait for specified duration or until all messages are processed.
+
+        Data parameters:
+        - seconds: Duration in seconds (float) - if not specified, waits until all messages processed
+        """
+        seconds = step.data.get("seconds")
+
+        if seconds is not None:
+            await self.pilot.pause(seconds)
         else:
             await self.pilot.pause()
 
@@ -274,27 +279,6 @@ class UITestRunner:
             f"File content mismatch at step {step_index}: {step.description}"
         )
 
-    async def run_external_file_change(
-        self, step: UITestStep, _step_index: int
-    ) -> None:
-        """Simulate an external file change by overwriting the current file."""
-        new_content_file = step.data["file"]
-        new_content_data = self.test_case_tree.get(new_content_file)
-
-        if not new_content_data or "content" not in new_content_data:
-            raise FileNotFoundError(f"New content file not found: {new_content_file}")
-
-        new_content = new_content_data["content"]
-
-        # Overwrite the current ledger file to simulate external change
-        with self.temp_ledger_file.open("w") as f:
-            f.write(new_content)
-
-    async def run_pause(self, step: UITestStep, _step_index: int) -> None:
-        """Pause for a specified number of milliseconds."""
-        milliseconds = step.data.get("milliseconds", 100)
-        await self.pilot.pause(milliseconds / 1000.0)
-
     async def run_assert_ui(self, step: UITestStep, step_index: int) -> None:
         """Assert UI state (e.g., specific text visible, table contents)."""
         assertion_type = step.data["type"]
@@ -339,48 +323,54 @@ class UITestRunner:
             )
 
     async def run_modify_file(self, step: UITestStep, _step_index: int) -> None:
-        """Modify the ledger file externally to test file watcher functionality."""
-        new_content_file = step.data["content_file"]
-        new_content_data = self.test_case_tree.get(new_content_file)
+        """Modify the ledger file externally to test file watcher functionality.
 
+        Supports both simple overwrites and atomic replacements (like VSCode).
+
+        Data parameters:
+        - content_file: File containing new content
+        - atomic_replace: If True, use atomic replacement via temp file (default: False)
+        - sync: If True, call os.sync() after modification (default: True)
+        """
+        # Get configuration options
+        content_file = step.data["content_file"]
+        atomic_replace = step.data.get("atomic_replace", False)
+        sync = step.data.get("sync", True)
+
+        # Load new content
+        new_content_data = self.test_case_tree.get(content_file)
         if not new_content_data or "content" not in new_content_data:
-            raise FileNotFoundError(f"Content file not found: {new_content_file}")
+            raise FileNotFoundError(f"Content file not found: {content_file}")
 
         new_content = new_content_data["content"]
 
-        # Write new content to the ledger file (simulating external modification)
-        with self.temp_ledger_file.open("w") as f:
-            f.write(new_content)
+        if atomic_replace:
+            # Simulate VSCode's atomic rewrite pattern:
+            # 1. Write to a temporary file with a VSCode-like name pattern
+            temp_file = self.temp_ledger_file.with_suffix(".tmp-vscode")
 
-        # Force filesystem sync
-        os.sync()
+            # 2. Write content to temporary file
+            with temp_file.open("w") as f:
+                f.write(new_content)
 
-    async def run_atomic_rewrite(self, step: UITestStep, _step_index: int) -> None:
-        """Simulate atomic rewrite like VSCode does for external file modification."""
-        new_content_file = step.data["content_file"]
-        new_content_data = self.test_case_tree.get(new_content_file)
+            # 3. Force filesystem sync if requested
+            if sync:
+                os.sync()
 
-        if not new_content_data or "content" not in new_content_data:
-            raise FileNotFoundError(f"Content file not found: {new_content_file}")
+            # 4. Atomically replace the original file
+            temp_file.replace(self.temp_ledger_file)
 
-        new_content = new_content_data["content"]
+            # 5. Force another filesystem sync if requested
+            if sync:
+                os.sync()
+        else:
+            # Simple direct write
+            with self.temp_ledger_file.open("w") as f:
+                f.write(new_content)
 
-        # Simulate VSCode's atomic rewrite pattern:
-        # 1. Write to a temporary file with a VSCode-like name pattern
-        temp_file = self.temp_ledger_file.with_suffix(".tmp-vscode")
-
-        # 2. Write content to temporary file
-        with temp_file.open("w") as f:
-            f.write(new_content)
-
-        # 3. Force filesystem sync
-        os.sync()
-
-        # 4. Atomically replace the original file (VSCode does this)
-        temp_file.replace(self.temp_ledger_file)
-
-        # 5. Force another filesystem sync
-        os.sync()
+            # Force filesystem sync if requested
+            if sync:
+                os.sync()
 
 
 # Test discovery and execution

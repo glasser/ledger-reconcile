@@ -474,7 +474,7 @@
                                         {% elif step.action == "snapshot" %}
                                             <div class="step-data">Snapshot name: <strong>{{ step.data.name }}</strong></div>
                                         {% elif step.action == "wait" %}
-                                            <div class="step-data">Duration: <strong>{{ step.data.duration }}s</strong></div>
+                                            <div class="step-data">Duration: <strong>{{ step.data.seconds }}s</strong></div>
                                         {% elif step.action == "assert_file" %}
                                             <div class="step-data">Expected file: <strong>{{ step.data.file }}</strong></div>
                                         {% elif step.action == "assert_ui" %}
@@ -487,7 +487,11 @@
                                                 {% endif %}
                                             </div>
                                         {% elif step.action == "modify_file" %}
-                                            <div class="step-data">Content file: <strong>{{ step.data.content_file }}</strong></div>
+                                            <div class="step-data">
+                                                Content file: <strong>{{ step.data.content_file }}</strong><br>
+                                                {% if step.data.atomic_replace %}Atomic replace: <strong>{{ step.data.atomic_replace }}</strong><br>{% endif %}
+                                                {% if step.data.sync is defined %}Sync: <strong>{{ step.data.sync }}</strong>{% endif %}
+                                            </div>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -560,7 +564,7 @@
                                     {% elif step.action == "snapshot" %}
                                         <div class="step-data">Snapshot name: <strong>{{ step.data.name }}</strong></div>
                                     {% elif step.action == "wait" %}
-                                        <div class="step-data">Duration: <strong>{{ step.data.duration }}s</strong></div>
+                                        <div class="step-data">Duration: <strong>{{ step.data.seconds }}s</strong></div>
                                     {% elif step.action == "assert_file" %}
                                         <div class="step-data">Expected file: <strong>{{ step.data.file }}</strong></div>
                                     {% elif step.action == "assert_ui" %}
@@ -573,7 +577,11 @@
                                             {% endif %}
                                         </div>
                                     {% elif step.action == "modify_file" %}
-                                        <div class="step-data">Content file: <strong>{{ step.data.content_file }}</strong></div>
+                                        <div class="step-data">
+                                            Content file: <strong>{{ step.data.content_file }}</strong><br>
+                                            {% if step.data.atomic_replace %}Atomic replace: <strong>{{ step.data.atomic_replace }}</strong><br>{% endif %}
+                                            {% if step.data.sync is defined %}Sync: <strong>{{ step.data.sync }}</strong>{% endif %}
+                                        </div>
                                     {% endif %}
                                 </div>
                             </div>
