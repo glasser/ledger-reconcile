@@ -11,9 +11,6 @@ steps:
       name: target_dialog_open
   - action: key
     data:
-      key: "ctrl+a"  # Select all in input
-  - action: key
-    data:
       key: "shift+4 7 5 0 full_stop 0 0"  # Type $750.00
   - action: key
     data:
