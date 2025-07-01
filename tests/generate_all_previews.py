@@ -11,7 +11,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from tests.fixture_utils import load_directory_tree
 
 
-def generate_preview(test_dir: Path):
+def generate_preview(test_dir: Path, preview_dir: Path):
     """Generate HTML preview using generic template and data loader."""
     test_cases_dir = test_dir / "test_cases"
     tree = load_directory_tree(test_cases_dir)
@@ -44,8 +44,8 @@ def generate_preview(test_dir: Path):
     # Render template
     rendered = template.render(**template_data)
 
-    # Write output
-    output_file = test_dir / "test_cases.html"
+    # Write output to preview directory
+    output_file = preview_dir / f"{test_dir.name}.html"
     output_file.write_text(rendered, encoding="utf-8")
     print(f"Generated preview: {output_file}")
 
@@ -72,6 +72,10 @@ def generate_index(test_dirs: list[tuple[str, Path]], output_file: Path):
 def main():
     """Generate all test case previews."""
     tests_dir = Path(__file__).parent.parent / "tests"
+    preview_dir = tests_dir / "preview"
+
+    # Create preview directory if it doesn't exist
+    preview_dir.mkdir(exist_ok=True)
 
     # Find all test directories with test_cases subdirectories
     test_suites = []
@@ -80,11 +84,11 @@ def main():
             test_suites.append((item.name, item))
 
             # Generate preview using generic system
-            generate_preview(item)
+            generate_preview(item, preview_dir)
 
     # Generate index
     if test_suites:
-        index_file = tests_dir / "test_cases.html"
+        index_file = preview_dir / "index.html"
         generate_index(test_suites, index_file)
 
 

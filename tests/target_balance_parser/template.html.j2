@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,12 +14,12 @@
             line-height: 1.6;
             background-color: #f5f5f5;
         }
-        
+
         h1 {
             color: #2c3e50;
             margin-bottom: 20px;
         }
-        
+
         .summary {
             background: #2c3e50;
             color: white;
@@ -26,7 +27,7 @@
             border-radius: 6px;
             margin-bottom: 20px;
         }
-        
+
         .navigation {
             background: #3498db;
             color: white;
@@ -37,21 +38,21 @@
             align-items: center;
             gap: 10px;
         }
-        
+
         .navigation a {
             color: white;
             text-decoration: none;
             font-weight: bold;
         }
-        
+
         .navigation a:hover {
             text-decoration: underline;
         }
-        
+
         .back-arrow {
             font-size: 16px;
         }
-        
+
         .test-case {
             background: white;
             border: 1px solid #ddd;
@@ -59,29 +60,29 @@
             margin-bottom: 30px;
             overflow: hidden;
         }
-        
+
         .test-header {
             background: #f8f9fa;
             padding: 15px 20px;
             border-bottom: 1px solid #ddd;
         }
-        
+
         .test-header h2 {
             margin: 0;
             color: #2c3e50;
             font-size: 20px;
         }
-        
+
         .test-description {
             color: #666;
             margin-top: 5px;
             font-size: 14px;
         }
-        
+
         .test-content {
             padding: 20px;
         }
-        
+
         .test-input {
             background: #e8f4fd;
             border-left: 4px solid #3498db;
@@ -91,7 +92,7 @@
             font-size: 16px;
             font-weight: bold;
         }
-        
+
         .test-output {
             background: #d4edda;
             border-left: 4px solid #28a745;
@@ -99,24 +100,25 @@
             font-family: monospace;
             font-size: 14px;
         }
-        
+
         .output-field {
             margin-bottom: 5px;
         }
-        
+
         .output-field strong {
             color: #2c3e50;
         }
     </style>
 </head>
+
 <body>
     <div class="navigation">
         <span class="back-arrow">←</span>
-        <a href="../test_cases.html">Back to Test Cases Index</a>
+        <a href="index.html">Back to Test Cases Index</a>
     </div>
-    
+
     <h1>Target Balance Parser Test Fixtures</h1>
-    
+
     <div class="summary">
         <strong>Total test cases:</strong> {{ total_cases }}
         <br>
@@ -125,7 +127,7 @@
 
     {% for case_name, case_data in test_cases.items() | sort %}
     {% set config = case_data.get("config.yaml", {}).get("parsed", {}) %}
-    
+
     <div class="test-case" id="{{ case_name }}">
         <div class="test-header">
             <h2>{{ case_name.replace('_', ' ').title() }}</h2>
@@ -135,18 +137,20 @@
             </div>
             {% endif %}
         </div>
-        
+
         <div class="test-content">
             <h3>Input</h3>
             <div class="test-input">{{ config.input }}</div>
-            
+
             <h3>Expected Output</h3>
             <div class="test-output">
                 <div class="output-field"><strong>Parsed Amount:</strong> {{ config.expected.parsed_amount }}</div>
-                <div class="output-field"><strong>Formatted Display:</strong> {{ config.expected.formatted_display }}</div>
+                <div class="output-field"><strong>Formatted Display:</strong> {{ config.expected.formatted_display }}
+                </div>
             </div>
         </div>
     </div>
     {% endfor %}
 </body>
+
 </html>
