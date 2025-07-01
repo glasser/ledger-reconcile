@@ -1,0 +1,58 @@
+name: "Refresh From File"
+description: "Test the ability to manually refresh from file using 'r' key"
+account: "Assets:Checking"
+target_amount: "$1000.00"
+
+steps:
+  - action: snapshot
+    description: "Initial state with 2 transactions"
+    data:
+      name: "initial_state"
+
+  - action: assert_ui
+    description: "Should have 2 transactions shown"
+    data:
+      type: "table_rows"
+      count: 2
+
+  - action: external_file_change
+    description: "Simulate external file modification (add a new transaction)"
+    data:
+      file: "modified.ledger"
+
+  - action: pause
+    description: "Wait for file watcher to detect change"
+    data:
+      milliseconds: 200
+
+  - action: snapshot
+    description: "State after automatic file watcher refresh (should show 3 transactions)"
+    data:
+      name: "after_auto_refresh"
+
+  - action: assert_ui
+    description: "Should have 3 transactions after auto-refresh"
+    data:
+      type: "table_rows"
+      count: 3
+
+  - action: key
+    description: "Press 'r' to manually refresh from file (should show notification)"
+    data:
+      key: "r"
+
+  - action: pause
+    description: "Wait for refresh to complete"
+    data:
+      milliseconds: 100
+
+  - action: snapshot
+    description: "After manual refresh (should still show 3 transactions with notification)"
+    data:
+      name: "after_manual_refresh"
+
+  - action: assert_ui
+    description: "Should still have 3 transactions after manual refresh"
+    data:
+      type: "table_rows"
+      count: 3

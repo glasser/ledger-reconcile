@@ -274,6 +274,25 @@ class UITestRunner:
             f"File content mismatch at step {step_index}: {step.description}"
         )
 
+    async def run_external_file_change(self, step: UITestStep, _step_index: int) -> None:
+        """Simulate an external file change by overwriting the current file."""
+        new_content_file = step.data["file"]
+        new_content_data = self.test_case_tree.get(new_content_file)
+
+        if not new_content_data or "content" not in new_content_data:
+            raise FileNotFoundError(f"New content file not found: {new_content_file}")
+
+        new_content = new_content_data["content"]
+
+        # Overwrite the current ledger file to simulate external change
+        with self.temp_ledger_file.open("w") as f:
+            f.write(new_content)
+
+    async def run_pause(self, step: UITestStep, _step_index: int) -> None:
+        """Pause for a specified number of milliseconds."""
+        milliseconds = step.data.get("milliseconds", 100)
+        await self.pilot.pause(milliseconds / 1000.0)
+
     async def run_assert_ui(self, step: UITestStep, step_index: int) -> None:
         """Assert UI state (e.g., specific text visible, table contents)."""
         assertion_type = step.data["type"]

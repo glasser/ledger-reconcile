@@ -1,5 +1,5 @@
 name: "Reconcile All Pending"
-description: "Test reconciling all pending transactions using 'r' key"
+description: "Test reconciling all pending transactions using 'c' key"
 account: "Assets:Checking"
 target_amount: "$900.00"
 
@@ -23,9 +23,9 @@ steps:
       count: 3
 
   - action: key
-    description: "Press 'r' to show reconcile confirmation"
+    description: "Press 'c' to show reconcile confirmation"
     data:
-      key: "r"
+      key: "c"
 
   - action: key
     description: "Press 'y' to confirm reconciliation"

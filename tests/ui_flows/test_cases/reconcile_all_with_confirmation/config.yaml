@@ -8,9 +8,9 @@ steps:
     data:
       name: "initial_with_pending"
   - action: key
-    description: "Press 'r' to trigger reconcile all"
+    description: "Press 'c' to trigger reconcile all"
     data:
-      key: "r"
+      key: "c"
   - action: snapshot
     description: "Confirmation dialog appears"
     data:
@@ -28,9 +28,9 @@ steps:
     data:
       file: "expected_unchanged.ledger"
   - action: key
-    description: "Press 'r' again to trigger reconcile all"
+    description: "Press 'c' again to trigger reconcile all"
     data:
-      key: "r"
+      key: "c"
   - action: key
     description: "Press 'y' to confirm"
     data:

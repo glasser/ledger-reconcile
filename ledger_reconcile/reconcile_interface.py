@@ -274,9 +274,10 @@ class ReconcileApp(App):
         ("q", "quit", "Quit"),
         ("ctrl+c", "quit", "Quit"),
         ("space", "toggle_status", "Toggle Status"),
-        ("r", "reconcile_all", "Reconcile All !"),
+        ("c", "reconcile_all", "Clear All !"),
         ("t", "adjust_target", "Adjust Target"),
         ("s", "toggle_sort", "Reverse Sort"),
+        ("r", "refresh", "Refresh"),
     ]
 
     def __init__(self, ledger_file: Path, account: str, target_amount: str):
@@ -560,6 +561,13 @@ class ReconcileApp(App):
         self.reverse_sort = not self.reverse_sort
         # Refresh the table to apply new sort order
         self.call_after_refresh(self.refresh_table)
+
+    def action_refresh(self) -> None:
+        """Manually refresh data from the ledger file."""
+        # Reload transactions and refresh the table
+        self.call_after_refresh(self.load_transactions)
+        self.call_after_refresh(self.refresh_table)
+        self.notify("Refreshed from file")
 
     async def _adjust_target_worker(self) -> None:
         """Worker method to handle target balance adjustment."""
