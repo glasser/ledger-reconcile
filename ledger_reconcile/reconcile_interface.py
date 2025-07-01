@@ -425,25 +425,28 @@ class ReconcileApp(App):
         )
         # Add rows
         for transaction in sorted_transactions:
-            # Find posting for this account to get the amount and status
+            # Find posting for this account to get the amount, status, and line number
             amount = ""
             posting_status = ""
+            posting_line_number = None
             for posting in transaction.account_postings:
                 if posting.account == self.account:
                     amount = posting.amount
                     posting_status = posting.status
+                    posting_line_number = posting.line_number
                     break
 
-            status_display = posting_status if posting_status else "·"
-            table.add_row(
-                status_display,
-                str(transaction.line_number),
-                transaction.date,
-                transaction.check_code,
-                amount,
-                transaction.description,
-                key=str(transaction.line_number),
-            )
+            if posting_line_number is not None:
+                status_display = posting_status if posting_status else "·"
+                table.add_row(
+                    status_display,
+                    str(transaction.line_number),
+                    transaction.date,
+                    transaction.check_code,
+                    amount,
+                    transaction.description,
+                    key=str(posting_line_number),  # Use posting line number as key
+                )
 
     def action_toggle_status(self) -> None:
         """Toggle the status of the currently selected transaction."""
@@ -451,7 +454,7 @@ class ReconcileApp(App):
         if table.cursor_row is None:
             return
 
-        # Get the current row key (line number)
+        # Get the current row key (posting line number)
         if table.cursor_coordinate is None:
             return
         cell_key = table.coordinate_to_cell_key(table.cursor_coordinate)
@@ -459,30 +462,15 @@ class ReconcileApp(App):
         if row_key is None or row_key.value is None:
             return
 
-        line_number = int(row_key.value)
+        posting_line_number = int(row_key.value)
 
-        # Find the transaction
-        transaction = None
-        for t in self.transactions:
-            if t.line_number == line_number:
-                transaction = t
-                break
-
-        if not transaction:
-            return
-
-        # Find the posting for this account to determine current status
+        # Find the current status directly from the posting line number
         current_posting_status = ""
-        posting_line_number = None
-        for posting in transaction.account_postings:
-            if posting.account == self.account:
-                current_posting_status = posting.status
-                posting_line_number = posting.line_number
-                break
-
-        if posting_line_number is None:
-            self.notify("Could not find posting for this account", severity="error")
-            return
+        for transaction in self.transactions:
+            for posting in transaction.account_postings:
+                if posting.line_number == posting_line_number:
+                    current_posting_status = posting.status
+                    break
 
         # Determine new status (only toggle between empty and "!")
         new_status = "!" if current_posting_status == "" else ""
@@ -509,16 +497,16 @@ class ReconcileApp(App):
 
     @on(DataTable.RowSelected)
     def open_in_editor(self, event: DataTable.RowSelected) -> None:
-        """Open the current transaction in VSCode."""
+        """Open the current posting in VSCode."""
         row_key = event.row_key
         if not row_key.value:
             return
-        line_number = int(row_key.value)
+        posting_line_number = int(row_key.value)
 
         try:
-            # Use 'code -g' to open file at specific line
+            # Use 'code -g' to open file at specific line (posting line number)
             subprocess.run(
-                ["code", "-g", f"{self.ledger_file}:{line_number}"], check=True
+                ["code", "-g", f"{self.ledger_file}:{posting_line_number}"], check=True
             )
         except subprocess.CalledProcessError:
             self.notify("Failed to open in VSCode", severity="error")

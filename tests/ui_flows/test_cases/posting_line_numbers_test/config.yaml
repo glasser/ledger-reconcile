@@ -1,0 +1,19 @@
+name: posting_line_numbers_test
+description: Test using posting line numbers as row keys for better toggle behavior
+account: "Assets:Checking"
+target_amount: "$500.00"
+initial_file: initial.ledger
+steps:
+  - action: snapshot
+    data:
+      name: initial_state
+  - action: key
+    data:
+      key: "space"  # Toggle the first transaction
+  - action: snapshot
+    data:
+      name: after_toggle
+assertions:
+  - type: table_columns
+    data:
+      count: 6
