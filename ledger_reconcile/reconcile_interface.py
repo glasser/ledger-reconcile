@@ -306,7 +306,13 @@ class ReconcileApp(App):
             posting_line_number = None
             for posting in transaction.account_postings:
                 if posting.account == self.account:
-                    amount = posting.amount
+                    # Parse and reformat amount for consistent display with alignment
+                    try:
+                        parsed_amount = parse_balance(posting.amount)
+                        amount = format_balance(parsed_amount, align_dollar_sign=True)
+                    except ValueError:
+                        # If parsing fails, use original amount
+                        amount = posting.amount
                     posting_status = posting.status
                     posting_line_number = posting.line_number
                     break

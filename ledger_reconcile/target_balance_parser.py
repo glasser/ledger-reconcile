@@ -55,21 +55,25 @@ def parse_balance(input_text: str) -> Decimal:
     return amount
 
 
-def format_balance(amount: Decimal) -> str:
+def format_balance(amount: Decimal, align_dollar_sign: bool = False) -> str:
     """Format a Decimal amount as a currency string.
 
     Args:
         amount: The decimal amount to format
+        align_dollar_sign: If True, add a space before positive amounts for alignment
 
     Returns:
-        Formatted currency string (e.g., "$1,234.56" or "-$500.00")
+        Formatted currency string (e.g., " $1,234.56" or "-$500.00")
     """
     # Format the amount (always show .00 for consistency)
     abs_amount = abs(amount)
-    formatted = f"${abs_amount:,.2f}"
 
     if amount < 0:
         formatted = f"-${abs_amount:,.2f}"
+    else:
+        # Add space for alignment if requested
+        prefix = " " if align_dollar_sign else ""
+        formatted = f"{prefix}${abs_amount:,.2f}"
 
     return formatted
 
