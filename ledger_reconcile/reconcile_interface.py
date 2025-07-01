@@ -164,7 +164,13 @@ class ReconcileApp(App):
     cleared_pending_balance: reactive[Decimal] = reactive(Decimal("0.00"))
     delta: reactive[Decimal] = reactive(Decimal("0.00"))
 
-    def __init__(self, ledger_file: Path, account: str, target_amount: str):
+    def __init__(
+        self,
+        ledger_file: Path,
+        account: str,
+        target_amount: str,
+        disable_file_watcher: bool = False,
+    ):
         super().__init__()
         self.ledger_file = ledger_file
         self.account = account
@@ -174,7 +180,11 @@ class ReconcileApp(App):
         self.set_reactive(ReconcileApp.target_amount, self.target_amount_decimal)
 
         self.ledger_interface = LedgerInterface(ledger_file)
-        self.file_watcher = LedgerFileWatcher(ledger_file, self._on_file_changed)
+        self.file_watcher = (
+            None
+            if disable_file_watcher
+            else LedgerFileWatcher(ledger_file, self._on_file_changed)
+        )
         self.file_editor = LedgerFileEditor(ledger_file, self.file_watcher)
         self.transactions: list[ReconciliationEntry] = []
 
@@ -248,13 +258,15 @@ class ReconcileApp(App):
 
     async def on_mount(self) -> None:
         """Initialize the app when mounted."""
-        self.file_watcher.start()
+        if self.file_watcher:
+            self.file_watcher.start()
         await self.load_transactions()
         await self.setup_table()
 
     async def on_unmount(self) -> None:
         """Clean up when unmounted."""
-        self.file_watcher.stop()
+        if self.file_watcher:
+            self.file_watcher.stop()
 
     def _on_file_changed(self) -> None:
         """Handle external file changes."""
@@ -442,9 +454,21 @@ class ReconcileApp(App):
 
     def action_refresh(self) -> None:
         """Manually refresh data from the ledger file."""
-        # Reload transactions and refresh the table
-        self.call_after_refresh(self.load_transactions)
-        self.call_after_refresh(self.refresh_table)
+        # Get current cursor position before refresh
+        table = self.query_one("#transactions-table", DataTable)
+        current_row = table.cursor_row
+        current_row_key = None
+
+        if current_row is not None and current_row < table.row_count:
+            # Get the row key for the current cursor position
+            cell_key = table.coordinate_to_cell_key(Coordinate(current_row, 0))
+            if cell_key and cell_key.row_key:
+                current_row_key = cell_key.row_key
+
+        # Refresh data and restore cursor position
+        self.call_after_refresh(
+            self._refresh_and_restore_cursor, current_row or 0, current_row_key
+        )
         self.notify("Refreshed from file")
 
     async def _adjust_target_worker(self) -> None:

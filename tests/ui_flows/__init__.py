@@ -116,6 +116,7 @@ class UITestCase(DataClassDictMixin):
     account: str
     target_amount: str
     steps: list[UITestStep]
+    disable_file_watcher: bool = False
 
 
 class UITestRunner:
@@ -331,12 +332,10 @@ class UITestRunner:
         Data parameters:
         - content_file: File containing new content
         - atomic_replace: If True, use atomic replacement via temp file (default: False)
-        - sync: If True, call os.sync() after modification (default: True)
         """
         # Get configuration options
         content_file = step.data["content_file"]
         atomic_replace = step.data.get("atomic_replace", False)
-        sync = step.data.get("sync", True)
 
         # Load new content
         new_content_data = self.test_case_tree.get(content_file)
@@ -354,24 +353,21 @@ class UITestRunner:
             with temp_file.open("w") as f:
                 f.write(new_content)
 
-            # 3. Force filesystem sync if requested
-            if sync:
-                os.sync()
+            # 3. Force filesystem sync
+            os.sync()
 
             # 4. Atomically replace the original file
             temp_file.replace(self.temp_ledger_file)
 
-            # 5. Force another filesystem sync if requested
-            if sync:
-                os.sync()
+            # 5. Force another filesystem sync
+            os.sync()
         else:
             # Simple direct write
             with self.temp_ledger_file.open("w") as f:
                 f.write(new_content)
 
-            # Force filesystem sync if requested
-            if sync:
-                os.sync()
+            # Force filesystem sync
+            os.sync()
 
 
 # Test discovery and execution
@@ -427,7 +423,12 @@ async def test_ui_flow(test_case_name, test_case_data, snapshot, request):
         f.write(initial_ledger)
         temp_file = Path(f.name)
 
-    app = ReconcileApp(temp_file, test_case.account, test_case.target_amount)
+    app = ReconcileApp(
+        temp_file,
+        test_case.account,
+        test_case.target_amount,
+        test_case.disable_file_watcher,
+    )
 
     async with app.run_test() as pilot:
         await pilot.pause()

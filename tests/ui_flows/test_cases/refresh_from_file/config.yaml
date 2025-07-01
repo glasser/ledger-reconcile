@@ -1,10 +1,16 @@
 description: "Test the ability to manually refresh from file using 'r' key"
 account: "Assets:Checking"
 target_amount: "$1000.00"
+disable_file_watcher: true
 
 steps:
+  - action: key
+    description: "Move cursor down to second row to test cursor preservation"
+    data:
+      key: "down"
+
   - action: snapshot
-    description: "Initial state with 2 transactions"
+    description: "Initial state with 2 transactions, cursor on second row"
     data:
       name: "initial_state"
 
@@ -18,36 +24,30 @@ steps:
     description: "Simulate external file modification (add a new transaction)"
     data:
       content_file: "modified.ledger"
-      sync: false
 
   - action: wait
-    description: "Wait for file watcher to detect change"
+    description: "Wait a moment (file watcher is disabled, so no auto-refresh should occur)"
     data:
       seconds: 0.2
 
   - action: snapshot
-    description: "State after automatic file watcher refresh (should show 3 transactions)"
+    description: "State after file modification (should still show 2 transactions since file watcher is disabled)"
     data:
-      name: "after_auto_refresh"
+      name: "after_external_modification"
 
   - action: assert_ui
-    description: "Should have 3 transactions after auto-refresh"
+    description: "Should still have 2 transactions (file watcher is disabled)"
     data:
       type: "table_rows"
-      count: 3
+      count: 2
 
   - action: key
-    description: "Press 'r' to manually refresh from file (should show notification)"
+    description: "Press 'r' to manually refresh from file (should show notification and preserve cursor)"
     data:
       key: "r"
 
-  - action: wait
-    description: "Wait for refresh to complete"
-    data:
-      seconds: 0.1
-
   - action: snapshot
-    description: "After manual refresh (should still show 3 transactions with notification)"
+    description: "After manual refresh (should show 3 transactions with notification, cursor preserved)"
     data:
       name: "after_manual_refresh"
 

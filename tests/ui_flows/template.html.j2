@@ -399,6 +399,10 @@
             <strong>Target Amount:</strong> {{ config.target_amount }}
             <br>
             <strong>Steps:</strong> {{ config.steps|length }}
+            {% if config.disable_file_watcher %}
+            <br>
+            <strong>File Watcher:</strong> <span style="color: #e74c3c;">DISABLED</span>
+            {% endif %}
         </div>
         
         <div class="initial-files">
