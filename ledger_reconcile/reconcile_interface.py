@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import subprocess
+from decimal import Decimal
 from pathlib import Path
 from typing import ClassVar
 
@@ -19,7 +20,7 @@ from textual.widgets import Button, DataTable, Footer, Input, Label
 from .file_editor import LedgerFileEditor
 from .file_watcher import LedgerFileWatcher
 from .ledger_interface import LedgerInterface, ReconciliationEntry
-from .target_balance_parser import TargetBalanceParser, calculate_delta
+from .target_balance_parser import format_balance, parse_balance
 
 
 class ConfirmationScreen(ModalScreen[bool]):
@@ -190,8 +191,7 @@ class TargetBalanceScreen(ModalScreen[str | None]):
 
         # Try to parse the new target to validate it
         try:
-            parser = TargetBalanceParser()
-            parser.parse(new_target)
+            parse_balance(new_target)
             self.dismiss(new_target)
         except ValueError as e:
             self.notify(f"Invalid target balance: {e}", severity="error")
@@ -283,19 +283,18 @@ class ReconcileApp(App):
     ]
 
     # Reactive variables that automatically update UI labels
-    target_amount: reactive[str] = reactive("$0.00", init=False)
-    cleared_pending_balance: reactive[str] = reactive("$0.00", init=False)
-    delta: reactive[str] = reactive("$0.00", init=False)
+    target_amount: reactive[Decimal] = reactive(Decimal("0.00"))
+    cleared_pending_balance: reactive[Decimal] = reactive(Decimal("0.00"))
+    delta: reactive[Decimal] = reactive(Decimal("0.00"))
 
     def __init__(self, ledger_file: Path, account: str, target_amount: str):
         super().__init__()
         self.ledger_file = ledger_file
         self.account = account
 
-        # Parse and store target amount (but don't set reactive variable yet)
-        parser = TargetBalanceParser()
-        self.target_amount_parsed = parser.parse(target_amount)
-        self._initial_target_amount = self.target_amount_parsed.formatted_display
+        # Parse and store target amount - use set_reactive to avoid triggering watchers
+        self.target_amount_decimal = parse_balance(target_amount)
+        self.set_reactive(ReconcileApp.target_amount, self.target_amount_decimal)
 
         self.ledger_interface = LedgerInterface(ledger_file)
         self.file_watcher = LedgerFileWatcher(ledger_file, self._on_file_changed)
@@ -312,7 +311,7 @@ class ReconcileApp(App):
                 HorizontalGroup(
                     Label(f"Account: {self.account}", classes="info-label"),
                     Label(
-                        f"Target: {self._initial_target_amount}",
+                        f"Target: {format_balance(self.target_amount)}",
                         id="target-label",
                         classes="info-label",
                     ),
@@ -320,12 +319,12 @@ class ReconcileApp(App):
                 ),
                 HorizontalGroup(
                     Label(
-                        f"Cleared+Pending: {self.cleared_pending_balance}",
+                        f"Cleared+Pending: {format_balance(self.cleared_pending_balance)}",
                         id="cleared-pending-balance-label",
                         classes="info-label",
                     ),
                     Label(
-                        f"Delta: {self.delta}",
+                        f"Delta: {format_balance(self.delta)}",
                         id="delta-label",
                         classes="info-label delta-label",
                     ),
@@ -337,53 +336,41 @@ class ReconcileApp(App):
         )
         yield Footer()
 
-    def watch_target_amount(self, target_amount: str) -> None:
-        """Update target label and recalculate delta when target_amount changes."""
+    def compute_delta(self) -> Decimal:
+        """Compute delta based on current target and balance."""
+        return self.target_amount - self.cleared_pending_balance
+
+    def watch_target_amount(self, target_amount: Decimal) -> None:
+        """Update target label when target_amount changes."""
         try:
             target_label = self.query_one("#target-label", Label)
-            target_label.update(f"Target: {target_amount}")
-        except (AttributeError, NoMatches):
-            # Widget may not be ready yet during initialization
+            target_label.update(f"Target: {format_balance(target_amount)}")
+        except NoMatches:
+            # Widget not created yet during compose()
             pass
-        self._update_delta()
 
-    def watch_cleared_pending_balance(self, cleared_pending_balance: str) -> None:
-        """Update balance label and recalculate delta when cleared_pending_balance changes."""
+    def watch_cleared_pending_balance(self, cleared_pending_balance: Decimal) -> None:
+        """Update balance label when cleared_pending_balance changes."""
         try:
             balance_label = self.query_one("#cleared-pending-balance-label", Label)
-            balance_label.update(f"Cleared+Pending: {cleared_pending_balance}")
-        except (AttributeError, NoMatches):
-            # Widget may not be ready yet during initialization
+            balance_label.update(
+                f"Cleared+Pending: {format_balance(cleared_pending_balance)}"
+            )
+        except NoMatches:
+            # Widget not created yet during compose()
             pass
-        self._update_delta()
 
-    def watch_delta(self, delta: str) -> None:
+    def watch_delta(self, delta: Decimal) -> None:
         """Update delta label when delta changes."""
         try:
             delta_label = self.query_one("#delta-label", Label)
-            delta_label.update(f"Delta: {delta}")
-        except (AttributeError, NoMatches):
-            # Widget may not be ready yet during initialization
+            delta_label.update(f"Delta: {format_balance(delta)}")
+        except NoMatches:
+            # Widget not created yet during compose()
             pass
-
-    def _update_delta(self) -> None:
-        """Calculate and update delta based on current target and balance."""
-        # Only update delta if both values are set and not default values
-        if (
-            hasattr(self, "target_amount")
-            and hasattr(self, "cleared_pending_balance")
-            and self.target_amount != "$0.00"
-            and self.cleared_pending_balance != "$0.00"
-        ):
-            self.delta = calculate_delta(
-                self.target_amount, self.cleared_pending_balance
-            )
 
     async def on_mount(self) -> None:
         """Initialize the app when mounted."""
-        # Set initial reactive values now that widgets are ready
-        self.target_amount = self._initial_target_amount
-
         self.file_watcher.start()
         await self.load_transactions()
         await self.setup_table()
@@ -407,10 +394,10 @@ class ReconcileApp(App):
             )
 
             # Get balance types for reconciliation - reactive variables will automatically update UI
-            self.cleared_pending_balance = (
-                self.ledger_interface.get_cleared_and_pending_balance(self.account)
+            balance_str = self.ledger_interface.get_cleared_and_pending_balance(
+                self.account
             )
-            # Delta will be calculated automatically by reactive watchers
+            self.cleared_pending_balance = parse_balance(balance_str)
 
         except (OSError, ValueError, RuntimeError) as e:
             self.notify(f"Error loading transactions: {e}", severity="error")
@@ -587,18 +574,16 @@ class ReconcileApp(App):
 
     async def _adjust_target_worker(self) -> None:
         """Worker method to handle target balance adjustment."""
-        target_screen = TargetBalanceScreen(self.target_amount)
+        target_screen = TargetBalanceScreen(format_balance(self.target_amount))
         new_target = await self.push_screen_wait(target_screen)
 
         if new_target is not None:
             # Parse and update the target amount
             try:
-                parser = TargetBalanceParser()
-                self.target_amount_parsed = parser.parse(new_target)
-                self.target_amount = self.target_amount_parsed.formatted_display
-                # Delta will be recalculated automatically by reactive watchers
-
-                self.notify(f"Target balance updated to {self.target_amount}")
+                self.target_amount = parse_balance(new_target)
+                self.notify(
+                    f"Target balance updated to {format_balance(self.target_amount)}"
+                )
             except ValueError as e:
                 self.notify(f"Error updating target: {e}", severity="error")
 

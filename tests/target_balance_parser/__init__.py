@@ -46,14 +46,14 @@ def test_fixture(name, test_data):
 
     # Create parser and test
     parser = TargetBalanceParser()
-    result = parser.parse(input_text)
+    amount, formatted_display = parser.parse(input_text)
 
     # Check parsed amount
-    assert result.amount == expected["parsed_amount"], (
-        f"Test case: {name}\nExpected amount: {expected['parsed_amount']}\nGot: {result.amount}"
+    assert float(amount) == expected["parsed_amount"], (
+        f"Test case: {name}\nExpected amount: {expected['parsed_amount']}\nGot: {float(amount)}"
     )
 
     # Check formatted display
-    assert result.formatted_display == expected["formatted_display"], (
-        f"Test case: {name}\nExpected display: {expected['formatted_display']}\nGot: {result.formatted_display}"
+    assert formatted_display == expected["formatted_display"], (
+        f"Test case: {name}\nExpected display: {expected['formatted_display']}\nGot: {formatted_display}"
     )

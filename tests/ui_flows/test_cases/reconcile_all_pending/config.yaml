@@ -9,7 +9,7 @@ steps:
     data:
       type: "balance"
       balance_type: "cleared_pending"
-      value: "$-100.00"
+      value: "-$100.00"
 
   - action: snapshot
     description: "Initial state with pending transactions"

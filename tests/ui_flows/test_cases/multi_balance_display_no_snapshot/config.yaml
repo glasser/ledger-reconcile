@@ -8,7 +8,7 @@ steps:
     data:
       type: "balance"
       balance_type: "cleared_pending"
-      value: "$-400.00"  # Only cleared (-100) + pending (-300) = -400
+      value: "-$400.00"  # Only cleared (-100) + pending (-300) = -400
 
   - action: assert_ui
     description: "Check delta (target - cleared+pending)"
