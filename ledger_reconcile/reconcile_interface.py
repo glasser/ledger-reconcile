@@ -11,6 +11,7 @@ from textual import on
 from textual.app import App, ComposeResult
 from textual.containers import Container, HorizontalGroup, Vertical
 from textual.coordinate import Coordinate
+from textual.css.query import NoMatches
 from textual.reactive import reactive
 from textual.screen import ModalScreen
 from textual.widgets import Button, DataTable, Footer, Input, Label
@@ -291,10 +292,10 @@ class ReconcileApp(App):
         self.ledger_file = ledger_file
         self.account = account
 
-        # Parse and store target amount
+        # Parse and store target amount (but don't set reactive variable yet)
         parser = TargetBalanceParser()
         self.target_amount_parsed = parser.parse(target_amount)
-        self.target_amount = self.target_amount_parsed.formatted_display
+        self._initial_target_amount = self.target_amount_parsed.formatted_display
 
         self.ledger_interface = LedgerInterface(ledger_file)
         self.file_watcher = LedgerFileWatcher(ledger_file, self._on_file_changed)
@@ -311,7 +312,7 @@ class ReconcileApp(App):
                 HorizontalGroup(
                     Label(f"Account: {self.account}", classes="info-label"),
                     Label(
-                        f"Target: {self.target_amount}",
+                        f"Target: {self._initial_target_amount}",
                         id="target-label",
                         classes="info-label",
                     ),
@@ -337,39 +338,51 @@ class ReconcileApp(App):
         yield Footer()
 
     def watch_target_amount(self, target_amount: str) -> None:
-        """Update target label when target_amount changes."""
+        """Update target label and recalculate delta when target_amount changes."""
         try:
-            if hasattr(self, "_target_label"):
-                self._target_label.update(f"Target: {target_amount}")
-        except AttributeError:
+            target_label = self.query_one("#target-label", Label)
+            target_label.update(f"Target: {target_amount}")
+        except (AttributeError, NoMatches):
+            # Widget may not be ready yet during initialization
             pass
+        self._update_delta()
 
     def watch_cleared_pending_balance(self, cleared_pending_balance: str) -> None:
-        """Update cleared+pending balance label when it changes."""
+        """Update balance label and recalculate delta when cleared_pending_balance changes."""
         try:
-            if hasattr(self, "_cleared_pending_label"):
-                self._cleared_pending_label.update(
-                    f"Cleared+Pending: {cleared_pending_balance}"
-                )
-        except AttributeError:
+            balance_label = self.query_one("#cleared-pending-balance-label", Label)
+            balance_label.update(f"Cleared+Pending: {cleared_pending_balance}")
+        except (AttributeError, NoMatches):
+            # Widget may not be ready yet during initialization
             pass
+        self._update_delta()
 
     def watch_delta(self, delta: str) -> None:
         """Update delta label when delta changes."""
         try:
-            if hasattr(self, "_delta_label"):
-                self._delta_label.update(f"Delta: {delta}")
-        except AttributeError:
+            delta_label = self.query_one("#delta-label", Label)
+            delta_label.update(f"Delta: {delta}")
+        except (AttributeError, NoMatches):
+            # Widget may not be ready yet during initialization
             pass
+
+    def _update_delta(self) -> None:
+        """Calculate and update delta based on current target and balance."""
+        # Only update delta if both values are set and not default values
+        if (
+            hasattr(self, "target_amount")
+            and hasattr(self, "cleared_pending_balance")
+            and self.target_amount != "$0.00"
+            and self.cleared_pending_balance != "$0.00"
+        ):
+            self.delta = calculate_delta(
+                self.target_amount, self.cleared_pending_balance
+            )
 
     async def on_mount(self) -> None:
         """Initialize the app when mounted."""
-        # Cache label references for reactive watchers
-        self._target_label = self.query_one("#target-label", Label)
-        self._cleared_pending_label = self.query_one(
-            "#cleared-pending-balance-label", Label
-        )
-        self._delta_label = self.query_one("#delta-label", Label)
+        # Set initial reactive values now that widgets are ready
+        self.target_amount = self._initial_target_amount
 
         self.file_watcher.start()
         await self.load_transactions()
@@ -397,9 +410,7 @@ class ReconcileApp(App):
             self.cleared_pending_balance = (
                 self.ledger_interface.get_cleared_and_pending_balance(self.account)
             )
-            self.delta = calculate_delta(
-                self.target_amount, self.cleared_pending_balance
-            )
+            # Delta will be calculated automatically by reactive watchers
 
         except (OSError, ValueError, RuntimeError) as e:
             self.notify(f"Error loading transactions: {e}", severity="error")
@@ -585,11 +596,7 @@ class ReconcileApp(App):
                 parser = TargetBalanceParser()
                 self.target_amount_parsed = parser.parse(new_target)
                 self.target_amount = self.target_amount_parsed.formatted_display
-
-                # Recalculate delta - reactive variables will automatically update UI
-                self.delta = calculate_delta(
-                    self.target_amount, self.cleared_pending_balance
-                )
+                # Delta will be recalculated automatically by reactive watchers
 
                 self.notify(f"Target balance updated to {self.target_amount}")
             except ValueError as e:
