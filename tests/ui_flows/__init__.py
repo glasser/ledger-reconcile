@@ -274,7 +274,9 @@ class UITestRunner:
             f"File content mismatch at step {step_index}: {step.description}"
         )
 
-    async def run_external_file_change(self, step: UITestStep, _step_index: int) -> None:
+    async def run_external_file_change(
+        self, step: UITestStep, _step_index: int
+    ) -> None:
         """Simulate an external file change by overwriting the current file."""
         new_content_file = step.data["file"]
         new_content_data = self.test_case_tree.get(new_content_file)
@@ -304,6 +306,15 @@ class UITestRunner:
             actual_rows = table.row_count
             assert expected_rows == actual_rows, (
                 f"Expected {expected_rows} table rows, got {actual_rows} at step {step_index}: {step.description}"
+            )
+
+        elif assertion_type == "table_columns":
+            # Check number of columns in the table
+            table = self.app.query_one("#transactions-table", DataTable)
+            expected_columns = step.data["count"]
+            actual_columns = len(table.columns)
+            assert expected_columns == actual_columns, (
+                f"Expected {expected_columns} table columns, got {actual_columns} at step {step_index}: {step.description}"
             )
 
         elif assertion_type == "balance":

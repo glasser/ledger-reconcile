@@ -1,0 +1,16 @@
+name: "Check Code Column"
+description: "Test that the table displays a check code column for transactions"
+account: "Assets:Checking"
+target_amount: "$1000.00"
+
+steps:
+  - action: snapshot
+    description: "Initial state showing check code column"
+    data:
+      name: "with_check_codes"
+
+  - action: assert_ui
+    description: "Table should have 6 columns including check code"
+    data:
+      type: "table_columns"
+      count: 6

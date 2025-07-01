@@ -29,6 +29,7 @@ class ReconciliationEntry:
     date: str
     description: str
     line_number: int  # Line number of the transaction header
+    check_code: str  # Transaction check code (e.g., check number)
     account_postings: list[LedgerPosting]  # Only postings for the target account
     original_line: str
 
@@ -189,6 +190,9 @@ class LedgerInterface:
 
             description = data[4] if data[4] else ""
 
+            # Extract check code
+            check_code = data[3] if len(data) > 3 and data[3] else ""
+
             # Parse postings - just extract the status for each posting
             postings = []
             for i in range(5, len(data)):
@@ -212,6 +216,7 @@ class LedgerInterface:
                 date=date,
                 description=description,
                 line_number=line_number,
+                check_code=check_code,
                 account_postings=postings,
                 original_line="",  # Not available in emacs format
             )

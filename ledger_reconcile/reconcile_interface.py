@@ -387,10 +387,11 @@ class ReconcileApp(App):
         # Select full rows
         table.cursor_type = "row"
 
-        # Add columns - status first, then line number, date, amount, description
+        # Add columns - status first, then line number, date, check, amount, description
         table.add_column("")  # Status column - no header, just the symbol
         table.add_column("Line")
         table.add_column("Date")
+        table.add_column("Check")
         table.add_column("Amount")
         table.add_column("Description")
 
@@ -423,6 +424,7 @@ class ReconcileApp(App):
                 status_display,
                 str(transaction.line_number),
                 transaction.date,
+                transaction.check_code,
                 amount,
                 transaction.description,
                 key=str(transaction.line_number),
