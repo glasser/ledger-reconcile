@@ -1,4 +1,3 @@
-name: reactive_labels_test
 description: Test that labels update reactively when values change
 account: "Assets:Checking"
 target_amount: "$500.00"

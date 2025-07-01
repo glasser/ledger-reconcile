@@ -1,4 +1,3 @@
-name: "Table Layout Test"
 description: "Test table layout with both short and long transaction descriptions"
 account: "Assets:Checking"
 target_amount: "$500.00"

@@ -1,4 +1,3 @@
-name: "Reconcile All with Confirmation"
 description: "Test the confirmation dialog for reconcile all command with both acceptance and cancellation"
 account: "Assets:Checking"
 target_amount: "$540.00"

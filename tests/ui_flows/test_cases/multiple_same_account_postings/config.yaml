@@ -1,0 +1,47 @@
+description: Test that transactions with multiple postings to same account show as separate rows
+account: "Assets:Checking"
+target_amount: "$1000.00"
+initial_file: initial.ledger
+steps:
+  - action: snapshot
+    data:
+      name: initial_multiple_postings
+  
+  # Test toggling the first posting (should be the opening balance posting)
+  - action: key  
+    data:
+      key: "space"  # Toggle to pending
+  - action: snapshot
+    data:
+      name: first_posting_toggled
+  - action: assert_file
+    data:
+      file: expected_first_pending.ledger
+    
+  # Test toggling the second posting (move to first split posting)
+  - action: key
+    data:
+      key: "down"  # Move to first posting of split transaction  
+  - action: key
+    data:
+      key: "space"  # Toggle to pending
+  - action: snapshot
+    data:
+      name: second_posting_toggled
+  - action: assert_file
+    data:
+      file: expected_second_pending.ledger
+    
+  # Test clear-all functionality with multiple postings
+  - action: key
+    data:
+      key: "c"  # Clear all pending (!) postings to reconciled (*)
+  - action: key
+    data:
+      key: "y"  # Confirm the reconcile-all action
+  - action: snapshot
+    data:
+      name: after_clear_all
+  - action: assert_file
+    data:
+      file: expected_all_cleared.ledger

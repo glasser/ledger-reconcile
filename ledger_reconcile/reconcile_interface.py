@@ -298,35 +298,27 @@ class ReconcileApp(App):
         sorted_transactions = sorted(
             self.transactions, key=lambda t: t.date, reverse=self.reverse_sort
         )
-        # Add rows
+        # Add rows - create one row per posting
         for transaction in sorted_transactions:
-            # Find posting for this account to get the amount, status, and line number
-            amount = ""
-            posting_status = ""
-            posting_line_number = None
+            # Create a row for each posting (ledger already filtered to this account)
             for posting in transaction.account_postings:
-                if posting.account == self.account:
-                    # Parse and reformat amount for consistent display with alignment
-                    try:
-                        parsed_amount = parse_balance(posting.amount)
-                        amount = format_balance(parsed_amount, align_dollar_sign=True)
-                    except ValueError:
-                        # If parsing fails, use original amount
-                        amount = posting.amount
-                    posting_status = posting.status
-                    posting_line_number = posting.line_number
-                    break
+                # Parse and reformat amount for consistent display with alignment
+                try:
+                    parsed_amount = parse_balance(posting.amount)
+                    amount = format_balance(parsed_amount, align_dollar_sign=True)
+                except ValueError:
+                    # If parsing fails, use original amount
+                    amount = posting.amount
 
-            if posting_line_number is not None:
-                status_display = posting_status if posting_status else "·"
+                status_display = posting.status if posting.status else "·"
                 table.add_row(
                     status_display,
-                    str(transaction.line_number),
+                    str(posting.line_number),
                     transaction.date,
                     transaction.check_code,
                     amount,
                     transaction.description,
-                    key=str(posting_line_number),  # Use posting line number as key
+                    key=str(posting.line_number),  # Use posting line number as key
                 )
 
     def action_toggle_status(self) -> None:

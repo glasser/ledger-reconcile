@@ -112,7 +112,6 @@ class UITestStep(DataClassDictMixin):
 class UITestCase(DataClassDictMixin):
     """Represents a complete UI test case."""
 
-    name: str
     description: str
     account: str
     target_amount: str
@@ -124,6 +123,7 @@ class UITestRunner:
 
     def __init__(
         self,
+        test_case_name: str,
         test_case: UITestCase,
         test_case_tree: dict,
         pilot: Pilot,
@@ -132,6 +132,7 @@ class UITestRunner:
         snapshot,
         request,
     ):
+        self.test_case_name = test_case_name
         self.test_case = test_case
         self.test_case_tree = test_case_tree
         self.pilot = pilot
@@ -245,7 +246,7 @@ class UITestRunner:
 
             # Collect the failure for report generation
             # Use individualized SVGs for HTML display (each gets unique IDs for styling)
-            test_case_name = self.test_case.name
+            test_case_name = self.test_case_name
             failure = UISnapshotDiff(
                 test_name=f"test_ui_flow[{test_case_name}]",
                 step_name=snapshot_name,
@@ -391,20 +392,22 @@ def discover_ui_test_cases(base_dir: Path) -> list[tuple[str, dict]]:
 
 def pytest_generate_tests(metafunc):
     """Generate pytest tests for each UI test case."""
-    if "test_case_data" in metafunc.fixturenames:
+    if (
+        "test_case_data" in metafunc.fixturenames
+        and "test_case_name" in metafunc.fixturenames
+    ):
         test_dir = Path(__file__).parent / "test_cases"
         if test_dir.exists():
             test_cases = discover_ui_test_cases(test_dir)
             metafunc.parametrize(
-                "test_case_data",
-                [content for _name, content in test_cases],
+                ["test_case_name", "test_case_data"],
+                [(name, content) for name, content in test_cases],
                 ids=[name for name, _content in test_cases],
             )
 
 
 @pytest.mark.asyncio
-@pytest.mark.filterwarnings("ignore:Can not relate snapshot location")
-async def test_ui_flow(test_case_data, snapshot, request):
+async def test_ui_flow(test_case_name, test_case_data, snapshot, request):
     """Run a UI flow test case with snapshot testing."""
     # Parse the test case from the injected tree data
     config_file = test_case_data.get("config.yaml")
@@ -429,7 +432,14 @@ async def test_ui_flow(test_case_data, snapshot, request):
     async with app.run_test() as pilot:
         await pilot.pause()
         with UITestRunner(
-            test_case, test_case_data, pilot, app, temp_file, snapshot, request
+            test_case_name,
+            test_case,
+            test_case_data,
+            pilot,
+            app,
+            temp_file,
+            snapshot,
+            request,
         ) as runner:
             # Run each step
             for i, step in enumerate(test_case.steps):

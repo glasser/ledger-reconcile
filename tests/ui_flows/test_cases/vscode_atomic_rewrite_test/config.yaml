@@ -1,4 +1,3 @@
-name: vscode_atomic_rewrite_test
 description: Test file watcher detection of atomic rewrites like VSCode
 account: "Assets:Checking"
 target_amount: "$500.00"

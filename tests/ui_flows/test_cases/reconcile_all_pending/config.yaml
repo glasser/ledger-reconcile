@@ -1,4 +1,3 @@
-name: "Reconcile All Pending"
 description: "Test reconciling all pending transactions using 'c' key"
 account: "Assets:Checking"
 target_amount: "$900.00"

@@ -1,4 +1,3 @@
-name: "Target Balance Adjustment Modal"
 description: "Test the target balance adjustment modal dialog functionality"
 account: "Assets:Checking"
 target_amount: "$500.00"

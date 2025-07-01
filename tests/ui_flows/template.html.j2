@@ -370,7 +370,7 @@
         {% if test_case_data is mapping and "config.yaml" in test_case_data %}
             {% set config = test_case_data["config.yaml"].parsed %}
             <li>
-                <a href="#{{ test_case_name }}">{{ config.name }}</a>
+                <a href="#{{ test_case_name }}">{{ test_case_name }}</a>
                 {% if config.description %}
                 - {{ config.description }}
                 {% endif %}
@@ -385,7 +385,7 @@
     {% set config = test_case_data["config.yaml"].parsed %}
     <div class="test-case" id="{{ test_case_name }}">
         <div class="test-header">
-            <h2>{{ config.name }}</h2>
+            <h2>{{ test_case_name }}</h2>
             {% if config.description %}
             <div class="test-description">
                 {{ config.description }}

@@ -1,4 +1,3 @@
-name: "Toggle Single Posting"
 description: "Test toggling a single posting from uncleared to pending using spacebar"
 account: "Assets:Checking"
 target_amount: "$1000.00"

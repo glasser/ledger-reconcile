@@ -1,4 +1,3 @@
-name: "Multi Balance Display Test - No Snapshot"
 description: "Test the multi-balance display system without snapshots to check for runtime errors"
 account: "Assets:Checking"
 target_amount: "$650.00"

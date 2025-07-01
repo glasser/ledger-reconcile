@@ -1,4 +1,3 @@
-name: "Reverse Sort Order"
 description: "Test the ability to reverse the sort order of transactions"
 account: "Assets:Checking"
 target_amount: "$1000.00"

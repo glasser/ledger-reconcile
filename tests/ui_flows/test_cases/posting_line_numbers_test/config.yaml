@@ -1,4 +1,3 @@
-name: posting_line_numbers_test
 description: Test using posting line numbers as row keys for better toggle behavior
 account: "Assets:Checking"
 target_amount: "$500.00"

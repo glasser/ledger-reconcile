@@ -1,4 +1,3 @@
-name: "Refresh From File"
 description: "Test the ability to manually refresh from file using 'r' key"
 account: "Assets:Checking"
 target_amount: "$1000.00"

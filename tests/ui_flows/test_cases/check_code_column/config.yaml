@@ -1,4 +1,3 @@
-name: "Check Code Column"
 description: "Test that the table displays a check code column for transactions"
 account: "Assets:Checking"
 target_amount: "$1000.00"

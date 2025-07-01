@@ -1,4 +1,3 @@
-name: "Multi Balance Display Test"
 description: "Test the multi-balance display system with target, cleared+pending, and delta"
 account: "Assets:Checking"
 target_amount: "$650.00"

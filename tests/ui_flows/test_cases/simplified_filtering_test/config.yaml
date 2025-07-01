@@ -1,4 +1,3 @@
-name: simplified_filtering_test
 description: Test that simplified filtering works correctly 
 account: "Assets:Checking"
 target_amount: "$500.00"
