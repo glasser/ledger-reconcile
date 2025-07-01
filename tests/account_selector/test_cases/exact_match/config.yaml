@@ -1,0 +1,8 @@
+# Test exact match with fzf filter
+accounts:
+  - "Assets:Checking"
+  - "Assets:Savings"
+  - "Expenses:Food"
+test_input: "Assets:Checking"
+expected_result: "Assets:Checking"
+requires_fzf: true

@@ -273,7 +273,7 @@
     <h1>Ledger Interface Test Fixtures</h1>
     
     <div class="summary">
-        <strong>Total test cases:</strong> 7
+        <strong>Total test cases:</strong> 8
     </div>
     
     
@@ -299,6 +299,13 @@
                 <a href="#fake_status_in_description">Fake Status In Description</a>
                 
                 - Ensure status markers in descriptions are not treated as actual status
+                
+            </li>
+        
+            <li>
+                <a href="#get_accounts_test">Get Accounts Test</a>
+                
+                - Test get_accounts method including accounts with posting-level status markers
                 
             </li>
         
@@ -859,6 +866,216 @@
                         </tbody>
                     </table>
                     
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-case" id="get_accounts_test">
+        <div class="test-header">
+            <h2>Get Accounts Test</h2>
+            
+            <div class="test-description">
+                Test get_accounts method including accounts with posting-level status markers
+            </div>
+            
+        </div>
+        
+        <div class="test-content">
+            <div class="input-section">
+                <div class="section-title">Input Ledger File</div>
+                
+                <div class="ledger-content">
+                    <table>
+                        
+                        <tr>
+                            <td class="line-num">1</td>
+                            <td class="line-content">2024/01/01 Opening Balance</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">2</td>
+                            <td class="line-content">    Assets:Checking                 $1000.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">3</td>
+                            <td class="line-content">    Assets:Savings                   $500.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">4</td>
+                            <td class="line-content">    Income:Salary</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">5</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">6</td>
+                            <td class="line-content">2024/01/02 Grocery Shopping</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">7</td>
+                            <td class="line-content">    Expenses:Food                     $75.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">8</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">9</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">10</td>
+                            <td class="line-content">2024/01/03 Gas</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">11</td>
+                            <td class="line-content">    Expenses:Transportation           $40.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">12</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">13</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">14</td>
+                            <td class="line-content">2024/01/04 * Cleared Transaction</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">15</td>
+                            <td class="line-content">    Expenses:ClearedOnly              $25.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">16</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">17</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">18</td>
+                            <td class="line-content">2024/01/05 ! Pending Transaction  </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">19</td>
+                            <td class="line-content">    Expenses:PendingOnly              $30.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">20</td>
+                            <td class="line-content">    Assets:Checking</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">21</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">22</td>
+                            <td class="line-content">2024/01/06 Transfer</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">23</td>
+                            <td class="line-content">    Assets:Savings                   $200.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">24</td>
+                            <td class="line-content">    Assets:Checking                 $-200.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">25</td>
+                            <td class="line-content"> </td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">26</td>
+                            <td class="line-content">2024/01/07 Mixed Posting Status Transaction</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">27</td>
+                            <td class="line-content">    * Expenses:ClearedPostingOnly     $15.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">28</td>
+                            <td class="line-content">    ! Expenses:PendingPostingOnly     $10.00</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="line-num">29</td>
+                            <td class="line-content">    Assets:Checking                  $-25.00</td>
+                        </tr>
+                        
+                    </table>
+                </div>
+                
+            </div>
+            
+            <div class="expected-section">
+                
+                
+                
+                    <div class="section-title">Expected Account List</div>
+                    
+                    
+                    <div style="background: white; border: 1px solid #ddd; border-radius: 4px; padding: 20px;">
+                        <h4 style="margin-top: 0; color: #2c3e50;">Accounts (9)</h4>
+                        <ul style="margin: 0; padding-left: 20px; color: #333;">
+                        
+                            <li style="padding: 4px 0; font-family: monospace; font-size: 14px;">Assets:Checking</li>
+                        
+                            <li style="padding: 4px 0; font-family: monospace; font-size: 14px;">Assets:Savings</li>
+                        
+                            <li style="padding: 4px 0; font-family: monospace; font-size: 14px;">Expenses:ClearedOnly</li>
+                        
+                            <li style="padding: 4px 0; font-family: monospace; font-size: 14px;">Expenses:ClearedPostingOnly</li>
+                        
+                            <li style="padding: 4px 0; font-family: monospace; font-size: 14px;">Expenses:Food</li>
+                        
+                            <li style="padding: 4px 0; font-family: monospace; font-size: 14px;">Expenses:PendingOnly</li>
+                        
+                            <li style="padding: 4px 0; font-family: monospace; font-size: 14px;">Expenses:PendingPostingOnly</li>
+                        
+                            <li style="padding: 4px 0; font-family: monospace; font-size: 14px;">Expenses:Transportation</li>
+                        
+                            <li style="padding: 4px 0; font-family: monospace; font-size: 14px;">Income:Salary</li>
+                        
+                        </ul>
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
+                            <p style="color: #666; font-size: 14px; margin: 0;">
+                                <strong>Note:</strong> Accounts are returned in sorted order by the ledger CLI.
+                            </p>
+                        </div>
+                    </div>
+                    
+                
                 
             </div>
         </div>

@@ -1,0 +1,9 @@
+# Test fuzzy matching with fzf
+accounts:
+  - "Assets:Checking"
+  - "Assets:Savings"
+  - "Expenses:Food"
+  - "Expenses:Transportation"
+test_input: "food"
+expected_result: "Expenses:Food"
+requires_fzf: true

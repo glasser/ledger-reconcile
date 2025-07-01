@@ -149,7 +149,7 @@
     <h1>S-Expression Parser Test Fixtures</h1>
     
     <div class="summary">
-        <strong>Total test cases:</strong> 43
+        <strong>Total test cases:</strong> 50
     </div>
     
     
@@ -163,11 +163,27 @@
             </li>
         
             <li>
+                <a href="#error_list_expected_paren">error_list_expected_paren</a>
+            </li>
+        
+            <li>
+                <a href="#error_truncate_long">error_truncate_long</a>
+            </li>
+        
+            <li>
+                <a href="#error_truncate_short">error_truncate_short</a>
+            </li>
+        
+            <li>
                 <a href="#error_unexpected_closing_paren">error_unexpected_closing_paren</a>
             </li>
         
             <li>
                 <a href="#error_unmatched_paren">error_unmatched_paren</a>
+            </li>
+        
+            <li>
+                <a href="#error_unterminated_string">error_unterminated_string</a>
             </li>
         
             <li>
@@ -259,11 +275,23 @@
             </li>
         
             <li>
+                <a href="#string_escaped_carriage_return">string_escaped_carriage_return</a>
+            </li>
+        
+            <li>
                 <a href="#string_escaped_newline">string_escaped_newline</a>
             </li>
         
             <li>
                 <a href="#string_escaped_quote">string_escaped_quote</a>
+            </li>
+        
+            <li>
+                <a href="#string_escaped_tab">string_escaped_tab</a>
+            </li>
+        
+            <li>
+                <a href="#string_escaped_unknown">string_escaped_unknown</a>
             </li>
         
             <li>
@@ -356,6 +384,69 @@
     </div>
     
     
+    <div class="test-case error-case" id="error_list_expected_paren">
+        <h2>error_list_expected_paren (Error)</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">abc(123)</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Error</h3>
+                <div class="file-content json-content">Unexpected content after atom: (123)</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case error-case" id="error_truncate_long">
+        <h2>error_truncate_long (Error)</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">&#34;test&#34; this_is_a_very_long_extra_content_that_should_be_truncated</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Error</h3>
+                <div class="file-content json-content">Unexpected content after string: this_is_a_very_long_...</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case error-case" id="error_truncate_short">
+        <h2>error_truncate_short (Error)</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">&#34;test&#34; extra</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Error</h3>
+                <div class="file-content json-content">Unexpected content after string: extra</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
     <div class="test-case error-case" id="error_unexpected_closing_paren">
         <h2>error_unexpected_closing_paren (Error)</h2>
         
@@ -392,6 +483,27 @@
             <div class="file-section output-section">
                 <h3>Expected Error</h3>
                 <div class="file-content json-content">Unclosed list - missing closing parenthesis</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case error-case" id="error_unterminated_string">
+        <h2>error_unterminated_string (Error)</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">&#34;unterminated</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Error</h3>
+                <div class="file-content json-content">Unterminated quoted string: &#34;unterminated</div>
             </div>
             
         </div>
@@ -860,6 +972,27 @@
     </div>
     
     
+    <div class="test-case" id="string_escaped_carriage_return">
+        <h2>string_escaped_carriage_return</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">&#34;line1\rline2&#34;</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">&#34;line1\rline2&#34;</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
     <div class="test-case" id="string_escaped_newline">
         <h2>string_escaped_newline</h2>
         
@@ -896,6 +1029,48 @@
             <div class="file-section output-section">
                 <h3>Expected Output</h3>
                 <div class="file-content json-content">&#34;hello\&#34;world&#34;</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="string_escaped_tab">
+        <h2>string_escaped_tab</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">&#34;hello\tworld&#34;</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">&#34;hello\tworld&#34;</div>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+    <div class="test-case" id="string_escaped_unknown">
+        <h2>string_escaped_unknown</h2>
+        
+        <div class="file-sections-container">
+            
+            <div class="file-section input-section">
+                <h3>Input</h3>
+                <div class="file-content sexp-content">&#34;test\xmore&#34;</div>
+            </div>
+            
+            
+            
+            <div class="file-section output-section">
+                <h3>Expected Output</h3>
+                <div class="file-content json-content">&#34;testxmore&#34;</div>
             </div>
             
         </div>

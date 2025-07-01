@@ -175,27 +175,3 @@ class SafeFileEditor:
             return False
         else:
             return True
-
-    def update_line_safely(self, line_number: int, new_line: str) -> bool:
-        """Update a single line in the file safely.
-
-        Args:
-            line_number: 1-based line number to update
-            new_line: New content for the line
-
-        Returns:
-            True if the update was successful, False if there was a race condition
-        """
-        lines, read_time = self.read_lines_safely()
-
-        if line_number < 1 or line_number > len(lines):
-            return False
-
-        # Update the line
-        line_idx = line_number - 1
-        if not new_line.endswith("\n") and lines[line_idx].endswith("\n"):
-            new_line += "\n"
-        lines[line_idx] = new_line
-
-        # Write back safely
-        return self.write_lines_safely(lines, read_time)

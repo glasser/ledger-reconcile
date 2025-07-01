@@ -47,3 +47,9 @@ description = "Run all checks (lint, format-check, typecheck, test) and generate
 [tasks.reconcile]
 run = "uv run ledger-reconcile"
 description = "Run ledger-reconcile CLI"
+
+[tasks.coverage]
+run = "mise run test -- --cov=ledger_reconcile --cov-report=term-missing"
+
+[tasks.coverage-html]
+run = "rm -rf htmlcov && mise run test -- --cov=ledger_reconcile --cov-report=html"

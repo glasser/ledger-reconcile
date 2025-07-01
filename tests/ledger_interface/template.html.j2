@@ -267,6 +267,27 @@
                     <p>No expected balance data found</p>
                     {% endif %}
                 
+                {% elif test_type == "accounts" %}
+                    <div class="section-title">Expected Account List</div>
+                    {% if case_data.get("config.yaml") and case_data["config.yaml"].get("parsed") and case_data["config.yaml"].parsed.get("expected") %}
+                    {% set expected = case_data["config.yaml"].parsed.expected %}
+                    <div style="background: white; border: 1px solid #ddd; border-radius: 4px; padding: 20px;">
+                        <h4 style="margin-top: 0; color: #2c3e50;">Accounts ({{ expected|length }})</h4>
+                        <ul style="margin: 0; padding-left: 20px; color: #333;">
+                        {% for account in expected %}
+                            <li style="padding: 4px 0; font-family: monospace; font-size: 14px;">{{ account }}</li>
+                        {% endfor %}
+                        </ul>
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
+                            <p style="color: #666; font-size: 14px; margin: 0;">
+                                <strong>Note:</strong> Accounts are returned in sorted order by the ledger CLI.
+                            </p>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p>No expected account data found</p>
+                    {% endif %}
+                
                 {% else %}
                     <div class="section-title">Expected Parser Output</div>
                     {% if case_data.get("config.yaml") and case_data["config.yaml"].get("parsed") and case_data["config.yaml"].parsed.get("expected") %}

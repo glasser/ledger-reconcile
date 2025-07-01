@@ -1,0 +1,29 @@
+2024/01/01 Opening Balance
+    Assets:Checking                 $1000.00
+    Assets:Savings                   $500.00
+    Income:Salary
+
+2024/01/02 Grocery Shopping
+    Expenses:Food                     $75.00
+    Assets:Checking
+
+2024/01/03 Gas
+    Expenses:Transportation           $40.00
+    Assets:Checking
+
+2024/01/04 * Cleared Transaction
+    Expenses:ClearedOnly              $25.00
+    Assets:Checking
+
+2024/01/05 ! Pending Transaction  
+    Expenses:PendingOnly              $30.00
+    Assets:Checking
+
+2024/01/06 Transfer
+    Assets:Savings                   $200.00
+    Assets:Checking                 $-200.00
+
+2024/01/07 Mixed Posting Status Transaction
+    * Expenses:ClearedPostingOnly     $15.00
+    ! Expenses:PendingPostingOnly     $10.00
+    Assets:Checking                  $-25.00

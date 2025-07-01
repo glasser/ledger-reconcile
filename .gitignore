@@ -1,5 +1,7 @@
 __pycache__
 
+.coverage
+
 # Test reports
 ui_snapshot_report.html
 snapshot_report.html

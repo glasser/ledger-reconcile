@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Selector Test Cases</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .navigation {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .navigation a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .navigation a:hover {
+            text-decoration: underline;
+        }
+        
+        .back-arrow {
+            font-size: 16px;
+        }
+        
+        .summary {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        
+        .toc {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .toc h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        .toc ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .toc a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        
+        
+    </style>
+</head>
+<body>
+    <div class="navigation">
+        <span class="back-arrow">←</span>
+        <a href="../test_cases.html">Back to Test Cases Index</a>
+    </div>
+    
+    <h1>Test Cases</h1>
+    
+    <div class="summary">
+        <strong>Total test cases:</strong> 5
+    </div>
+    
+    
+<h1>Account Selector Test Cases</h1>
+
+<div class="test-info">
+    <p>These tests verify the account selector's integration with fzf (fuzzy finder).</p>
+    <p>Tests that require fzf will fail if it's not installed.</p>
+</div>
+
+<div class="test-case-grid">
+    
+    
+    <div class="test-case-card">
+        <h3>no_match</h3>
+        
+        <div class="test-section">
+            <h4>Accounts</h4>
+            
+            <ul class="account-list">
+                
+                <li>Assets:Checking</li>
+                
+                <li>Assets:Savings</li>
+                
+                <li>Expenses:Food</li>
+                
+            </ul>
+            
+        </div>
+        
+        
+        <div class="test-section">
+            <h4>Test Input (fzf filter)</h4>
+            <div class="test-input">xyz123</div>
+        </div>
+        
+        
+        <div class="test-section">
+            <h4>Expected Result</h4>
+            
+            <div class="expected-result null">null</div>
+            
+        </div>
+        
+        
+        
+        
+        <div class="test-note">
+            <span class="requires-fzf">Requires fzf</span>
+        </div>
+        
+    </div>
+    
+    
+    <div class="test-case-card">
+        <h3>multiple_matches</h3>
+        
+        <div class="test-section">
+            <h4>Accounts</h4>
+            
+            <ul class="account-list">
+                
+                <li>Assets:Bank:Checking</li>
+                
+                <li>Assets:Bank:Savings</li>
+                
+                <li>Assets:Investments</li>
+                
+                <li>Liabilities:Bank:CreditCard</li>
+                
+            </ul>
+            
+        </div>
+        
+        
+        <div class="test-section">
+            <h4>Test Input (fzf filter)</h4>
+            <div class="test-input">bank</div>
+        </div>
+        
+        
+        <div class="test-section">
+            <h4>Expected Result</h4>
+            
+            <div class="expected-result">Assets:Bank:Savings</div>
+            
+        </div>
+        
+        
+        
+        
+        <div class="test-note">
+            <span class="requires-fzf">Requires fzf</span>
+        </div>
+        
+    </div>
+    
+    
+    <div class="test-case-card">
+        <h3>no_accounts</h3>
+        
+        <div class="test-section">
+            <h4>Accounts</h4>
+            
+            <p class="empty-state">No accounts</p>
+            
+        </div>
+        
+        
+        
+        <div class="test-section">
+            <h4>Expected Result</h4>
+            
+            <div class="expected-result null">null</div>
+            
+        </div>
+        
+        
+        <div class="test-section">
+            <h4>Expected Console Output Contains</h4>
+            <div class="console-output">No accounts found in ledger file</div>
+        </div>
+        
+        
+        
+    </div>
+    
+    
+    <div class="test-case-card">
+        <h3>fuzzy_match</h3>
+        
+        <div class="test-section">
+            <h4>Accounts</h4>
+            
+            <ul class="account-list">
+                
+                <li>Assets:Checking</li>
+                
+                <li>Assets:Savings</li>
+                
+                <li>Expenses:Food</li>
+                
+                <li>Expenses:Transportation</li>
+                
+            </ul>
+            
+        </div>
+        
+        
+        <div class="test-section">
+            <h4>Test Input (fzf filter)</h4>
+            <div class="test-input">food</div>
+        </div>
+        
+        
+        <div class="test-section">
+            <h4>Expected Result</h4>
+            
+            <div class="expected-result">Expenses:Food</div>
+            
+        </div>
+        
+        
+        
+        
+        <div class="test-note">
+            <span class="requires-fzf">Requires fzf</span>
+        </div>
+        
+    </div>
+    
+    
+    <div class="test-case-card">
+        <h3>exact_match</h3>
+        
+        <div class="test-section">
+            <h4>Accounts</h4>
+            
+            <ul class="account-list">
+                
+                <li>Assets:Checking</li>
+                
+                <li>Assets:Savings</li>
+                
+                <li>Expenses:Food</li>
+                
+            </ul>
+            
+        </div>
+        
+        
+        <div class="test-section">
+            <h4>Test Input (fzf filter)</h4>
+            <div class="test-input">Assets:Checking</div>
+        </div>
+        
+        
+        <div class="test-section">
+            <h4>Expected Result</h4>
+            
+            <div class="expected-result">Assets:Checking</div>
+            
+        </div>
+        
+        
+        
+        
+        <div class="test-note">
+            <span class="requires-fzf">Requires fzf</span>
+        </div>
+        
+    </div>
+    
+</div>
+
+<style>
+.test-info {
+    background: #f0f8ff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #b0d4ff;
+}
+
+.test-case-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.test-case-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    background: #f9f9f9;
+    position: relative;
+}
+
+.test-case-card h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1.2em;
+}
+
+.test-section {
+    margin: 15px 0;
+}
+
+.test-section h4 {
+    margin: 10px 0 5px 0;
+    color: #666;
+    font-size: 0.9em;
+    text-transform: uppercase;
+}
+
+.account-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.account-list li {
+    padding: 3px 0;
+    font-family: monospace;
+}
+
+.empty-state {
+    color: #999;
+    font-style: italic;
+}
+
+.test-input {
+    background: #e7f0ff;
+    padding: 10px;
+    border-radius: 4px;
+    font-family: monospace;
+    border: 1px solid #b0d4ff;
+}
+
+.expected-result {
+    background: #e7f3e7;
+    padding: 10px;
+    border-radius: 4px;
+    font-family: monospace;
+    border: 1px solid #c3e6c3;
+}
+
+.expected-result.null {
+    background: #f0f0f0;
+    border-color: #d0d0d0;
+    color: #666;
+}
+
+.console-output {
+    background: #2d2d2d;
+    color: #f0f0f0;
+    padding: 10px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.9em;
+}
+
+.test-note {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.requires-fzf {
+    background: #ffeaa7;
+    color: #d63031;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+</style>
+
+</body>
+</html>

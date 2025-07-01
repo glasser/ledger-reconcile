@@ -71,6 +71,12 @@ def test_fixture(name, test_data):
                 ), (
                     f"Test case: {name}\nExpected cleared+pending balance: {expected['cleared_and_pending_balance']}\nGot: {cleared_pending_balance}"
                 )
+        elif test_type == "accounts":
+            # Test get_accounts method
+            accounts = interface.get_accounts()
+            assert accounts == expected, (
+                f"Test case: {name}\nExpected accounts: {expected}\nGot: {accounts}"
+            )
         else:
             # Default: test transaction parsing
             # Get uncleared transactions for Assets:Checking

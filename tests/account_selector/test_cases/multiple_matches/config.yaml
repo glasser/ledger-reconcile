@@ -1,0 +1,9 @@
+# Test when multiple accounts match - fzf returns based on its scoring
+accounts:
+  - "Assets:Bank:Checking"
+  - "Assets:Bank:Savings"
+  - "Assets:Investments"
+  - "Liabilities:Bank:CreditCard"
+test_input: "bank"
+expected_result: "Assets:Bank:Savings"  # fzf's choice based on scoring
+requires_fzf: true

@@ -1,0 +1,171 @@
+{% extends "base_template.html.j2" %}
+
+{% block title %}Account Selector Test Cases{% endblock %}
+
+{% block content %}
+<h1>Account Selector Test Cases</h1>
+
+<div class="test-info">
+    <p>These tests verify the account selector's integration with fzf (fuzzy finder).</p>
+    <p>Tests that require fzf will fail if it's not installed.</p>
+</div>
+
+<div class="test-case-grid">
+    {% for test_name, test_data in test_cases.items() %}
+    {% set config = test_data.get("config.yaml", {}).get("parsed", {}) %}
+    <div class="test-case-card">
+        <h3>{{ test_name }}</h3>
+        
+        <div class="test-section">
+            <h4>Accounts</h4>
+            {% if config.accounts %}
+            <ul class="account-list">
+                {% for account in config.accounts %}
+                <li>{{ account }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="empty-state">No accounts</p>
+            {% endif %}
+        </div>
+        
+        {% if config.test_input %}
+        <div class="test-section">
+            <h4>Test Input (fzf filter)</h4>
+            <div class="test-input">{{ config.test_input }}</div>
+        </div>
+        {% endif %}
+        
+        <div class="test-section">
+            <h4>Expected Result</h4>
+            {% if config.expected_result %}
+            <div class="expected-result">{{ config.expected_result }}</div>
+            {% else %}
+            <div class="expected-result null">null</div>
+            {% endif %}
+        </div>
+        
+        {% if config.expected_console_contains %}
+        <div class="test-section">
+            <h4>Expected Console Output Contains</h4>
+            <div class="console-output">{{ config.expected_console_contains }}</div>
+        </div>
+        {% endif %}
+        
+        {% if config.requires_fzf %}
+        <div class="test-note">
+            <span class="requires-fzf">Requires fzf</span>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+.test-info {
+    background: #f0f8ff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #b0d4ff;
+}
+
+.test-case-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.test-case-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    background: #f9f9f9;
+    position: relative;
+}
+
+.test-case-card h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1.2em;
+}
+
+.test-section {
+    margin: 15px 0;
+}
+
+.test-section h4 {
+    margin: 10px 0 5px 0;
+    color: #666;
+    font-size: 0.9em;
+    text-transform: uppercase;
+}
+
+.account-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.account-list li {
+    padding: 3px 0;
+    font-family: monospace;
+}
+
+.empty-state {
+    color: #999;
+    font-style: italic;
+}
+
+.test-input {
+    background: #e7f0ff;
+    padding: 10px;
+    border-radius: 4px;
+    font-family: monospace;
+    border: 1px solid #b0d4ff;
+}
+
+.expected-result {
+    background: #e7f3e7;
+    padding: 10px;
+    border-radius: 4px;
+    font-family: monospace;
+    border: 1px solid #c3e6c3;
+}
+
+.expected-result.null {
+    background: #f0f0f0;
+    border-color: #d0d0d0;
+    color: #666;
+}
+
+.console-output {
+    background: #2d2d2d;
+    color: #f0f0f0;
+    padding: 10px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.9em;
+}
+
+.test-note {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.requires-fzf {
+    background: #ffeaa7;
+    color: #d63031;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+</style>
+{% endblock %}

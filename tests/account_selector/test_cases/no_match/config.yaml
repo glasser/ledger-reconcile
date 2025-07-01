@@ -1,0 +1,8 @@
+# Test when filter has no matches
+accounts:
+  - "Assets:Checking"
+  - "Assets:Savings"
+  - "Expenses:Food"
+test_input: "xyz123"
+expected_result: null
+requires_fzf: true

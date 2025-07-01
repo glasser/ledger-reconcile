@@ -1,0 +1,12 @@
+description: Test get_accounts method including accounts with posting-level status markers
+test_type: accounts
+expected:
+  - "Assets:Checking"
+  - "Assets:Savings" 
+  - "Expenses:ClearedOnly"
+  - "Expenses:ClearedPostingOnly"
+  - "Expenses:Food"
+  - "Expenses:PendingOnly"
+  - "Expenses:PendingPostingOnly"
+  - "Expenses:Transportation"
+  - "Income:Salary"
