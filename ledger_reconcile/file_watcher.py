@@ -99,6 +99,31 @@ class LedgerFileEventHandler(FileSystemEventHandler):
         if event_path == watched_path:
             self.watcher._handle_file_change()
 
+    def on_moved(self, event: FileSystemEvent) -> None:
+        """Handle file move events (important for atomic rewrites)."""
+        if event.is_directory:
+            return
+
+        # Check if destination matches our watched file (atomic rewrite pattern)
+        if hasattr(event, "dest_path"):
+            dest_path = Path(str(event.dest_path)).resolve()
+            watched_path = self.watcher.file_path.resolve()
+
+            if dest_path == watched_path:
+                self.watcher._handle_file_change()
+
+    def on_created(self, event: FileSystemEvent) -> None:
+        """Handle file creation events (may occur during atomic rewrites)."""
+        if event.is_directory:
+            return
+
+        # Resolve both paths to handle symlinks (e.g., /var -> /private/var on macOS)
+        event_path = Path(str(event.src_path)).resolve()
+        watched_path = self.watcher.file_path.resolve()
+
+        if event_path == watched_path:
+            self.watcher._handle_file_change()
+
 
 class SafeFileEditor:
     """Provides safe file editing with race condition prevention."""

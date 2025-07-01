@@ -1,0 +1,11 @@
+2024-01-01 Opening Balance
+    Assets:Checking              $1000.00
+    Equity:Opening Balances
+
+2024-01-02 First Transaction
+    Expenses:Food                 $30.00
+    Assets:Checking              $-30.00
+
+2024-01-03 Second Transaction
+    Expenses:Gas                  $40.00
+    Assets:Checking              $-40.00

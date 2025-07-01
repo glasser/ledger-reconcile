@@ -1,0 +1,30 @@
+name: vscode_atomic_rewrite_test
+description: Test file watcher detection of atomic rewrites like VSCode
+account: "Assets:Checking"
+target_amount: "$500.00"
+initial_file: initial.ledger
+steps:
+  - action: snapshot
+    data:
+      name: initial_state
+  - action: atomic_rewrite
+    data:
+      content_file: after_external_edit.ledger
+    description: "Simulate VSCode atomic rewrite by writing to temp file and replacing"
+  - action: pause
+    data:
+      milliseconds: 200
+    description: "Wait for file watcher to detect the change"
+  - action: snapshot
+    data:
+      name: after_external_edit
+      description: "UI should reflect the external file change"
+  - action: assert_ui
+    data:
+      type: table_rows
+      count: 4
+    description: "Should now show 4 rows (including the new third transaction)"
+assertions:
+  - type: table_columns
+    data:
+      count: 6

@@ -355,6 +355,33 @@ class UITestRunner:
         # Force filesystem sync
         os.sync()
 
+    async def run_atomic_rewrite(self, step: UITestStep, _step_index: int) -> None:
+        """Simulate atomic rewrite like VSCode does for external file modification."""
+        new_content_file = step.data["content_file"]
+        new_content_data = self.test_case_tree.get(new_content_file)
+
+        if not new_content_data or "content" not in new_content_data:
+            raise FileNotFoundError(f"Content file not found: {new_content_file}")
+
+        new_content = new_content_data["content"]
+
+        # Simulate VSCode's atomic rewrite pattern:
+        # 1. Write to a temporary file with a VSCode-like name pattern
+        temp_file = self.temp_ledger_file.with_suffix(".tmp-vscode")
+
+        # 2. Write content to temporary file
+        with temp_file.open("w") as f:
+            f.write(new_content)
+
+        # 3. Force filesystem sync
+        os.sync()
+
+        # 4. Atomically replace the original file (VSCode does this)
+        temp_file.replace(self.temp_ledger_file)
+
+        # 5. Force another filesystem sync
+        os.sync()
+
 
 # Test discovery and execution
 def discover_ui_test_cases(base_dir: Path) -> list[tuple[str, dict]]:
