@@ -295,15 +295,15 @@
                 {% if case_data.get("input.ledger") %}
                 <div class="ledger-content">
                     <table>
-                        {% for line in case_data["input.ledger"].content.split('\n') %}
-                        {% set line_num = loop.index %}
+                        {% for line in case_data["input.ledger"].content.split('\n') -%}
+                        {% set line_num = loop.index -%}
                         <tr>
                             <td class="line-num">{{ line_num }}</td>
                             <td
                                 class="line-content {% if line_num in test_params.posting_line_numbers %}posting-target{% endif %}">
-                                {{ line if line else ' ' }}</td>
+                                {{- line if line else ' ' -}}</td>
                         </tr>
-                        {% endfor %}
+                        {%- endfor %}
                     </table>
                 </div>
                 {% endif %}
@@ -314,16 +314,16 @@
                 {% if case_data.get("expected.ledger") %}
                 <div class="ledger-content">
                     <table>
-                        {% set input_lines = case_data["input.ledger"].content.split('\n') %}
-                        {% set expected_lines = case_data["expected.ledger"].content.split('\n') %}
-                        {% for line in expected_lines %}
-                        {% set line_num = loop.index %}
-                        {% set changed = line != input_lines[line_num - 1] if line_num <= input_lines|length else true
-                            %} <tr>
+                        {% set input_lines = case_data["input.ledger"].content.split('\n') -%}
+                        {% set expected_lines = case_data["expected.ledger"].content.split('\n') -%}
+                        {% for line in expected_lines -%}
+                        {% set line_num = loop.index -%}
+                        {% set changed = line != input_lines[line_num - 1] if line_num <= input_lines|length else true -%}
+                        <tr>
                             <td class="line-num">{{ line_num }}</td>
-                            <td class="line-content {% if changed %}updated{% endif %}">{{ line if line else ' ' }}</td>
-                            </tr>
-                            {% endfor %}
+                            <td class="line-content {% if changed %}updated{% endif %}">{{- line if line else ' ' -}}</td>
+                        </tr>
+                        {%- endfor %}
                     </table>
                 </div>
                 {% else %}
