@@ -529,7 +529,8 @@ class ReconcileApp(App):
         current_row = table.cursor_row if table.cursor_row is not None else 0
         current_row_key = None
 
-        if table.cursor_coordinate is not None:
+        # Only try to get row key if table has rows and cursor is valid
+        if table.row_count > 0 and table.cursor_coordinate is not None:
             cell_key = table.coordinate_to_cell_key(table.cursor_coordinate)
             current_row_key = cell_key.row_key
 

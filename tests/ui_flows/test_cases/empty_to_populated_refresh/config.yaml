@@ -1,0 +1,36 @@
+account: "Assets:Checking"
+target_amount: "$100.00"
+description: "Test file watcher handling transition from empty table to populated table"
+
+steps:
+  - action: "snapshot"
+    description: "Initial state with empty table (no unreconciled transactions)"
+    data:
+      name: "initial_empty_state"
+
+  - action: "assert_ui"
+    description: "Verify initial table has 0 rows"
+    data:
+      type: "table_rows"
+      count: 0
+
+  - action: "modify_file"
+    description: "External process adds unreconciled transaction"
+    data:
+      content_file: "populated.ledger"
+
+  - action: "wait"
+    description: "Wait for file watcher to trigger reload"
+    data:
+      seconds: 0.1
+
+  - action: "snapshot"
+    description: "UI updated with new transaction (should not crash)"
+    data:
+      name: "after_external_change_to_populated"
+
+  - action: "assert_ui"
+    description: "Verify table now has 1 row"
+    data:
+      type: "table_rows"
+      count: 1
