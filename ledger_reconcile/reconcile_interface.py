@@ -336,7 +336,7 @@ class ReconcileApp(App):
     def action_toggle_status(self) -> None:
         """Toggle the status of the currently selected transaction."""
         table = self.query_one("#transactions-table", DataTable)
-        if table.cursor_row is None:
+        if table.cursor_row is None or table.row_count == 0:
             return
 
         # Get the current row key (posting line number)
@@ -368,10 +368,16 @@ class ReconcileApp(App):
         if self.file_editor.update_postings_status(
             [posting_line_number], current_posting_status, new_status
         ):
-            # Use call_later for better timing control
-            self.call_later(
-                self._refresh_and_restore_cursor, current_row, current_row_key
-            )
+            # Move cursor down one row if possible
+            next_row = current_row + 1 if current_row is not None else 0
+            if next_row < table.row_count:
+                # Move to next row
+                self.call_later(self._refresh_and_restore_cursor, next_row, None)
+            else:
+                # Stay on current row if at the end
+                self.call_later(
+                    self._refresh_and_restore_cursor, current_row, current_row_key
+                )
 
             self.notify(f"Updated posting status to '{new_status}'")
         else:

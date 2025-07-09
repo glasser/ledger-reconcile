@@ -18,10 +18,7 @@ steps:
     data:
       file: expected_first_pending.ledger
     
-  # Test toggling the second posting (move to first split posting)
-  - action: key
-    data:
-      key: "down"  # Move to first posting of split transaction  
+  # Test toggling the second posting (cursor auto-moved to first split posting)
   - action: key
     data:
       key: "space"  # Toggle to pending
