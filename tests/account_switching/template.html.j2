@@ -1,0 +1,251 @@
+{% extends "base_template.html.j2" %}
+
+{% block title %}Account Switching Test Cases{% endblock %}
+
+{% block content %}
+<h1>Account Switching Test Cases</h1>
+
+<div class="test-info">
+    <p>These tests verify the account switching functionality that allows users to switch between accounts using the 'a' key.</p>
+    <p>The functionality integrates with fzf for account selection and includes account caching for performance.</p>
+</div>
+
+<div class="test-case-grid">
+    {% for test_name, test_data in test_cases.items() %}
+    {% set config = test_data.get("config.yaml", {}).get("parsed", {}) %}
+    <div class="test-case-card">
+        <h3>{{ test_name }}</h3>
+        
+        {% if config.description %}
+        <div class="test-description">{{ config.description }}</div>
+        {% endif %}
+        
+        <div class="test-section">
+            <h4>Initial Setup</h4>
+            <div class="setup-info">
+                <div class="setup-row">
+                    <span class="setup-label">Account:</span>
+                    <span class="setup-value">{{ config.initial_account }}</span>
+                </div>
+                <div class="setup-row">
+                    <span class="setup-label">Target Amount:</span>
+                    <span class="setup-value">{{ config.initial_target_amount }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h4>Available Accounts</h4>
+            {% if config.available_accounts %}
+            <ul class="account-list">
+                {% for account in config.available_accounts %}
+                <li>{{ account }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="empty-state">No accounts available</p>
+            {% endif %}
+        </div>
+        
+        {% if config.target_account %}
+        <div class="test-section">
+            <h4>Target Account</h4>
+            <div class="target-account">{{ config.target_account }}</div>
+        </div>
+        {% endif %}
+        
+        <div class="test-section">
+            <h4>Account Selector Returns</h4>
+            {% if config.account_selector_returns %}
+            <div class="selector-result">{{ config.account_selector_returns }}</div>
+            {% else %}
+            <div class="selector-result null">null (cancelled)</div>
+            {% endif %}
+        </div>
+        
+        <div class="test-section">
+            <h4>Expected Result</h4>
+            <div class="expected-result {{ config.expected_result }}">
+                {% if config.expected_result == "account_changed" %}
+                ✓ Account Changed
+                {% elif config.expected_result == "account_unchanged" %}
+                → Account Unchanged
+                {% elif config.expected_result == "cancelled" %}
+                ✗ Selection Cancelled
+                {% else %}
+                {{ config.expected_result }}
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if config.test_caching %}
+        <div class="test-note">
+            <span class="caching-test">Tests Caching</span>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+.test-info {
+    background: #f0f8ff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #b0d4ff;
+}
+
+.test-case-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.test-case-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    background: #f9f9f9;
+    position: relative;
+}
+
+.test-case-card h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1.2em;
+}
+
+.test-description {
+    color: #666;
+    font-style: italic;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+.test-section {
+    margin: 15px 0;
+}
+
+.test-section h4 {
+    margin: 10px 0 5px 0;
+    color: #666;
+    font-size: 0.9em;
+    text-transform: uppercase;
+}
+
+.setup-info {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.setup-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+}
+
+.setup-label {
+    font-weight: bold;
+    color: #555;
+}
+
+.setup-value {
+    font-family: monospace;
+    color: #2c3e50;
+}
+
+.account-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.account-list li {
+    padding: 3px 0;
+    font-family: monospace;
+    color: #2c3e50;
+}
+
+.empty-state {
+    color: #999;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+}
+
+.target-account {
+    background: #e7f0ff;
+    padding: 10px;
+    border-radius: 4px;
+    font-family: monospace;
+    border: 1px solid #b0d4ff;
+    color: #2c3e50;
+}
+
+.selector-result {
+    background: #fff3cd;
+    padding: 10px;
+    border-radius: 4px;
+    font-family: monospace;
+    border: 1px solid #ffeaa7;
+    color: #856404;
+}
+
+.selector-result.null {
+    background: #f0f0f0;
+    border-color: #d0d0d0;
+    color: #666;
+}
+
+.expected-result {
+    padding: 10px;
+    border-radius: 4px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.expected-result.account_changed {
+    background: #d4edda;
+    border: 1px solid #c3e6c3;
+    color: #155724;
+}
+
+.expected-result.account_unchanged {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    color: #856404;
+}
+
+.expected-result.cancelled {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.test-note {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.caching-test {
+    background: #e7f0ff;
+    color: #2c3e50;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: bold;
+    border: 1px solid #b0d4ff;
+}
+</style>
+{% endblock %}

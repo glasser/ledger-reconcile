@@ -1,0 +1,11 @@
+description: "Verify accounts are cached and not re-fetched on subsequent calls"
+initial_account: "Assets:Checking"
+target_account: "Assets:Savings"
+available_accounts:
+  - "Assets:Checking"
+  - "Assets:Savings"
+  - "Expenses:Food"
+initial_target_amount: "$1000.00"
+account_selector_returns: "Assets:Savings"
+expected_result: "account_changed"
+test_caching: true

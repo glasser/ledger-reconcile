@@ -38,15 +38,16 @@ def main(ledger_file: Path, account: str | None, target: str | None) -> None:
         # Initialize ledger interface
         ledger_interface = LedgerInterface(ledger_file)
 
+        # Get all accounts once for validation and caching
+        accounts = ledger_interface.get_accounts()
+
+        if not accounts:
+            console.print("[red]No accounts found in ledger file[/red]")
+            sys.exit(1)
+
         # Get account if not provided
         if not account:
             console.print("[bold]Step 1: Select Account[/bold]")
-            accounts = ledger_interface.get_accounts()
-
-            if not accounts:
-                console.print("[red]No accounts found in ledger file[/red]")
-                sys.exit(1)
-
             selector = AccountSelector(accounts)
             account = selector.select_account("Select account to reconcile")
 
@@ -55,7 +56,6 @@ def main(ledger_file: Path, account: str | None, target: str | None) -> None:
                 sys.exit(0)
 
         # Validate account exists
-        accounts = ledger_interface.get_accounts()
         if account not in accounts:
             console.print(f"[red]Account '{account}' not found in ledger file[/red]")
             sys.exit(1)
@@ -80,7 +80,7 @@ def main(ledger_file: Path, account: str | None, target: str | None) -> None:
         console.print(f"Target amount: [cyan]{target}[/cyan]")
         console.print("\nLaunching reconciliation interface...")
 
-        run_reconcile_interface(ledger_file, account, target)
+        run_reconcile_interface(ledger_file, account, target, cached_accounts=accounts)
 
     except KeyboardInterrupt:
         console.print("\n[yellow]Cancelled by user[/yellow]")

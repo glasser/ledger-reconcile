@@ -1,0 +1,9 @@
+description: "User cancels account selection (fzf returns None)"
+initial_account: "Assets:Checking"
+available_accounts:
+  - "Assets:Checking"
+  - "Assets:Savings"
+  - "Expenses:Food"
+initial_target_amount: "$1000.00"
+account_selector_returns: null
+expected_result: "cancelled"

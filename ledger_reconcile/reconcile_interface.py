@@ -8,6 +8,7 @@ from decimal import Decimal
 from pathlib import Path
 from typing import ClassVar
 
+from rich.text import Text
 from textual import on
 from textual.app import App, ComposeResult
 from textual.containers import Container, HorizontalGroup, Vertical
@@ -17,6 +18,7 @@ from textual.reactive import reactive
 from textual.screen import ModalScreen
 from textual.widgets import Button, DataTable, Footer, Input, Label
 
+from .account_selector import AccountSelector
 from .file_editor import LedgerFileEditor
 from .file_watcher import LedgerFileWatcher
 from .ledger_interface import LedgerInterface, ReconciliationEntry
@@ -157,6 +159,7 @@ class ReconcileApp(App):
         ("t", "adjust_target", "Adjust Target"),
         ("s", "toggle_sort", "Reverse Sort"),
         ("r", "refresh", "Refresh"),
+        ("a", "switch_account", "Switch Account"),
     ]
 
     # Reactive variables that automatically update UI labels
@@ -170,6 +173,7 @@ class ReconcileApp(App):
         account: str,
         target_amount: str,
         disable_file_watcher: bool = False,
+        cached_accounts: list[str] | None = None,
     ):
         super().__init__()
         self.ledger_file = ledger_file
@@ -191,12 +195,19 @@ class ReconcileApp(App):
         # Track sort order
         self.reverse_sort = False  # False = oldest first, True = newest first
 
+        # Cache accounts (loaded once per app session)
+        self._cached_accounts: list[str] | None = cached_accounts
+
     def compose(self) -> ComposeResult:
         """Create the UI layout."""
         yield Container(
             Vertical(
                 HorizontalGroup(
-                    Label(f"Account: {self.account}", classes="info-label"),
+                    Label(
+                        f"Account: {self.account}",
+                        id="account-label",
+                        classes="info-label",
+                    ),
                     Label(
                         f"Target: {format_balance(self.target_amount)}",
                         id="target-label",
@@ -226,6 +237,12 @@ class ReconcileApp(App):
     def compute_delta(self) -> Decimal:
         """Compute delta based on current target and balance."""
         return self.target_amount - self.cleared_pending_balance
+
+    def get_cached_accounts(self) -> list[str]:
+        """Get accounts from cache or load and cache them."""
+        if self._cached_accounts is None:
+            self._cached_accounts = self.ledger_interface.get_accounts()
+        return self._cached_accounts
 
     def watch_target_amount(self, target_amount: Decimal) -> None:
         """Update target label when target_amount changes."""
@@ -323,15 +340,43 @@ class ReconcileApp(App):
                     amount = posting.amount
 
                 status_display = posting.status if posting.status else "·"
-                table.add_row(
-                    status_display,
-                    str(posting.line_number),
-                    transaction.date,
-                    transaction.check_code,
-                    amount,
-                    transaction.description,
-                    key=str(posting.line_number),  # Use posting line number as key
-                )
+
+                # Apply special styling for pending status "!"
+                if posting.status == "!":
+                    # Create styled text cells with background color for pending items
+                    # Use justify to help fill cell width with background color
+                    styled_row = [
+                        Text(status_display, style="on bright_blue", justify="left"),
+                        Text(
+                            str(posting.line_number),
+                            style="on bright_blue",
+                            justify="left",
+                        ),
+                        Text(transaction.date, style="on bright_blue", justify="left"),
+                        Text(
+                            transaction.check_code,
+                            style="on bright_blue",
+                            justify="left",
+                        ),
+                        Text(amount, style="on bright_blue", justify="left"),
+                        Text(
+                            transaction.description,
+                            style="on bright_blue",
+                            justify="left",
+                        ),
+                    ]
+                    table.add_row(*styled_row, key=str(posting.line_number))
+                else:
+                    # Regular row for other statuses
+                    table.add_row(
+                        status_display,
+                        str(posting.line_number),
+                        transaction.date,
+                        transaction.check_code,
+                        amount,
+                        transaction.description,
+                        key=str(posting.line_number),
+                    )
 
     def action_toggle_status(self) -> None:
         """Toggle the status of the currently selected transaction."""
@@ -477,6 +522,60 @@ class ReconcileApp(App):
         )
         self.notify("Refreshed from file")
 
+    def action_switch_account(self) -> None:
+        """Switch to a different account using fzf selection."""
+        # Use run_worker to handle the async operation
+        self.run_worker(self._switch_account_worker(), exclusive=True)
+
+    async def _switch_account_worker(self) -> None:
+        """Worker method to handle account switching."""
+        try:
+            # Get cached accounts
+            accounts = self.get_cached_accounts()
+
+            if not accounts:
+                self.notify("No accounts found in ledger file", severity="error")
+                return
+
+            # Create account selector
+            account_selector = AccountSelector(accounts)
+
+            # Suspend the app to allow fzf to take over the terminal
+            with self.suspend():
+                selected_account = account_selector.select_account("Switch to account")
+
+            if selected_account is None:
+                self.notify("Account selection cancelled")
+                return
+
+            if selected_account == self.account:
+                self.notify(f"Already on account {self.account}")
+                return
+
+            # Switch to the new account
+            self.account = selected_account
+
+            # Update the account label
+            try:
+                account_label = self.query_one("#account-label", Label)
+                account_label.update(f"Account: {self.account}")
+            except NoMatches:
+                pass
+
+            # Clear current data and reload for new account
+            self.transactions = []
+            table = self.query_one("#transactions-table", DataTable)
+            table.clear(columns=True)
+
+            # Load transactions for the new account
+            await self.load_transactions()
+            await self.setup_table()
+
+            self.notify(f"Switched to account: {self.account}")
+
+        except (OSError, ValueError, RuntimeError) as e:
+            self.notify(f"Error switching account: {e}", severity="error")
+
     async def _adjust_target_worker(self) -> None:
         """Worker method to handle target balance adjustment."""
         target_screen = TargetBalanceScreen(format_balance(self.target_amount))
@@ -540,8 +639,13 @@ class ReconcileApp(App):
 
 
 def run_reconcile_interface(
-    ledger_file: Path, account: str, target_amount: str
+    ledger_file: Path,
+    account: str,
+    target_amount: str,
+    cached_accounts: list[str] | None = None,
 ) -> None:
     """Run the reconciliation interface for the given account."""
-    app = ReconcileApp(ledger_file, account, target_amount)
+    app = ReconcileApp(
+        ledger_file, account, target_amount, cached_accounts=cached_accounts
+    )
     app.run()

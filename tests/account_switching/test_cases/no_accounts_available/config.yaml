@@ -1,0 +1,6 @@
+description: "No accounts are available in the ledger file"
+initial_account: "Assets:Checking"
+available_accounts: []
+initial_target_amount: "$1000.00"
+account_selector_returns: null
+expected_result: "cancelled"

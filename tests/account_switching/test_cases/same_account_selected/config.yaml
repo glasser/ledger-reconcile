@@ -1,0 +1,9 @@
+description: "User selects the same account they're already on"
+initial_account: "Assets:Checking"
+available_accounts:
+  - "Assets:Checking"
+  - "Assets:Savings"
+  - "Expenses:Food"
+initial_target_amount: "$1000.00"
+account_selector_returns: "Assets:Checking"
+expected_result: "account_unchanged"
