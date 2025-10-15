@@ -1,0 +1,50 @@
+description: "Test toggling all pending transactions back to uncleared using '!' key"
+account: "Assets:Checking"
+target_amount: "$890.00"
+
+steps:
+  - action: assert_ui
+    description: "Cleared+pending balance should show pending transactions"
+    data:
+      type: "balance"
+      balance_type: "cleared_pending"
+      value: "$900.00"
+
+  - action: snapshot
+    description: "Initial state with all pending transactions"
+    data:
+      name: "initial_all_pending"
+
+  - action: assert_ui
+    description: "Should have 3 transactions shown"
+    data:
+      type: "table_rows"
+      count: 3
+
+  - action: key
+    description: "Press '!' to toggle all pending transactions to uncleared"
+    data:
+      key: "!"
+
+  - action: snapshot
+    description: "After toggling all to uncleared"
+    data:
+      name: "after_toggle_to_uncleared"
+
+  - action: assert_ui
+    description: "Should still have 3 transactions shown"
+    data:
+      type: "table_rows"
+      count: 3
+
+  - action: assert_ui
+    description: "Cleared+pending balance should be $0 (no pending)"
+    data:
+      type: "balance"
+      balance_type: "cleared_pending"
+      value: "$0.00"
+
+  - action: assert_file
+    description: "Ledger file should have all transactions back to uncleared"
+    data:
+      file: "expected_all_uncleared.ledger"

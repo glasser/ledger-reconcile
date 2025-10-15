@@ -1,0 +1,50 @@
+description: "Test setting all transactions to pending using '!' key"
+account: "Assets:Checking"
+target_amount: "$890.00"
+
+steps:
+  - action: assert_ui
+    description: "Cleared+pending balance should be updated from async loading (not initial $0.00)"
+    data:
+      type: "balance"
+      balance_type: "cleared_pending"
+      value: "$0.00"
+
+  - action: snapshot
+    description: "Initial state with uncleared transactions"
+    data:
+      name: "initial_uncleared"
+
+  - action: assert_ui
+    description: "Should have 4 transactions shown (including opening balance)"
+    data:
+      type: "table_rows"
+      count: 4
+
+  - action: key
+    description: "Press '!' to set all visible transactions to pending"
+    data:
+      key: "!"
+
+  - action: snapshot
+    description: "After setting all to pending"
+    data:
+      name: "after_set_all_pending"
+
+  - action: assert_ui
+    description: "Should still have 4 transactions shown"
+    data:
+      type: "table_rows"
+      count: 4
+
+  - action: assert_ui
+    description: "Cleared+pending balance should be updated to $890.00"
+    data:
+      type: "balance"
+      balance_type: "cleared_pending"
+      value: "$890.00"
+
+  - action: assert_file
+    description: "Ledger file should have all transactions marked as pending"
+    data:
+      file: "expected_all_pending.ledger"

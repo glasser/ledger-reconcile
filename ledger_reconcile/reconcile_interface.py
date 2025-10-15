@@ -156,6 +156,7 @@ class ReconcileApp(App):
         ("ctrl+c", "quit", "Quit"),
         ("space", "toggle_status", "Toggle Status"),
         ("c", "reconcile_all", "Clear All !"),
+        ("!", "set_all_pending", "Set All !"),
         ("t", "adjust_target", "Adjust Target"),
         ("s", "toggle_sort", "Reverse Sort"),
         ("r", "refresh", "Refresh"),
@@ -489,6 +490,65 @@ class ReconcileApp(App):
         else:
             self.notify(
                 "Failed to reconcile postings (may have changed externally)",
+                severity="error",
+            )
+
+    def action_set_all_pending(self) -> None:
+        """Toggle all visible transactions between uncleared and pending.
+
+        This is equivalent to selecting every visible row and toggling them.
+        Matches the behavior of space key which toggles "" <-> "!".
+        If all are pending, clears them all. If any are uncleared, sets all to pending.
+        """
+        # Count pending vs uncleared postings
+        pending_lines = []
+        uncleared_lines = []
+        for transaction in self.transactions:
+            for posting in transaction.account_postings:
+                if posting.account == self.account:
+                    if posting.status == "!":
+                        pending_lines.append(posting.line_number)
+                    elif posting.status == "":
+                        uncleared_lines.append(posting.line_number)
+
+        # If all are pending, clear them all
+        # Otherwise, set all uncleared to pending
+        if uncleared_lines:
+            # Set all uncleared to pending
+            target_lines = uncleared_lines
+            from_status = ""
+            to_status = "!"
+            action_desc = "pending"
+        elif pending_lines:
+            # Clear all pending
+            target_lines = pending_lines
+            from_status = "!"
+            to_status = ""
+            action_desc = "uncleared"
+        else:
+            self.notify("No transactions to toggle")
+            return
+
+        # Save current cursor position
+        table = self.query_one("#transactions-table", DataTable)
+        current_row = table.cursor_row if table.cursor_row is not None else 0
+        current_row_key = None
+
+        if current_row < table.row_count and table.cursor_coordinate is not None:
+            cell_key = table.coordinate_to_cell_key(table.cursor_coordinate)
+            current_row_key = cell_key.row_key
+
+        if self.file_editor.update_postings_status(
+            target_lines, from_status, to_status
+        ):
+            self.notify(f"Set {len(target_lines)} postings to {action_desc}")
+            # Refresh the table to show updated status
+            self.call_after_refresh(
+                self._refresh_and_restore_cursor, current_row, current_row_key
+            )
+        else:
+            self.notify(
+                "Failed to update postings (may have changed externally)",
                 severity="error",
             )
 

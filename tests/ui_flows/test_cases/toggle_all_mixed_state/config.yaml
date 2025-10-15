@@ -1,0 +1,104 @@
+description: "Test '!' key behavior with mixed pending/uncleared transactions after manual toggle"
+account: "Assets:Checking"
+target_amount: "$860.00"
+
+steps:
+  - action: snapshot
+    description: "Initial state with all uncleared transactions"
+    data:
+      name: "initial_all_uncleared"
+
+  - action: assert_ui
+    description: "Should have 5 transactions shown"
+    data:
+      type: "table_rows"
+      count: 5
+
+  - action: assert_ui
+    description: "Cleared+pending balance should be $0"
+    data:
+      type: "balance"
+      balance_type: "cleared_pending"
+      value: "$0.00"
+
+  - action: key
+    description: "Arrow down twice to middle row (Gas Station)"
+    data:
+      key: "down down"
+
+  - action: snapshot
+    description: "Cursor on middle row before toggle"
+    data:
+      name: "cursor_on_middle_row"
+
+  - action: key
+    description: "Press space to toggle middle transaction to pending"
+    data:
+      key: "space"
+
+  - action: snapshot
+    description: "After manually toggling middle transaction"
+    data:
+      name: "after_manual_toggle"
+
+  - action: assert_ui
+    description: "Cleared+pending balance should be -$50 (Gas Station)"
+    data:
+      type: "balance"
+      balance_type: "cleared_pending"
+      value: "-$50.00"
+
+  - action: assert_file
+    description: "Only middle transaction (Gas Station) should be pending"
+    data:
+      file: "expected_after_manual_toggle.ledger"
+
+  - action: key
+    description: "Press '!' with mixed state - should set all to pending"
+    data:
+      key: "!"
+
+  - action: snapshot
+    description: "After '!' with mixed state - all should be pending"
+    data:
+      name: "after_toggle_all_mixed"
+
+  - action: assert_ui
+    description: "Should still have 5 transactions shown"
+    data:
+      type: "table_rows"
+      count: 5
+
+  - action: assert_ui
+    description: "Cleared+pending balance should be $860.00 (all transactions)"
+    data:
+      type: "balance"
+      balance_type: "cleared_pending"
+      value: "$860.00"
+
+  - action: assert_file
+    description: "All transactions should now be pending"
+    data:
+      file: "expected_all_pending.ledger"
+
+  - action: key
+    description: "Press '!' again when all pending - should clear all"
+    data:
+      key: "!"
+
+  - action: snapshot
+    description: "After second '!' - all should be uncleared"
+    data:
+      name: "after_toggle_all_to_uncleared"
+
+  - action: assert_ui
+    description: "Cleared+pending balance should be back to $0"
+    data:
+      type: "balance"
+      balance_type: "cleared_pending"
+      value: "$0.00"
+
+  - action: assert_file
+    description: "All transactions should be uncleared again"
+    data:
+      file: "expected_all_uncleared.ledger"

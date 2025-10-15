@@ -1,0 +1,19 @@
+2024-01-01 Opening Balance
+    ! Assets:Checking              $1000.00
+    Equity:Opening Balances
+
+2024-01-05 Grocery Store
+    Expenses:Food                 $50.00
+    ! Assets:Checking
+
+2024-01-06 Gas Station
+    Expenses:Gas                  $50.00
+    ! Assets:Checking
+
+2024-01-07 Coffee Shop
+    Expenses:Food                 $10.00
+    ! Assets:Checking
+
+2024-01-08 Bookstore
+    Expenses:Books                $30.00
+    ! Assets:Checking
